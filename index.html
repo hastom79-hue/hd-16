@@ -55,8 +55,8 @@
     <button class="tab-btn active" data-screen="mainScreen">부서별 현황 (메인)</button>
     <button class="tab-btn" data-screen="listScreen">조회 (List)</button>
     <button class="tab-btn" data-screen="dashScreen">9.6.5 중요과제 대시보드</button>
+    <button class="tab-btn" data-screen="sgMainScreen">소그룹활동 (메인)</button>
     <button class="tab-btn" data-screen="sgListScreen">소그룹활동 조회</button>
-    <button class="tab-btn" data-screen="s5sScreen">5S 점검항목관리</button>
   </div>
 </nav>
 
@@ -190,7 +190,39 @@
   </section>
 
   <!-- =====================================================
-       SCREEN 4 — 소그룹활동 조회 (List)
+       SCREEN 4 — 소그룹활동 (메인, 부서별 대시보드)
+  ====================================================== -->
+  <section class="screen" id="sgMainScreen">
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="tbtn" id="btnSgmSearch">🔍 조회</button>
+        <button class="tbtn" id="btnSgmNew">🆕 신규</button>
+        <button class="tbtn" id="btnSgmSave">💾 저장</button>
+        <button class="tbtn" id="btnSgmDelete" disabled>🗑 삭제</button>
+        <button class="tbtn" id="btnSgmExport">🖨 출력</button>
+      </div>
+      <button class="tbtn fav-toggle" id="btnSgmFavToggle">☆ 즐겨찾기</button>
+    </div>
+
+    <div class="filter-bar">
+      <label>공장 <select id="sgmFactory"><option>울산공장</option></select></label>
+      <label>작업장 <select id="sgmWorkplace"><option>All</option></select></label>
+      <label>팀명 <select id="sgmTeam"><option>All</option></select></label>
+      <label>등록일
+        <input type="date" id="sgmDateFrom" value="2025-01-01">
+        ~ <input type="date" id="sgmDateTo" value="2026-12-31">
+      </label>
+      <label>표준화 <select id="sgmStd"><option>All</option></select></label>
+      <button class="tbtn ghost" id="btnSgmCopy">⧉ 복사등록(btn_copy)</button>
+    </div>
+
+    <div class="dept-tree" id="sgDeptTree"></div>
+
+  </section>
+
+  <!-- =====================================================
+       SCREEN 4b — 소그룹활동 조회 (List)
   ====================================================== -->
   <section class="screen" id="sgListScreen">
     <div class="board-head">
@@ -227,34 +259,6 @@
           </tr>
         </thead>
         <tbody id="sgListBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- =====================================================
-       SCREEN 5 — 5S 점검항목관리 (소그룹 평가항목 기준정보)
-  ====================================================== -->
-  <section class="screen" id="s5sScreen">
-    <div class="board-head">
-      <h2>HDPS32 팀별 5S 점검항목관리</h2>
-      <p class="board-sub">소그룹활동 과제 평가항목 구성은 이 '팀별 5S 점검항목관리'와 동일하게 구성됩니다. 평가항목 구성권한: 생산혁신팀.</p>
-    </div>
-
-    <div class="filter-bar">
-      <label>팀 <select id="s5sTeam"><option value="">All</option></select></label>
-      <label>5S 구분 <select id="s5sType"><option value="">All</option><option>정리</option><option>정돈</option><option>청소</option><option>청결</option><option>습관화</option></select></label>
-      <label>사용여부 <select id="s5sUse"><option value="">All</option><option value="사용">사용</option><option value="">미사용</option></select></label>
-      <label>항목명 <input type="text" id="s5sSearch" placeholder="검색"></label>
-      <button class="tbtn" id="btnS5sSearch">조회</button>
-      <button class="tbtn" id="btnS5sSave" style="margin-left:auto">💾 저장</button>
-    </div>
-
-    <div class="table-wrap">
-      <table class="task-table">
-        <thead>
-          <tr><th>No</th><th>5S구분</th><th>점검항목</th><th style="text-align:left">점검항목명</th><th>사용여부</th><th>등록자</th><th>등록일</th></tr>
-        </thead>
-        <tbody id="s5sBody"></tbody>
       </table>
     </div>
   </section>

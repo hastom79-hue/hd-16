@@ -118,7 +118,7 @@ let SG_TASKS = [
     eval2: { grade: "A", date: "2026-03-28", checked: 5 },
     verifyDesc: "정리정돈 점검 점수 20점 상승, 동선 개선 확인", verifyMh: "8M/H, 320,000원",
     stdTimeApplied: true, stdTimeDate: "2026-03-29",
-    regDate: "2026-02-08"
+    favorite: false, regDate: "2026-02-08"
   },
   {
     id: "SG-2026-0011", dept: "생산운영부", team: "설비관리팀", user: "구본무",
@@ -131,7 +131,7 @@ let SG_TASKS = [
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
-    regDate: "2026-03-15"
+    favorite: false, regDate: "2026-03-15"
   },
   {
     id: "SG-2026-0004", dept: "생산기술부", team: "제작기술과", user: "이향기",
@@ -144,7 +144,7 @@ let SG_TASKS = [
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
-    regDate: "2026-01-05"
+    favorite: false, regDate: "2026-01-05"
   }
 ];
 
@@ -197,8 +197,8 @@ function bindTabs(){
       $("#" + btn.dataset.screen).classList.add("active");
       if (btn.dataset.screen === "listScreen") renderListScreen();
       if (btn.dataset.screen === "dashScreen") renderDashScreen();
+      if (btn.dataset.screen === "sgMainScreen") renderSgMainScreen();
       if (btn.dataset.screen === "sgListScreen") renderSgListScreen();
-      if (btn.dataset.screen === "s5sScreen") renderS5sScreen();
     });
   });
 }
@@ -787,7 +787,106 @@ function bindTypeSelect(){
   $("#selectTypeGroup").addEventListener("click", () => { closeTypeSelect(); openSgRegisterModal(); });
 }
 
-/* ================= SCREEN 4 — 소그룹활동 조회 ================= */
+function refreshSgScreens(){
+  if ($("#sgMainScreen").classList.contains("active")) renderSgMainScreen();
+  if ($("#sgListScreen").classList.contains("active")) renderSgListScreen();
+}
+
+/* ================= SCREEN 4 — 소그룹활동 (메인, 부서별) ================= */
+function sgGroupByDept(tasks){
+  const groups = {};
+  tasks.forEach(t => {
+    if (!groups[t.dept]) groups[t.dept] = {};
+    if (!groups[t.dept][t.team]) groups[t.dept][t.team] = [];
+    groups[t.dept][t.team].push(t);
+  });
+  return groups;
+}
+
+function renderSgMainScreen(){
+  const visible = SG_TASKS.filter(t => !favOnlySg || t.favorite);
+  const groups = sgGroupByDept(visible);
+  const wrap = $("#sgDeptTree");
+  wrap.innerHTML = "";
+
+  Object.keys(groups).forEach(dept => {
+    const teams = groups[dept];
+    let done = 0, inprog = 0;
+    Object.values(teams).flat().forEach(t => t.doneYN ? done++ : inprog++);
+
+    const group = document.createElement("div");
+    group.className = "dept-group";
+    group.innerHTML = `
+      <div class="dept-header">
+        <div class="dept-name"><span class="dept-caret">▾</span>${dept}</div>
+        <div class="dept-counts">진행 <b>${inprog}</b> · 완료 <b>${done}</b></div>
+      </div>
+      <div class="dept-body"></div>
+    `;
+    const body = group.querySelector(".dept-body");
+    Object.keys(teams).forEach(team => {
+      teams[team].forEach(t => {
+        const finalGrade = t.eval2.grade || t.eval1.grade || "";
+        const gradeBadge = finalGrade
+          ? `<span class="cat-dot ${finalGrade === "A" ? "important" : "normal"}">${finalGrade}등급</span>`
+          : `<span class="cat-dot" style="color:var(--ink-soft)">미평가</span>`;
+        const row = document.createElement("div");
+        row.className = "team-row";
+        row.innerHTML = `
+          <div class="team-name">${team}</div>
+          <div class="task-title-cell">
+            <a data-sg-open="${t.id}">${t.title || "(제목 미입력)"}</a>
+            <small>${t.current || "—"} → ${t.target || "—"} · ${t.doneYN ? "완료 " + t.doneDate : "진행중"}</small>
+          </div>
+          <div class="mini-metric"><b>${t.resultLevel || "—"}</b></div>
+          <div><span class="sqdc-pill">${t.sqdc || "-"}</span></div>
+          <div>${gradeBadge}</div>
+          <div class="progress-counts">
+            <button class="star-btn" data-sg-star="${t.id}">${t.favorite ? "★" : "☆"}</button>
+          </div>
+        `;
+        body.appendChild(row);
+      });
+    });
+    group.querySelector(".dept-header").addEventListener("click", () => group.classList.toggle("collapsed"));
+    wrap.appendChild(group);
+  });
+
+  $all("[data-sg-open]").forEach(a => a.addEventListener("click", (e) => { e.stopPropagation(); openSgTaskModal(a.dataset.sgOpen); }));
+  $all("[data-sg-star]").forEach(btn => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const t = sgGetTask(btn.dataset.sgStar);
+    t.favorite = !t.favorite;
+    renderSgMainScreen();
+  }));
+}
+
+function bindSgMainToolbar(){
+  $("#btnSgmSearch").addEventListener("click", () => { renderSgMainScreen(); toast("소그룹활동 조회 조건으로 재조회했습니다.", "navy"); });
+  $("#btnSgmNew").addEventListener("click", openSgRegisterModal);
+  $("#btnSgmSave").addEventListener("click", () => toast("변경사항이 저장되었습니다.", "green"));
+  $("#btnSgmExport").addEventListener("click", () => toast("출력 미리보기를 생성합니다. (데모)", "navy"));
+  $("#btnSgmFavToggle").addEventListener("click", () => {
+    favOnlySg = !favOnlySg;
+    $("#btnSgmFavToggle").classList.toggle("active-fav", favOnlySg);
+    $("#btnSgmFavToggle").textContent = favOnlySg ? "★ 즐겨찾기만" : "☆ 즐겨찾기";
+    renderSgMainScreen();
+  });
+  $("#btnSgmCopy").addEventListener("click", () => {
+    const src = sgGetTask(lastViewedSgId) || SG_TASKS[SG_TASKS.length - 1];
+    if (!src){ toast("복사할 소그룹활동 과제가 없습니다.", "red"); return; }
+    const id = "SG-2026-" + String(sgCounter++).padStart(4, "0");
+    const clone = { ...src, id, files: [], doneYN: false, doneDate: null,
+      eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
+      verifyDesc: "", verifyMh: "", stdTimeApplied: false, stdTimeDate: null,
+      favorite: false, regDate: todayStr(), isNew: true };
+    SG_TASKS.push(clone);
+    toast(`"${src.title}" 등록정보를 복사해 신규 소그룹활동 초안(${id})을 생성했습니다. (btn_copy)`, "navy");
+    openSgTaskModal(id);
+  });
+}
+
+/* ================= SCREEN 4b — 소그룹활동 조회 ================= */
 function sgGetTask(id){ return SG_TASKS.find(t => t.id === id); }
 
 function renderSgListScreen(){
@@ -846,50 +945,10 @@ function bindSgListScreen(){
   });
 }
 
-/* ================= SCREEN 5 — 5S 점검항목관리 ================= */
-function renderS5sScreen(){
-  const teamF = $("#s5sTeam").value;
-  const typeF = $("#s5sType").value;
-  const useF = $("#s5sUse").value;
-  const q = $("#s5sSearch").value.trim();
-
-  const filtered = S5S_ITEMS.filter(it => {
-    if (teamF && it.team !== teamF) return false;
-    if (typeF && it.type !== typeF) return false;
-    if (useF && it.use !== useF) return false;
-    if (q && !it.name.includes(q)) return false;
-    return true;
-  });
-
-  $("#s5sBody").innerHTML = filtered.map(it => `
-    <tr>
-      <td>${it.no}</td><td>${it.type}</td><td style="font-family:monospace;font-size:11px">${it.code}</td>
-      <td style="text-align:left">${it.name}</td>
-      <td><select data-s5s-use="${it.no}"><option value="사용" ${it.use === "사용" ? "selected" : ""}>사용</option><option value="" ${it.use === "" ? "selected" : ""}>—</option></select></td>
-      <td>${it.user || "—"}</td><td>${it.date || "—"}</td>
-    </tr>
-  `).join("") || `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">조건에 맞는 항목이 없습니다.</td></tr>`;
-
-  $all("[data-s5s-use]").forEach(sel => sel.addEventListener("change", () => {
-    const item = S5S_ITEMS.find(i => i.no === +sel.dataset.s5sUse);
-    item.use = sel.value;
-    if (sel.value === "사용"){ item.user = item.user || CURRENT_USER.name; item.date = item.date || todayStr(); }
-  }));
-}
-
-function bindS5sScreen(){
-  $("#btnS5sSearch").addEventListener("click", renderS5sScreen);
-  $("#btnS5sSave").addEventListener("click", () => toast("5S 점검항목 사용여부가 저장되었습니다.", "green"));
-  const teamSel = $("#s5sTeam");
-  [...new Set(S5S_ITEMS.map(it => it.team))].forEach(team => {
-    const opt = document.createElement("option");
-    opt.value = team; opt.textContent = team;
-    teamSel.appendChild(opt);
-  });
-}
-
 /* ================= 소그룹활동 등록/평가 모달 ================= */
 let activeSgId = null;
+let lastViewedSgId = null;
+let favOnlySg = false;
 let evalPopupCtx = null; // 'eval1' | 'eval2'
 
 function openSgRegisterModal(){
@@ -900,13 +959,14 @@ function openSgRegisterModal(){
     files: [], resultLevel: "", doneYN: false, doneDate: null,
     eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "", stdTimeApplied: false, stdTimeDate: null,
-    regDate: todayStr(), isNew: true
+    favorite: false, regDate: todayStr(), isNew: true
   });
   openSgTaskModal(id);
 }
 
 function openSgTaskModal(id){
   activeSgId = id;
+  lastViewedSgId = id;
   const t = sgGetTask(id);
   $("#sgModalTitle").textContent = t.isNew ? "소그룹활동 과제 등록" : `소그룹활동 과제 — ${t.id}`;
   $("#sgRegDate").value = t.regDate;
@@ -948,7 +1008,7 @@ function closeSgModal(){
   const t = sgGetTask(activeSgId);
   if (t && t.isNew && !t.title){ SG_TASKS = SG_TASKS.filter(x => x.id !== activeSgId); }
   activeSgId = null;
-  renderSgListScreen();
+  refreshSgScreens();
 }
 
 function saveSgRegistration(){
@@ -971,7 +1031,7 @@ function saveSgRegistration(){
   t.isNew = false;
   toast("소그룹활동 과제가 저장되었습니다.", "green");
   openSgTaskModal(t.id);
-  renderSgListScreen();
+  refreshSgScreens();
 }
 
 function openEvalPopup(which){
@@ -999,7 +1059,7 @@ function saveEvalPopup(){
   $("#evalPopupOverlay").classList.remove("open");
   toast(`${evalPopupCtx === "eval1" ? "1차" : "2차"}평가 저장 완료 — ${grade}등급`, "green");
   openSgTaskModal(t.id);
-  renderSgListScreen();
+  refreshSgScreens();
 }
 
 function bindSgModal(){
@@ -1085,7 +1145,7 @@ function bindEvents(){
   bindAdmin();
   bindTypeSelect();
   bindSgListScreen();
-  bindS5sScreen();
+  bindSgMainToolbar();
   bindSgModal();
 }
 
