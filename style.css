@@ -102,6 +102,7 @@ table{ border-collapse: collapse; }
   display:flex; flex-direction:column; gap:3px;
 }
 .kpi-chip .kpi-value{ font-size: 21px; font-weight: 900; color:#fff; font-variant-numeric: tabular-nums; }
+.kpi-chip .kpi-value small{ font-size: 12px; font-weight: 700; color: #C9DCEC; margin-left:2px; }
 .kpi-chip .kpi-label{ font-size: 10.5px; color: #C9DCEC; font-weight:600; }
 .kpi-chip.warn{ background: rgba(232,162,61,.18); border-color: rgba(232,162,61,.4); }
 .kpi-chip.warn .kpi-value{ color: var(--amber); }

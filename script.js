@@ -35,7 +35,7 @@ let TASKS = [
     filesDCA: [{ name: "개선대책서_v2.pptx", date: "2026-03-18" }],
     review: { C: "승인", A: "승인" },
     result: "32.0",
-    postcheck: [null, null, null], completeYN: null,
+    postcheck: ["2026-04-20", "2026-05-20", "2026-06-20"], completeYN: "Y",
     parentId: null, regenOf: null, favorite: true,
     regDate: "2026-02-12"
   },
@@ -69,7 +69,7 @@ let TASKS = [
     filesDCA: [{ name: "개선전후_비교.pptx", date: "2025-12-15" }],
     review: { C: "승인", A: "승인" },
     result: "0",
-    postcheck: ["2026-01-18", "2026-02-18", null], completeYN: null,
+    postcheck: ["2026-01-18", "2026-02-18", "2026-03-18"], completeYN: "Y",
     parentId: null, regenOf: null, favorite: false,
     regDate: "2025-11-04"
   },
@@ -115,13 +115,13 @@ let SG_TASKS = [
   {
     id: "SG-2026-0007", dept: "생산품질부", team: "라인품질팀", user: "정민아",
     improve: "품질 개선", sqdc: "Q",
-    title: "작업장 정리정돈 개선활동 (2026 1분기)",
-    phenomenon: "공구 방치로 인한 작업 동선 방해", current: "정리정돈 점검 68점", target: "정리정돈 점검 90점 이상",
-    files: [{ name: "5S_활동사진.zip", date: "2026-02-10" }],
+    title: "라인 안돈 반복 발생 원인분석 및 개선활동 (2026 1분기)",
+    phenomenon: "동일 설비에서 안돈(Andon) 반복 발생", current: "안돈 발생건수 12건(분기)", target: "안돈 발생건수 3건 이하",
+    files: [{ name: "안돈원인분석_보고서.xlsx", date: "2026-02-10" }],
     resultLevel: "88", doneYN: true, doneDate: "2026-03-20",
     eval1: { grade: "S", date: "2026-03-22", checked: 6 },
     eval2: { grade: "S+", date: "2026-03-28", checked: 5 },
-    verifyDesc: "정리정돈 점검 점수 20점 상승, 동선 개선 확인", verifyMh: "8M/H, 320,000원",
+    verifyDesc: "안돈 발생건수 9건 감소, 라인 정지시간 단축 확인", verifyMh: "8M/H, 320,000원",
     stdTimeApplied: true, stdTimeDate: "2026-03-29",
     horizontalDeployments: [
       { workplace: "조립2라인", appliedDate: "2026-04-10" },
@@ -450,6 +450,20 @@ function renderDashScreen(){
       <td style="text-align:left;font-size:11px;color:var(--ink-soft)">${t.regenOf ? "↳ " + t.regenOf : "Root"}</td>
     </tr>
   `).join("") || `<tr><td colspan="13" style="padding:20px;color:#9AA7B2">중요과제가 없습니다.</td></tr>`;
+
+  // --- SQDC 목표 달성 과제 ---
+  const achieved = TASKS.filter(t => t.completeYN === "Y");
+  $("#achievedBody").innerHTML = achieved.length ? achieved.map(t => `
+    <tr>
+      <td>${t.stageDates.A || t.regDate}</td>
+      <td style="text-align:left;font-weight:600">${t.title}</td>
+      <td>${t.team}</td>
+      <td><span class="sqdc-pill">${t.sqdc || "-"}</span></td>
+      <td style="text-align:left">${t.current || "—"} → ${t.target || "—"}</td>
+      <td>${t.result || "—"}</td>
+      <td style="font-size:11px;color:var(--ink-soft)">${t.regenOf ? "↳ " + t.regenOf : "Root"}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">SQDC 목표를 달성한 과제가 아직 없습니다.</td></tr>`;
 }
 
 function bindDashScreen(){
@@ -549,8 +563,15 @@ function refreshAllScreens(){
 
 /* ---- 상단 배너 실시간 KPI ---- */
 function renderKpiStrip(){
-  const inProgress = TASKS.filter(t => !(t.stageStatus === "done_all" && t.completeYN === "Y")).length
-    + SG_TASKS.filter(t => !t.doneYN).length;
+  const problemTotal = TASKS.length;
+  const problemInProgress = TASKS.filter(t => !(t.stageStatus === "done_all" && t.completeYN === "Y")).length;
+  const sgTotal = SG_TASKS.length;
+  const sgInProgress = SG_TASKS.filter(t => !t.doneYN).length;
+
+  const totalAccepted = problemTotal + sgTotal;
+  const totalInProgress = problemInProgress + sgInProgress;
+  const progressRate = totalAccepted ? Math.round((totalInProgress / totalAccepted) * 100) : 0;
+
   const escalateCount = TASKS.filter(t => {
     if (t.stageStatus === "done_all" && t.completeYN === "Y") return false;
     return daysSince(t.regDate) >= CONFIG.esc;
@@ -559,12 +580,24 @@ function renderKpiStrip(){
 
   $("#kpiStrip").innerHTML = `
     <div class="kpi-chip">
-      <span class="kpi-value">${inProgress}</span>
-      <span class="kpi-label">진행중 과제 (문제해결+소그룹)</span>
+      <span class="kpi-value">${problemInProgress}<small>/${problemTotal}</small></span>
+      <span class="kpi-label">문제해결과제 진행중</span>
+    </div>
+    <div class="kpi-chip">
+      <span class="kpi-value">${sgInProgress}<small>/${sgTotal}</small></span>
+      <span class="kpi-label">소그룹활동 진행중</span>
+    </div>
+    <div class="kpi-chip">
+      <span class="kpi-value">${totalInProgress}<small>/${totalAccepted} (${progressRate}%)</small></span>
+      <span class="kpi-label">접수 대비 진행중 비율</span>
     </div>
     <div class="kpi-chip">
       <span class="kpi-value">${hd.highCount}</span>
       <span class="kpi-label">고등급(S+·S·A) 발굴 누적</span>
+    </div>
+    <div class="kpi-chip">
+      <span class="kpi-value">${TASKS.filter(t => t.completeYN === "Y").length}</span>
+      <span class="kpi-label">SQDC 목표 달성 누적</span>
     </div>
     <div class="kpi-chip ${escalateCount > 0 ? "warn" : ""}">
       <span class="kpi-value">${escalateCount}</span>
