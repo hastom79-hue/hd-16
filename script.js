@@ -103,9 +103,26 @@ let TASKS = [
     filesDCA: [{ name: "용접조건_최적화보고서.pdf", date: "2026-01-10" }],
     review: { C: "승인", A: "승인" },
     result: "9.1",
-    postcheck: ["2026-02-12", null, null], completeYN: null,
+    postcheck: ["2026-02-12", "2026-03-12", "2026-04-12"], completeYN: "N",
     parentId: null, regenOf: null, favorite: false,
     regDate: "2025-12-01"
+  },
+  {
+    id: "T-2026-0006", dept: "생산기술부", team: "제작기술과",
+    title: "제작공정 스팟용접 품질 산포 저감 (재발생 대응)",
+    user: "이향기", resource: "모듈 미해결과제", improve: "품질 개선",
+    category: "important", sqdc: "Q",
+    phenomenon: "1차 개선 후에도 재작업률 목표 미달 재발", current: "재작업률 9.1%", target: "재작업률 2% 이하", effect: "재작업 공수 절감",
+    actFrom: "2026-04-13", actTo: "2026-06-13",
+    registered: true, stageIndex: 1, stageStatus: "in_progress",
+    stageDates: { P: "2026-04-15", D: null, C: null, A: null },
+    filesP: [{ name: "재발원인_추가분석.xlsx", date: "2026-04-15" }],
+    filesDCA: [],
+    review: { C: "", A: "" },
+    result: "",
+    postcheck: [null, null, null], completeYN: null,
+    parentId: "T-2026-0005", regenOf: "T-2026-0005", favorite: false,
+    regDate: "2026-04-13"
   },
 ];
 
@@ -464,6 +481,22 @@ function renderDashScreen(){
       <td style="font-size:11px;color:var(--ink-soft)">${t.regenOf ? "↳ " + t.regenOf : "Root"}</td>
     </tr>
   `).join("") : `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">SQDC 목표를 달성한 과제가 아직 없습니다.</td></tr>`;
+
+  // --- SQDC 목표 미달성 과제 ---
+  const unachieved = TASKS.filter(t => t.completeYN === "N");
+  $("#unachievedBody").innerHTML = unachieved.length ? unachieved.map(t => {
+    const child = TASKS.find(x => x.regenOf === t.id);
+    return `
+    <tr>
+      <td>${t.postcheck[t.postcheck.length - 1] || t.regDate}</td>
+      <td style="text-align:left;font-weight:600">${t.title}</td>
+      <td>${t.team}</td>
+      <td><span class="sqdc-pill">${t.sqdc || "-"}</span></td>
+      <td style="text-align:left">${t.current || "—"} → ${t.target || "—"}</td>
+      <td>${t.result || "—"}</td>
+      <td style="font-size:11px;color:var(--ink-soft)">${child ? `↻ ${child.id}` : "미생성"}</td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">SQDC 목표 미달성 과제가 없습니다.</td></tr>`;
 }
 
 function bindDashScreen(){
@@ -580,32 +613,40 @@ function renderKpiStrip(){
 
   $("#kpiStrip").innerHTML = `
     <div class="kpi-chip">
-      <span class="kpi-value">${problemInProgress}<small>/${problemTotal}</small></span>
+      <span class="kpi-value">${problemInProgress} <small>/ ${problemTotal}건</small></span>
       <span class="kpi-label">문제해결과제 진행중</span>
     </div>
     <div class="kpi-chip">
-      <span class="kpi-value">${sgInProgress}<small>/${sgTotal}</small></span>
+      <span class="kpi-value">${sgInProgress} <small>/ ${sgTotal}건</small></span>
       <span class="kpi-label">소그룹활동 진행중</span>
     </div>
     <div class="kpi-chip">
-      <span class="kpi-value">${totalInProgress}<small>/${totalAccepted} (${progressRate}%)</small></span>
-      <span class="kpi-label">접수 대비 진행중 비율</span>
+      <span class="kpi-value">${totalInProgress} <small>/ ${totalAccepted}건 (${progressRate}%)</small></span>
+      <span class="kpi-label">접수 대비 진행 비율</span>
     </div>
     <div class="kpi-chip">
       <span class="kpi-value">${hd.highCount}</span>
-      <span class="kpi-label">고등급(S+·S·A) 발굴 누적</span>
+      <span class="kpi-label">고등급(S+·S·A) 사례 누적</span>
     </div>
     <div class="kpi-chip">
       <span class="kpi-value">${TASKS.filter(t => t.completeYN === "Y").length}</span>
       <span class="kpi-label">SQDC 목표 달성 누적</span>
     </div>
+    <div class="kpi-chip">
+      <span class="kpi-value">${TASKS.filter(t => t.completeYN === "N").length}</span>
+      <span class="kpi-label">SQDC 목표 미달성 누적</span>
+    </div>
     <div class="kpi-chip ${escalateCount > 0 ? "warn" : ""}">
       <span class="kpi-value">${escalateCount}</span>
-      <span class="kpi-label">가속 독촉 대상</span>
+      <span class="kpi-label">지연 가속 독촉 대상</span>
     </div>
     <div class="kpi-chip">
       <span class="kpi-value">${hd.deployCount}</span>
       <span class="kpi-label">수평전개 적용 누적</span>
+    </div>
+    <div class="kpi-chip ${hd.noDeployCount > 0 ? "warn" : ""}">
+      <span class="kpi-value">${hd.noDeployCount}</span>
+      <span class="kpi-label">미전개 고등급 사례</span>
     </div>
   `;
 }
