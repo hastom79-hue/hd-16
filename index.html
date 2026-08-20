@@ -39,10 +39,7 @@
       <h1 class="thesis-title">GMES 문제해결과제 관리시스템</h1>
       <p class="thesis-tagline">문제해결과제와 소그룹활동을 하나의 PDCA 체계로 통합 관리하고, 등록부터 평가·재생성까지 전 과정의 데이터 계보를 추적하는 스마트 워크플로우입니다.</p>
     </div>
-    <p class="thesis-quote">
-      <span class="thesis-kicker">Synthesis</span>
-      단일 상태 객체(Task)가 <b>통제되고(Lock)</b>, <b>경로를 찾으며(Route)</b>, <b>기록된 뒤(View)</b>, 성과에 따라 <b>자가 증식(Loop)</b>하는 하나의 아키텍처 라이프사이클.
-    </p>
+    <div class="kpi-strip" id="kpiStrip"></div>
     <div class="screen-overview-row">
       <div class="screen-overview-card">
         <em>부서별 현황</em>
@@ -328,7 +325,7 @@
             <tr>
               <th style="width:34px"><input type="checkbox" id="chkAllHigh"></th>
               <th>등급</th><th>평가차수</th><th>평가일</th><th>팀</th>
-              <th style="text-align:left">과제명</th><th style="text-align:left">검증결과</th><th>발송상태</th>
+              <th style="text-align:left">과제명</th><th style="text-align:left">검증결과</th><th>발송상태</th><th>수평전개</th>
             </tr>
           </thead>
           <tbody id="highGradeBody"></tbody>
@@ -356,8 +353,10 @@
   <section class="screen" id="sgPerfScreen">
     <div class="board-head">
       <h2>소그룹활동 고등급(S+·S·A) 발굴 대시보드</h2>
-      <p class="board-sub">분기·연간 단위로 전체 평가건수 대비 고등급 사례가 얼마나 발굴되고 있는지 추적합니다.</p>
+      <p class="board-sub">분기·연간 단위로 전체 평가건수 대비 고등급 사례 발굴 현황과, 고등급 사례가 타 작업장·라인으로 수평전개된 건수·추이를 함께 추적합니다.</p>
     </div>
+
+    <div class="panel-strip" id="hdStatStrip"></div>
 
     <div class="dash-grid">
       <div class="dash-card">
@@ -378,6 +377,16 @@
         </div>
         <table class="matrix-table perf-table" id="perfYearTable"></table>
       </div>
+    </div>
+
+    <div class="dash-card" style="margin-top:16px">
+      <h3>고등급 발굴건수 vs 수평전개 적용건수 — 분기 추이</h3>
+      <div class="trend-chart-wrap" id="hdTrendChart"></div>
+      <div class="chart-legend">
+        <span><i class="lg-dot" style="background:var(--steel)"></i>고등급 발굴건수</span>
+        <span><i class="lg-dot" style="background:var(--amber)"></i>수평전개 적용건수</span>
+      </div>
+      <table class="matrix-table perf-table" id="hdTrendTable"></table>
     </div>
   </section>
 
@@ -519,6 +528,25 @@
         <div class="field"><label>평가일자</label><input type="text" id="evalDate" disabled></div>
       </div>
       <button class="btn btn-confirm-reg" id="saveEvalBtn">평가 완료 · 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 수평전개 등록 팝업 ============ -->
+<div class="overlay" id="hdOverlay">
+  <div class="modal hd-popup-modal">
+    <div class="modal-head">
+      <h3 id="hdPopupTitle">수평전개 적용 등록</h3>
+      <button class="icon-btn" id="closeHdPopupBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="hd-popup-body">
+      <p class="postcheck-sub">이 고등급 사례가 다른 작업장·라인에 적용된 이력을 등록합니다.</p>
+      <div class="hd-list" id="hdList"></div>
+      <div class="field-row two" style="margin-top:12px">
+        <div class="field"><label>적용 작업장/라인</label><input type="text" id="hdWorkplace" placeholder="예) 조립2라인"></div>
+        <div class="field"><label>적용일</label><input type="date" id="hdDate"></div>
+      </div>
+      <button class="btn btn-confirm-reg" id="hdAddBtn">+ 수평전개 이력 추가</button>
     </div>
   </div>
 </div>

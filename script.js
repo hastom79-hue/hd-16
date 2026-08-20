@@ -123,6 +123,10 @@ let SG_TASKS = [
     eval2: { grade: "S+", date: "2026-03-28", checked: 5 },
     verifyDesc: "정리정돈 점검 점수 20점 상승, 동선 개선 확인", verifyMh: "8M/H, 320,000원",
     stdTimeApplied: true, stdTimeDate: "2026-03-29",
+    horizontalDeployments: [
+      { workplace: "조립2라인", appliedDate: "2026-04-10" },
+      { workplace: "품질검사3라인", appliedDate: "2026-05-02" }
+    ],
     favorite: false, regDate: "2026-02-08"
   },
   {
@@ -136,6 +140,7 @@ let SG_TASKS = [
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
     favorite: false, regDate: "2026-03-15"
   },
   {
@@ -149,6 +154,7 @@ let SG_TASKS = [
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
     favorite: false, regDate: "2026-01-05"
   },
   {
@@ -162,6 +168,9 @@ let SG_TASKS = [
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "검수 누락률 5%p 개선, 재작업 공수 절감", verifyMh: "5M/H, 210,000원",
     stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [
+      { workplace: "자재2팀", appliedDate: "2026-02-20" }
+    ],
     favorite: false, regDate: "2025-12-18"
   }
 ];
@@ -535,6 +544,37 @@ function refreshAllScreens(){
   renderMainScreen();
   if ($("#listScreen").classList.contains("active")) renderListScreen();
   if ($("#dashScreen").classList.contains("active")) renderDashScreen();
+  renderKpiStrip();
+}
+
+/* ---- 상단 배너 실시간 KPI ---- */
+function renderKpiStrip(){
+  const inProgress = TASKS.filter(t => !(t.stageStatus === "done_all" && t.completeYN === "Y")).length
+    + SG_TASKS.filter(t => !t.doneYN).length;
+  const escalateCount = TASKS.filter(t => {
+    if (t.stageStatus === "done_all" && t.completeYN === "Y") return false;
+    return daysSince(t.regDate) >= CONFIG.esc;
+  }).length;
+  const hd = computeHdStats();
+
+  $("#kpiStrip").innerHTML = `
+    <div class="kpi-chip">
+      <span class="kpi-value">${inProgress}</span>
+      <span class="kpi-label">진행중 과제 (문제해결+소그룹)</span>
+    </div>
+    <div class="kpi-chip">
+      <span class="kpi-value">${hd.highCount}</span>
+      <span class="kpi-label">고등급(S+·S·A) 발굴 누적</span>
+    </div>
+    <div class="kpi-chip ${escalateCount > 0 ? "warn" : ""}">
+      <span class="kpi-value">${escalateCount}</span>
+      <span class="kpi-label">가속 독촉 대상</span>
+    </div>
+    <div class="kpi-chip">
+      <span class="kpi-value">${hd.deployCount}</span>
+      <span class="kpi-label">수평전개 적용 누적</span>
+    </div>
+  `;
 }
 
 /* ---- 등록 확정 (Part 잠금 전환) ---- */
@@ -812,6 +852,7 @@ function refreshSgScreens(){
   if ($("#sgListScreen").classList.contains("active")) renderSgListScreen();
   if ($("#sgEvalHistoryScreen").classList.contains("active")) renderSgEvalHistoryScreen();
   if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
+  renderKpiStrip();
 }
 
 /* ================= SCREEN 4 — 소그룹활동 (메인, 부서별) ================= */
@@ -901,6 +942,7 @@ function bindSgMainToolbar(){
     const clone = { ...src, id, files: [], doneYN: false, doneDate: null,
       eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
       verifyDesc: "", verifyMh: "", stdTimeApplied: false, stdTimeDate: null,
+      horizontalDeployments: [],
       favorite: false, regDate: todayStr(), isNew: true };
     SG_TASKS.push(clone);
     toast(`"${src.title}" 등록정보를 복사해 신규 소그룹활동 초안(${id})을 생성했습니다. (btn_copy)`, "navy");
@@ -1005,6 +1047,64 @@ let sentRecordKeys = new Set(); // "taskId|round" 이미 발송된 사례
 
 function recordKey(r){ return r.taskId + "|" + r.round; }
 
+/* ---- 수평전개(Horizontal Deployment) ---- */
+function buildDeploymentRecords(){
+  const records = [];
+  SG_TASKS.forEach(t => {
+    (t.horizontalDeployments || []).forEach(hd => {
+      records.push({ taskId: t.id, title: t.title, team: t.team, workplace: hd.workplace, appliedDate: hd.appliedDate });
+    });
+  });
+  return records.sort((a, b) => (b.appliedDate || "").localeCompare(a.appliedDate || ""));
+}
+
+let activeHdTaskId = null;
+function openHdPopup(taskId){
+  activeHdTaskId = taskId;
+  const t = sgGetTask(taskId);
+  $("#hdPopupTitle").textContent = `수평전개 적용 등록 — ${t.title}`;
+  $("#hdWorkplace").value = "";
+  $("#hdDate").value = todayStr();
+  renderHdList();
+  $("#hdOverlay").classList.add("open");
+}
+function renderHdList(){
+  const t = sgGetTask(activeHdTaskId);
+  const list = t.horizontalDeployments || [];
+  $("#hdList").innerHTML = list.length ? list.map((hd, i) => `
+    <div class="hd-item">
+      <div><b>${hd.workplace}</b> <span>적용일 ${hd.appliedDate}</span></div>
+      <button class="hd-del" data-hd-del="${i}">삭제</button>
+    </div>
+  `).join("") : `<div class="hd-empty">아직 등록된 수평전개 이력이 없습니다.</div>`;
+  $all("[data-hd-del]").forEach(b => b.addEventListener("click", () => {
+    t.horizontalDeployments.splice(+b.dataset.hdDel, 1);
+    renderHdList();
+    renderSgEvalHistoryScreen();
+    renderKpiStrip();
+  }));
+}
+function handleAddDeployment(){
+  const t = sgGetTask(activeHdTaskId);
+  const workplace = $("#hdWorkplace").value.trim();
+  const date = $("#hdDate").value;
+  if (!workplace){ toast("적용 작업장/라인명을 입력해 주세요.", "red"); return; }
+  if (!date){ toast("적용일을 선택해 주세요.", "red"); return; }
+  t.horizontalDeployments = t.horizontalDeployments || [];
+  t.horizontalDeployments.push({ workplace, appliedDate: date });
+  toast(`"${workplace}" 수평전개 이력이 등록되었습니다.`, "green");
+  $("#hdWorkplace").value = "";
+  renderHdList();
+  renderSgEvalHistoryScreen();
+  if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
+  renderKpiStrip();
+}
+function bindHdPopup(){
+  $("#closeHdPopupBtn").addEventListener("click", () => $("#hdOverlay").classList.remove("open"));
+  $("#hdOverlay").addEventListener("click", (e) => { if (e.target.id === "hdOverlay") $("#hdOverlay").classList.remove("open"); });
+  $("#hdAddBtn").addEventListener("click", handleAddDeployment);
+}
+
 function renderSgEvalHistoryScreen(){
   const all = buildEvalRecords();
   const gradeF = $("#ehGrade").value;
@@ -1027,6 +1127,8 @@ function renderSgEvalHistoryScreen(){
   highBody.innerHTML = highCases.length ? highCases.map(r => {
     const key = recordKey(r);
     const sent = sentRecordKeys.has(key);
+    const t = sgGetTask(r.taskId);
+    const hdCount = (t && t.horizontalDeployments) ? t.horizontalDeployments.length : 0;
     return `
       <tr>
         <td><input type="checkbox" class="high-chk" data-key="${key}" ${sent ? "disabled" : ""}></td>
@@ -1035,10 +1137,12 @@ function renderSgEvalHistoryScreen(){
         <td style="text-align:left;font-weight:600">${r.title}</td>
         <td style="text-align:left;font-size:11.5px">${r.verifyDesc || "—"}</td>
         <td>${sent ? `<span class="sent-tag">✅ 발송완료</span>` : "미발송"}</td>
+        <td><button class="hd-count-btn" data-hd-open="${r.taskId}">🔁 ${hdCount}건</button></td>
       </tr>`;
-  }).join("") : `<tr><td colspan="8" style="padding:16px;color:#9AA7B2">고등급(S+·S·A) 사례가 아직 없습니다.</td></tr>`;
+  }).join("") : `<tr><td colspan="9" style="padding:16px;color:#9AA7B2">고등급(S+·S·A) 사례가 아직 없습니다.</td></tr>`;
 
   $all(".high-chk").forEach(chk => chk.addEventListener("change", updateSendMailBtn));
+  $all("[data-hd-open]").forEach(b => b.addEventListener("click", () => openHdPopup(b.dataset.hdOpen)));
   updateSendMailBtn();
   renderMailLog();
 
@@ -1177,12 +1281,93 @@ function renderRateChart(chartEl, tableEl, map, unitLabel){
     }).join("");
 }
 
+function aggregateCountBy(records, keyFn, dateField){
+  const map = {};
+  records.forEach(r => {
+    const key = keyFn(r[dateField]);
+    if (!key) return;
+    map[key] = (map[key] || 0) + 1;
+  });
+  return map;
+}
+
+function computeHdStats(){
+  const evalRecords = buildEvalRecords();
+  const deployRecords = buildDeploymentRecords();
+  const highTaskIds = new Set(evalRecords.filter(r => isHighGrade(r.grade)).map(r => r.taskId));
+  const noDeployCount = [...highTaskIds].filter(id => {
+    const t = sgGetTask(id);
+    return !t || !(t.horizontalDeployments && t.horizontalDeployments.length);
+  }).length;
+  const highCount = evalRecords.filter(r => isHighGrade(r.grade)).length;
+  const deployCount = deployRecords.length;
+  const rate = highCount ? Math.round((deployCount / highCount) * 100) : 0;
+  return { highCount, deployCount, rate, noDeployCount };
+}
+
+function renderHdStatStrip(){
+  const s = computeHdStats();
+  $("#hdStatStrip").innerHTML = `
+    <div class="stat-card accent-navy"><span class="stat-label">누적 고등급 발굴건수</span><span class="stat-value">${s.highCount}</span></div>
+    <div class="stat-card accent-amber"><span class="stat-label">수평전개 적용건수</span><span class="stat-value">${s.deployCount}</span></div>
+    <div class="stat-card accent-red"><span class="stat-label">수평전개율</span><span class="stat-value">${s.rate}%</span></div>
+    <div class="stat-card"><span class="stat-label">미전개 고등급 사례</span><span class="stat-value">${s.noDeployCount}</span></div>
+  `;
+}
+
+function renderTrendChart(chartEl, tableEl, highMap, deployMap){
+  const labels = [...new Set([...Object.keys(highMap), ...Object.keys(deployMap)])].sort();
+  if (!labels.length){
+    chartEl.innerHTML = `<div class="case-empty" style="padding:20px">분기 추이 데이터가 아직 없습니다.</div>`;
+    tableEl.innerHTML = "";
+    return;
+  }
+  const w = 680, h = 190, padL = 34, padR = 16, padT = 16, padB = 26;
+  const maxVal = Math.max(1, ...labels.map(l => Math.max(highMap[l] || 0, deployMap[l] || 0)));
+  const stepX = labels.length > 1 ? (w - padL - padR) / (labels.length - 1) : 0;
+  const yFor = (v) => padT + (h - padT - padB) * (1 - v / maxVal);
+  const xFor = (i) => padL + stepX * i;
+
+  const gridLines = [0, 0.5, 1].map(f => {
+    const y = padT + (h - padT - padB) * f;
+    const val = Math.round(maxVal * (1 - f));
+    return `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#E2E8EE" stroke-width="1"/><text x="2" y="${y + 4}" font-size="10" fill="#8792A0">${val}</text>`;
+  }).join("");
+
+  const highPts = labels.map((l, i) => `${xFor(i)},${yFor(highMap[l] || 0)}`).join(" ");
+  const depPts = labels.map((l, i) => `${xFor(i)},${yFor(deployMap[l] || 0)}`).join(" ");
+  const highDots = labels.map((l, i) => `<circle cx="${xFor(i)}" cy="${yFor(highMap[l] || 0)}" r="3.5" fill="#2C5F8A"/>`).join("");
+  const depDots = labels.map((l, i) => `<circle cx="${xFor(i)}" cy="${yFor(deployMap[l] || 0)}" r="3.5" fill="#E8A23D"/>`).join("");
+  const xLabels = labels.map((l, i) => `<text x="${xFor(i)}" y="${h - 8}" font-size="10" fill="#8792A0" text-anchor="middle">${l}</text>`).join("");
+
+  chartEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    ${gridLines}
+    <polyline points="${highPts}" fill="none" stroke="#2C5F8A" stroke-width="2.5"/>
+    <polyline points="${depPts}" fill="none" stroke="#E8A23D" stroke-width="2.5"/>
+    ${highDots}${depDots}${xLabels}
+  </svg>`;
+
+  tableEl.innerHTML = `<tr><th>분기</th><th>고등급 발굴건수</th><th>수평전개 적용건수</th><th>전개율</th></tr>` +
+    labels.map(l => {
+      const hv = highMap[l] || 0, dv = deployMap[l] || 0;
+      const rate = hv ? Math.round((dv / hv) * 100) : 0;
+      return `<tr><th>${l}</th><td>${hv}</td><td>${dv}</td><td class="${rate >= 50 ? "rate-high" : ""}">${rate}%</td></tr>`;
+    }).join("");
+}
+
 function renderSgPerfScreen(){
   const all = buildEvalRecords();
   const byQuarter = aggregateBy(all, dateToQuarterLabel);
   const byYear = aggregateBy(all, dateToYear);
   renderRateChart($("#perfQuarterChart"), $("#perfQuarterTable"), byQuarter, "분기");
   renderRateChart($("#perfYearChart"), $("#perfYearTable"), byYear, "연도");
+
+  renderHdStatStrip();
+  const deployRecords = buildDeploymentRecords();
+  const highOnly = all.filter(r => isHighGrade(r.grade));
+  const quarterHighMap = aggregateCountBy(highOnly, dateToQuarterLabel, "date");
+  const quarterDeployMap = aggregateCountBy(deployRecords, dateToQuarterLabel, "appliedDate");
+  renderTrendChart($("#hdTrendChart"), $("#hdTrendTable"), quarterHighMap, quarterDeployMap);
 }
 
 /* ================= 소그룹활동 등록/평가 모달 ================= */
@@ -1199,6 +1384,7 @@ function openSgRegisterModal(){
     files: [], resultLevel: "", doneYN: false, doneDate: null,
     eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "", stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
     favorite: false, regDate: todayStr(), isNew: true
   });
   openSgTaskModal(id);
@@ -1387,10 +1573,12 @@ function bindEvents(){
   bindSgListScreen();
   bindSgMainToolbar();
   bindSgEvalHistoryScreen();
+  bindHdPopup();
   bindSgModal();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   bindEvents();
   renderMainScreen();
+  renderKpiStrip();
 });
