@@ -385,7 +385,7 @@ let TASKS = [
 let sgCounter = 17;
 let SG_TASKS = [
   {
-    id: "SG-2026-0007", dept: "생산품질부", team: "라인품질팀", user: "정민아",
+    id: "SG-2026-0007", dept: "중형생산부", team: "중형상부1팀", user: "정민아",
     improve: "품질 개선", sqdc: "Q",
     title: "라인 안돈 반복 발생 원인분석 및 개선활동 (2026 1분기)",
     phenomenon: "동일 설비에서 안돈(Andon) 반복 발생", current: "안돈 발생건수 12건(분기)", target: "안돈 발생건수 3건 이하",
@@ -396,13 +396,13 @@ let SG_TASKS = [
     verifyDesc: "안돈 발생건수 9건 감소, 라인 정지시간 단축 확인", verifyMh: "8M/H, 320,000원",
     stdTimeApplied: true, stdTimeDate: "2026-03-29",
     horizontalDeployments: [
-      { workplace: "조립2라인", appliedDate: "2026-04-10" },
-      { workplace: "품질검사3라인", appliedDate: "2026-05-02" }
+      { workplace: "중형상부2팀", appliedDate: "2026-04-10" },
+      { workplace: "중형하부팀", appliedDate: "2026-05-02" }
     ],
     favorite: false, regDate: "2026-02-08"
   },
   {
-    id: "SG-2026-0011", dept: "생산운영부", team: "설비관리팀", user: "구본무",
+    id: "SG-2026-0011", dept: "생산운영부", team: "울산정비팀", user: "구본무",
     improve: "안전성 개선", sqdc: "S",
     title: "크레인 주변 안전펜스 정비 소그룹활동",
     phenomenon: "안전펜스 노후로 인한 끼임 위험", current: "안전점검 미흡 3건", target: "안전점검 미흡 0건",
@@ -416,7 +416,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-03-15"
   },
   {
-    id: "SG-2026-0004", dept: "생산기술부", team: "조립부", user: "이향기",
+    id: "SG-2026-0004", dept: "자재운영부", team: "자재물류팀", user: "이향기",
     improve: "원가 개선", sqdc: "C",
     title: "제작공정 부자재 재고 절감 활동",
     phenomenon: "부자재 과다 발주로 재고 비용 증가", current: "재고금액 1,200만원", target: "재고금액 800만원 이하",
@@ -430,7 +430,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-01-05"
   },
   {
-    id: "SG-2026-0009", dept: "자재운영부", team: "내자운영팀", user: "최다인",
+    id: "SG-2026-0009", dept: "자재운영부", team: "출하팀", user: "최다인",
     improve: "납기 개선", sqdc: "D",
     title: "자재 입고 검수 체크리스트 표준화 활동",
     phenomenon: "검수 누락으로 인한 재작업 발생", current: "검수 누락률 6%", target: "검수 누락률 1% 이하",
@@ -441,12 +441,12 @@ let SG_TASKS = [
     verifyDesc: "검수 누락률 5%p 개선, 재작업 공수 절감", verifyMh: "5M/H, 210,000원",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [
-      { workplace: "자재2팀", appliedDate: "2026-02-20" }
+      { workplace: "자재물류팀", appliedDate: "2026-02-20" }
     ],
     favorite: false, regDate: "2025-12-18"
   },
   {
-    id: "SG-2026-0002", dept: "생산운영부", team: "설비관리팀", user: "장서윤",
+    id: "SG-2026-0002", dept: "대형생산부", team: "대형상부팀", user: "장서윤",
     improve: "품질 개선", sqdc: "Q",
     title: "설비 가동일지 기록 오류 감소 활동",
     phenomenon: "수기 기록 방식으로 인한 가동일지 오류 반복", current: "기록 오류 월 9건", target: "기록 오류 월 2건 이하",
@@ -460,7 +460,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2025-08-01"
   },
   {
-    id: "SG-2026-0003", dept: "생산품질부", team: "부품품질팀", user: "김도현",
+    id: "SG-2026-0003", dept: "휠로더생산부", team: "휠로더프론트팀", user: "김도현",
     improve: "납기 개선", sqdc: "D",
     title: "품질 클레임 현장 대응시간 단축 소그룹",
     phenomenon: "클레임 접수 후 현장 담당자 배정 지연", current: "평균 대응시간 14시간", target: "평균 대응시간 4시간 이내",
@@ -471,12 +471,12 @@ let SG_TASKS = [
     verifyDesc: "클레임 대응시간 10시간 단축, 현장 만족도 상승", verifyMh: "6M/H, 260,000원",
     stdTimeApplied: true, stdTimeDate: "2025-10-08",
     horizontalDeployments: [
-      { workplace: "부품검사2라인", appliedDate: "2025-11-10" }
+      { workplace: "성능팀", appliedDate: "2025-11-10" }
     ],
     favorite: true, regDate: "2025-09-05"
   },
   {
-    id: "SG-2026-0005", dept: "자재운영부", team: "내자운영팀", user: "한지수",
+    id: "SG-2026-0005", dept: "조립생산부", team: "옵션조립팀", user: "한지수",
     improve: "품질 개선", sqdc: "Q",
     title: "자재 불출 오류 저감 소그룹",
     phenomenon: "동일 규격 자재 혼재로 오불출 발생", current: "오불출 건수 월 7건", target: "오불출 건수 월 1건 이하",
@@ -490,7 +490,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2025-10-10"
   },
   {
-    id: "SG-2026-0006", dept: "자재운영부", team: "내자운영팀", user: "윤성민",
+    id: "SG-2026-0006", dept: "생산기술부", team: "프론트 제작팀", user: "윤성민",
     improve: "원가 개선", sqdc: "C",
     title: "포장 자재 재사용률 향상 활동",
     phenomenon: "1회성 포장재 폐기 비용 증가", current: "재사용률 22%", target: "재사용률 60% 이상",
@@ -501,13 +501,13 @@ let SG_TASKS = [
     verifyDesc: "포장재 비용 32% 절감, 재사용률 68% 달성", verifyMh: "10M/H, 410,000원",
     stdTimeApplied: true, stdTimeDate: "2025-12-19",
     horizontalDeployments: [
-      { workplace: "포장2라인", appliedDate: "2026-01-15" },
-      { workplace: "외자창고B동", appliedDate: "2026-02-10" }
+      { workplace: "중형어태치팀", appliedDate: "2026-01-15" },
+      { workplace: "대형메인팀", appliedDate: "2026-02-10" }
     ],
     favorite: true, regDate: "2025-11-01"
   },
   {
-    id: "SG-2026-0008", dept: "생산기술부", team: "가공부", user: "서준혁",
+    id: "SG-2026-0008", dept: "생산기술부", team: "붐 제작팀", user: "서준혁",
     improve: "품질 개선", sqdc: "Q",
     title: "가공설비 예방보전 체크리스트 개선",
     phenomenon: "점검항목 누락으로 돌발고장 발생", current: "돌발고장 월 5건", target: "돌발고장 월 1건 이하",
@@ -518,12 +518,12 @@ let SG_TASKS = [
     verifyDesc: "돌발고장 4건 감소, 설비 가동률 향상", verifyMh: "7M/H, 290,000원",
     stdTimeApplied: true, stdTimeDate: "2026-02-04",
     horizontalDeployments: [
-      { workplace: "가공2라인", appliedDate: "2026-03-01" }
+      { workplace: "대형어태치팀", appliedDate: "2026-03-01" }
     ],
     favorite: false, regDate: "2025-12-20"
   },
   {
-    id: "SG-2026-0010", dept: "생산기술부", team: "조립부", user: "이하늘",
+    id: "SG-2026-0010", dept: "조립생산부", team: "초대형조립팀", user: "이하늘",
     improve: "납기 개선", sqdc: "D",
     title: "조립 지그 표준화 소그룹",
     phenomenon: "지그 규격 상이로 작업 준비시간 증가", current: "준비시간 22분", target: "준비시간 8분 이하",
@@ -537,7 +537,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-01-15"
   },
   {
-    id: "SG-2026-0013", dept: "생산품질부", team: "부품품질팀", user: "오세훈",
+    id: "SG-2026-0013", dept: "생산품질부", team: "성능팀", user: "오세훈",
     improve: "품질 개선", sqdc: "Q",
     title: "수입검사 판정기준 명확화",
     phenomenon: "검사자별 판정기준 상이로 재검사 발생", current: "재검사율 9%", target: "재검사율 2% 이하",
@@ -548,7 +548,7 @@ let SG_TASKS = [
     verifyDesc: "재검사율 7%p 개선, 검사 리드타임 단축", verifyMh: "5M/H, 180,000원",
     stdTimeApplied: true, stdTimeDate: "2026-03-17",
     horizontalDeployments: [
-      { workplace: "부품검사2팀", appliedDate: "2026-04-05" }
+      { workplace: "휠로더리어팀", appliedDate: "2026-04-05" }
     ],
     favorite: false, regDate: "2026-02-01"
   },
@@ -567,7 +567,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-03-05"
   },
   {
-    id: "SG-2026-0015", dept: "생산운영부", team: "설비관리팀", user: "최다인",
+    id: "SG-2026-0015", dept: "중형생산부", team: "중형메인팀", user: "최다인",
     improve: "품질 개선", sqdc: "Q",
     title: "설비 가동 일정 변경 알림체계 개선",
     phenomenon: "설비 가동 일정 변경 알림 누락으로 현장 혼선 발생", current: "알림 누락률 15%", target: "알림 누락률 2% 이하",
@@ -581,7 +581,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-04-01"
   },
   {
-    id: "SG-2026-0016", dept: "생산운영부", team: "설비관리팀", user: "구본무",
+    id: "SG-2026-0016", dept: "휠로더생산부", team: "휠로더메인팀", user: "구본무",
     improve: "안전성 개선", sqdc: "S",
     title: "설비 청소 표준시간 재산정 소그룹",
     phenomenon: "청소시간 과다산정으로 비가동 손실 발생", current: "청소 소요 65분", target: "청소 소요 30분 이하",
@@ -592,8 +592,8 @@ let SG_TASKS = [
     verifyDesc: "청소시간 35분 단축, 설비 가동률 4%p 향상", verifyMh: "9M/H, 380,000원",
     stdTimeApplied: true, stdTimeDate: "2026-06-14",
     horizontalDeployments: [
-      { workplace: "설비관리2팀", appliedDate: "2026-07-01" },
-      { workplace: "조립설비라인", appliedDate: "2026-07-20" }
+      { workplace: "중형상부2팀", appliedDate: "2026-07-01" },
+      { workplace: "휠로더리어팀", appliedDate: "2026-07-20" }
     ],
     favorite: true, regDate: "2026-05-10"
   }
@@ -2129,7 +2129,7 @@ let evalPopupCtx = null; // 'eval1' | 'eval2'
 function openSgRegisterModal(){
   const id = "SG-2026-" + String(sgCounter++).padStart(4, "0");
   SG_TASKS.push({
-    id, dept: CURRENT_USER.dept, team: CURRENT_USER.team, user: CURRENT_USER.name,
+    id, dept: "중형생산부", team: "중형상부1팀", user: CURRENT_USER.name,
     improve: "품질 개선", sqdc: "", title: "", phenomenon: "", current: "", target: "",
     files: [], resultLevel: "", doneYN: false, doneDate: null,
     eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
