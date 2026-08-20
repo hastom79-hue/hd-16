@@ -85,6 +85,7 @@
     <button class="tab-btn" data-screen="sgEvalHistoryScreen">소그룹 평가이력 조회</button>
     <button class="tab-btn" data-screen="sgPerfScreen">소그룹 성과 대시보드</button>
     <button class="tab-btn" data-screen="hdStatusScreen">수평전개 현황</button>
+    <button class="tab-btn" data-screen="masterDataScreen">통합기준정보</button>
   </div>
 </nav>
 
@@ -499,6 +500,49 @@
             <tr><th>발굴팀</th><th style="text-align:left">고등급 사례(원본 과제)</th><th>등급</th><th>적용 작업장/라인</th><th>적용일</th></tr>
           </thead>
           <tbody id="hdDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN — 통합기준정보 (부서/작업장/담당자 마스터)
+  ====================================================== -->
+  <section class="screen" id="masterDataScreen">
+    <div class="board-head">
+      <h2>통합기준정보</h2>
+      <p class="board-sub">문제해결과제·소그룹활동 전체 시스템이 공통으로 참조하는 부서/팀, 작업장·라인, 담당자 기준정보입니다. 사용여부와 평가권한을 여기서 통제합니다.</p>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>1. 부서 · 팀 마스터</h3>
+      <p class="board-sub" style="margin-bottom:10px">문제해결과제·소그룹활동에서 실제 사용 중인 부서/팀 목록입니다.</p>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table">
+          <thead><tr><th>부서</th><th>팀</th><th>문제해결과제</th><th>소그룹활동</th><th>사용여부</th></tr></thead>
+          <tbody id="masterDeptBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>2. 작업장 · 라인 마스터</h3>
+      <p class="board-sub" style="margin-bottom:10px">수평전개 적용 대상으로 등록된 작업장/라인 목록입니다.</p>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table">
+          <thead><tr><th style="text-align:left">작업장/라인명</th><th>수평전개 적용건수</th><th>사용여부</th></tr></thead>
+          <tbody id="masterWorkplaceBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>3. 담당자 마스터</h3>
+      <p class="board-sub" style="margin-bottom:10px">등록자 기준 담당자 목록과 소그룹활동 평가권한 부여 현황입니다. (평가권한자만 1·2차 평가를 실시할 수 있도록 통제하는 기준정보)</p>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table">
+          <thead><tr><th style="text-align:left">담당자</th><th>소속팀</th><th>문제해결과제</th><th>소그룹활동</th><th>평가권한</th></tr></thead>
+          <tbody id="masterUserBody"></tbody>
         </table>
       </div>
     </div>

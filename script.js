@@ -654,6 +654,7 @@ function bindTabs(){
       if (btn.dataset.screen === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
       if (btn.dataset.screen === "sgPerfScreen") renderSgPerfScreen();
       if (btn.dataset.screen === "hdStatusScreen") renderHdStatusScreen();
+      if (btn.dataset.screen === "masterDataScreen") renderMasterDataScreen();
     });
   });
 }
@@ -1482,6 +1483,7 @@ function renderSgMainScreen(){
           <div><span class="sqdc-pill">${t.sqdc || "-"}</span></div>
           <div>${gradeBadge}</div>
           <div class="progress-counts">
+            ${(() => { const ea = evalActionFor(t); return ea ? `<button class="eval-btn" data-eval-open="${t.id}" data-eval-round="${ea.round}">📝 ${ea.label}</button>` : ""; })()}
             <button class="star-btn" data-sg-star="${t.id}">${t.favorite ? "★" : "☆"}</button>
           </div>
         `;
@@ -1498,6 +1500,10 @@ function renderSgMainScreen(){
     const t = sgGetTask(btn.dataset.sgStar);
     t.favorite = !t.favorite;
     renderSgMainScreen();
+  }));
+  $all("[data-eval-open]").forEach(btn => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openEvalPopupDirect(btn.dataset.evalOpen, btn.dataset.evalRound);
   }));
 }
 
@@ -1530,6 +1536,21 @@ function bindSgMainToolbar(){
 /* ================= SCREEN 4b — 소그룹활동 조회 ================= */
 function sgGetTask(id){ return SG_TASKS.find(t => t.id === id); }
 
+/* 평가 액션 판정: 다음에 실시해야 할 평가 차수를 반환 (없으면 null) */
+function evalActionFor(t){
+  if (!t.title) return null;
+  if (!t.eval1.grade) return { round: "eval1", label: "1차평가 실시" };
+  if (isHighGrade(t.eval1.grade) && !t.eval2.grade) return { round: "eval2", label: "2차평가 실시" };
+  return null;
+}
+
+/* 탭/리스트에서 바로 평가 팝업 열기 (등록 모달을 거치지 않는 직접 진입 경로) */
+function openEvalPopupDirect(taskId, round){
+  activeSgId = taskId;
+  lastViewedSgId = taskId;
+  openEvalPopup(round);
+}
+
 function renderSgListScreen(){
   const uf = $("#sgUser").value.trim().toLowerCase();
   const sqdcF = $("#sgSqdc").value;
@@ -1555,8 +1576,9 @@ function renderSgListScreen(){
 
   $("#sgListBody").innerHTML = filtered.map(t => {
     const finalGrade = t.eval2.grade || t.eval1.grade || "미평가";
+    const ea = evalActionFor(t);
     const evalCell = permOk
-      ? `${t.eval1.grade || "—"} / ${isHighGrade(t.eval1.grade) ? (t.eval2.grade || "대기") : "불필요"}`
+      ? `${t.eval1.grade || "—"} / ${isHighGrade(t.eval1.grade) ? (t.eval2.grade || "대기") : "불필요"}${ea ? ` <button class="eval-btn eval-btn-sm" data-eval-open="${t.id}" data-eval-round="${ea.round}">📝 ${ea.label}</button>` : ""}`
       : `<span class="locked-cell">🔒 권한없음</span>`;
     const verifyCell = permOk ? (t.verifyDesc ? "✅ " + (t.stdTimeApplied ? "반영" : "미반영") : "—") : `<span class="locked-cell">🔒</span>`;
     return `
@@ -1573,6 +1595,11 @@ function renderSgListScreen(){
         <td style="font-size:11px;color:var(--ink-soft)">${finalGrade === "미평가" ? "평가대기" : ""}</td>
       </tr>`;
   }).join("") || `<tr><td colspan="12" style="padding:20px;color:#9AA7B2">조건에 맞는 소그룹활동 과제가 없습니다.</td></tr>`;
+
+  $all("#sgListBody [data-eval-open]").forEach(btn => btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openEvalPopupDirect(btn.dataset.evalOpen, btn.dataset.evalRound);
+  }));
 }
 
 function bindSgListScreen(){
@@ -2010,6 +2037,87 @@ function renderHdStatusScreen(){
       <td>${r.appliedDate}</td>
     </tr>
   `).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">수평전개 이력이 아직 없습니다.</td></tr>`;
+}
+
+/* ================= SCREEN — 통합기준정보 ================= */
+let MASTER_DEPT_USE = {};        // key `${dept}|${team}` -> boolean (기본 true)
+let MASTER_WORKPLACE_USE = {};   // key workplace -> boolean (기본 true)
+let MASTER_USER_EVAL_AUTH = { "이향기": true, "정민아": true };  // key user -> boolean (기본 false, 평가권한자 일부 시드)
+
+function buildDeptTeamMaster(){
+  const map = {};
+  TASKS.forEach(t => {
+    const key = t.dept + "|" + t.team;
+    if (!map[key]) map[key] = { key, dept: t.dept, team: t.team, problemCount: 0, sgCount: 0 };
+    map[key].problemCount++;
+  });
+  SG_TASKS.forEach(t => {
+    const key = t.dept + "|" + t.team;
+    if (!map[key]) map[key] = { key, dept: t.dept, team: t.team, problemCount: 0, sgCount: 0 };
+    map[key].sgCount++;
+  });
+  return Object.values(map).sort((a, b) => a.dept.localeCompare(b.dept) || a.team.localeCompare(b.team));
+}
+
+function buildWorkplaceMaster(){
+  const map = {};
+  buildDeploymentRecords().forEach(r => { map[r.workplace] = (map[r.workplace] || 0) + 1; });
+  return Object.entries(map).map(([workplace, count]) => ({ workplace, count })).sort((a, b) => b.count - a.count);
+}
+
+function buildUserMaster(){
+  const map = {};
+  TASKS.forEach(t => {
+    if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, problemCount: 0, sgCount: 0 };
+    map[t.user].problemCount++;
+  });
+  SG_TASKS.forEach(t => {
+    if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, problemCount: 0, sgCount: 0 };
+    map[t.user].sgCount++;
+  });
+  return Object.values(map).sort((a, b) => a.user.localeCompare(b.user));
+}
+
+function renderMasterDataScreen(){
+  const deptRows = buildDeptTeamMaster();
+  $("#masterDeptBody").innerHTML = deptRows.length ? deptRows.map(r => {
+    const use = MASTER_DEPT_USE[r.key] !== false;
+    return `<tr>
+      <td>${r.dept}</td><td>${r.team}</td><td>${r.problemCount}</td><td>${r.sgCount}</td>
+      <td><label class="chk"><input type="checkbox" ${use ? "checked" : ""} data-master-dept="${r.key}"> 사용</label></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 부서/팀이 없습니다.</td></tr>`;
+
+  const wpRows = buildWorkplaceMaster();
+  $("#masterWorkplaceBody").innerHTML = wpRows.length ? wpRows.map(r => {
+    const use = MASTER_WORKPLACE_USE[r.workplace] !== false;
+    return `<tr>
+      <td style="text-align:left;font-weight:600">${r.workplace}</td><td>${r.count}</td>
+      <td><label class="chk"><input type="checkbox" ${use ? "checked" : ""} data-master-wp="${r.workplace}"> 사용</label></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="3" style="padding:20px;color:#9AA7B2">등록된 작업장/라인이 없습니다.</td></tr>`;
+
+  const userRows = buildUserMaster();
+  $("#masterUserBody").innerHTML = userRows.length ? userRows.map(r => {
+    const auth = MASTER_USER_EVAL_AUTH[r.user] === true;
+    return `<tr>
+      <td style="text-align:left;font-weight:600">${r.user}</td><td>${r.team}</td><td>${r.problemCount}</td><td>${r.sgCount}</td>
+      <td><label class="chk"><input type="checkbox" ${auth ? "checked" : ""} data-master-eval-auth="${r.user}"> 평가권한</label></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 담당자가 없습니다.</td></tr>`;
+
+  $all("[data-master-dept]").forEach(cb => cb.addEventListener("change", () => {
+    MASTER_DEPT_USE[cb.dataset.masterDept] = cb.checked;
+    toast(`${cb.dataset.masterDept.replace("|", " / ")} 사용여부가 ${cb.checked ? "사용" : "미사용"}으로 변경되었습니다.`, cb.checked ? "green" : "red");
+  }));
+  $all("[data-master-wp]").forEach(cb => cb.addEventListener("change", () => {
+    MASTER_WORKPLACE_USE[cb.dataset.masterWp] = cb.checked;
+    toast(`"${cb.dataset.masterWp}" 사용여부가 ${cb.checked ? "사용" : "미사용"}으로 변경되었습니다.`, cb.checked ? "green" : "red");
+  }));
+  $all("[data-master-eval-auth]").forEach(cb => cb.addEventListener("change", () => {
+    MASTER_USER_EVAL_AUTH[cb.dataset.masterEvalAuth] = cb.checked;
+    toast(`${cb.dataset.masterEvalAuth}님의 소그룹 평가권한이 ${cb.checked ? "부여" : "회수"}되었습니다.`, cb.checked ? "green" : "red");
+  }));
 }
 
 /* ================= 소그룹활동 등록/평가 모달 ================= */

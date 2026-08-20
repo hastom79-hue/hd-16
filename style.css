@@ -128,10 +128,14 @@ table{ border-collapse: collapse; }
   background: var(--surface); border-bottom: 1px solid var(--line);
   position: sticky; top:64px; z-index: 15;
 }
-.tabs-inner{ max-width: 1280px; margin:0 auto; display:flex; gap: 4px; padding: 0 24px; }
+.tabs-inner{
+  max-width: 1280px; margin:0 auto; display:flex; gap: 2px; padding: 0 24px;
+  overflow-x:auto; overflow-y:hidden; scrollbar-width: thin;
+}
 .tab-btn{
-  background:none; border:none; padding: 14px 18px; font-size: 13.5px; font-weight:700;
+  background:none; border:none; padding: 14px 14px; font-size: 13px; font-weight:700;
   color: var(--ink-soft); border-bottom: 3px solid transparent; margin-bottom:-1px;
+  white-space: nowrap; flex-shrink:0;
 }
 .tab-btn:hover{ color: var(--navy); }
 .tab-btn.active{ color: var(--navy); border-bottom-color: var(--steel); }
@@ -237,6 +241,12 @@ table{ border-collapse: collapse; }
 .progress-counts{ display:flex; gap:8px; font-size:11.5px; }
 .progress-counts .n{ font-weight:800; }
 .star-btn{ background:none; border:none; font-size:15px; color: var(--amber); }
+.eval-btn{
+  background: var(--steel-light); color: var(--steel); border:none; border-radius:6px;
+  padding: 4px 9px; font-size:11px; font-weight:700; white-space:nowrap;
+}
+.eval-btn:hover{ background:#DCEBF5; }
+.eval-btn-sm{ padding:3px 7px; font-size:10.5px; margin-left:6px; }
 
 /* ---- table shared (list / followup) ---- */
 .board-head{ margin-bottom: 14px; }
