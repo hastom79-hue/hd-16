@@ -35,16 +35,43 @@
 <!-- ============ THESIS STRIP ============ -->
 <section class="thesis-strip">
   <div class="thesis-inner">
+    <div class="thesis-title-row">
+      <h1 class="thesis-title">GMES 문제해결과제 관리시스템</h1>
+      <p class="thesis-tagline">문제해결과제와 소그룹활동을 하나의 PDCA 체계로 통합 관리하고, 등록부터 평가·재생성까지 전 과정의 데이터 계보를 추적하는 스마트 워크플로우입니다.</p>
+    </div>
     <p class="thesis-quote">
       <span class="thesis-kicker">Synthesis</span>
       단일 상태 객체(Task)가 <b>통제되고(Lock)</b>, <b>경로를 찾으며(Route)</b>, <b>기록된 뒤(View)</b>, 성과에 따라 <b>자가 증식(Loop)</b>하는 하나의 아키텍처 라이프사이클.
     </p>
-    <div class="chapter-rail">
-      <div class="chapter-chip"><em>01</em>아키텍처 청사진</div>
-      <div class="chapter-chip"><em>02</em>진입 관문</div>
-      <div class="chapter-chip"><em>03</em>지능형 라우팅</div>
-      <div class="chapter-chip"><em>04</em>데이터 금고</div>
-      <div class="chapter-chip"><em>05</em>사후 세계</div>
+    <div class="screen-overview-row">
+      <div class="screen-overview-card">
+        <em>부서별 현황</em>
+        <p>문제해결과제를 부서·팀 단위 트리로 훑어보는 기본 화면</p>
+      </div>
+      <div class="screen-overview-card">
+        <em>조회 (List)</em>
+        <p>등록일·등록자 등 세부 조건으로 문제해결과제를 검색</p>
+      </div>
+      <div class="screen-overview-card">
+        <em>중요과제 대시보드</em>
+        <p>SQDC 분류, 부서별 진행현황, Follow-up 리스트 제공</p>
+      </div>
+      <div class="screen-overview-card">
+        <em>소그룹활동 (메인)</em>
+        <p>소그룹활동 과제를 부서·팀 단위 트리로 훑어보는 화면</p>
+      </div>
+      <div class="screen-overview-card">
+        <em>소그룹활동 조회</em>
+        <p>소그룹활동 과제를 세부 조건으로 검색·열람</p>
+      </div>
+      <div class="screen-overview-card">
+        <em>소그룹 평가이력 조회</em>
+        <p>1·2차 평가 이력 조회 및 고등급 사례 메일 발송</p>
+      </div>
+      <div class="screen-overview-card">
+        <em>소그룹 성과 대시보드</em>
+        <p>분기·연간 단위 고등급(S+·S·A) 발굴율 추적</p>
+      </div>
     </div>
   </div>
 </section>
@@ -54,7 +81,7 @@
   <div class="tabs-inner">
     <button class="tab-btn active" data-screen="mainScreen">부서별 현황 (메인)</button>
     <button class="tab-btn" data-screen="listScreen">조회 (List)</button>
-    <button class="tab-btn" data-screen="dashScreen">9.6.5 중요과제 대시보드</button>
+    <button class="tab-btn" data-screen="dashScreen">중요과제 대시보드</button>
     <button class="tab-btn" data-screen="sgMainScreen">소그룹활동 (메인)</button>
     <button class="tab-btn" data-screen="sgListScreen">소그룹활동 조회</button>
     <button class="tab-btn" data-screen="sgEvalHistoryScreen">소그룹 평가이력 조회</button>
@@ -141,11 +168,11 @@
   </section>
 
   <!-- =====================================================
-       SCREEN 3 — 9.6.5 중요과제 마스터 대시보드
+       SCREEN 3 — 중요과제 마스터 대시보드
   ====================================================== -->
   <section class="screen" id="dashScreen">
     <div class="board-head">
-      <h2>9.6.5 문제해결과제 등록/관리 — 중요과제 마스터 대시보드</h2>
+      <h2>중요과제 마스터 대시보드</h2>
       <p class="board-sub">SQDC 유형별 중요과제 분류, 부서단위 조직별 진행현황(완료여부), 중요과제 세부 진행현황을 관리합니다.</p>
     </div>
 
