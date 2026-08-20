@@ -79,6 +79,7 @@
     <button class="tab-btn active" data-screen="mainScreen">부서별 현황 (메인)</button>
     <button class="tab-btn" data-screen="listScreen">조회 (List)</button>
     <button class="tab-btn" data-screen="dashScreen">중요과제 대시보드</button>
+    <button class="tab-btn" data-screen="regenTrendScreen">유효성 검증·재이관 추이</button>
     <button class="tab-btn" data-screen="sgMainScreen">소그룹활동 (메인)</button>
     <button class="tab-btn" data-screen="sgListScreen">소그룹활동 조회</button>
     <button class="tab-btn" data-screen="sgEvalHistoryScreen">소그룹 평가이력 조회</button>
@@ -242,6 +243,50 @@
             </tr>
           </thead>
           <tbody id="unachievedBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN — 유효성 검증·재이관 추이 대시보드
+  ====================================================== -->
+  <section class="screen" id="regenTrendScreen">
+    <div class="board-head">
+      <h2>유효성 검증 · 재이관 추이 대시보드</h2>
+      <p class="board-sub">M+1 / M+2 / M+3 사후 유효성 점검 주기별 검증 현황과, M+3 최종 검증에서 목표 미달로 신규과제로 강제 재이관된 과제의 추이를 추적합니다.</p>
+    </div>
+
+    <div class="panel-strip" id="regenStatStrip"></div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>M+1 / M+2 / M+3 유효성 점검 단계별 현황</h3>
+        <p class="board-sub" style="margin-bottom:10px">A단계 완료 후 사후검증이 진행 중인(아직 달성/미달성 확정 전) 과제 기준입니다.</p>
+        <div class="funnel" id="regenFunnel"></div>
+      </div>
+      <div class="dash-card">
+        <h3>분기별 재이관(미달성 확정) 건수 추이</h3>
+        <div class="bar-chart" id="regenTrendChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot" style="background:var(--red)"></i>재이관 확정 건수</span>
+        </div>
+        <table class="matrix-table perf-table" id="regenTrendTable"></table>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>재이관 이력</h3>
+      <p class="board-sub" style="margin-bottom:10px">M+3 검증에서 목표 미달로 확정되어 자동 재생성된 과제와, 그 재이관 신규과제의 현재 진행상태입니다.</p>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th>부서/팀</th><th>원본 과제</th><th>미달 확정일</th>
+              <th>재이관 신규과제</th><th>재이관일</th><th>재이관 후 진행상태</th>
+            </tr>
+          </thead>
+          <tbody id="regenHistoryBody"></tbody>
         </table>
       </div>
     </div>

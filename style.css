@@ -89,21 +89,24 @@ table{ border-collapse: collapse; }
   margin: 0 0 6px; color:#fff; font-size: 21px; font-weight: 900; letter-spacing: -0.2px;
 }
 .thesis-tagline{
-  margin: 0; color: #C9DCEC; font-size: 12.5px; line-height:1.6; max-width: 760px;
+  margin: 0; color: #C9DCEC; font-size: 12.5px; line-height:1.6; max-width: 980px;
+  word-break: keep-all; overflow-wrap: break-word;
 }
 .screen-overview-row{
   display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px;
   margin-top: 16px;
 }
-.kpi-strip{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; }
+.kpi-strip{
+  display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:10px; margin-top:16px;
+}
 .kpi-chip{
   background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
-  border-radius: 10px; padding: 10px 16px; min-width: 130px;
-  display:flex; flex-direction:column; gap:3px;
+  border-radius: 10px; padding: 10px 14px;
+  display:flex; flex-direction:column; gap:3px; min-width:0;
 }
-.kpi-chip .kpi-value{ font-size: 21px; font-weight: 900; color:#fff; font-variant-numeric: tabular-nums; }
+.kpi-chip .kpi-value{ font-size: 21px; font-weight: 900; color:#fff; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .kpi-chip .kpi-value small{ font-size: 12px; font-weight: 700; color: #C9DCEC; margin-left:2px; }
-.kpi-chip .kpi-label{ font-size: 10.5px; color: #C9DCEC; font-weight:600; }
+.kpi-chip .kpi-label{ font-size: 10.5px; color: #C9DCEC; font-weight:600; word-break: keep-all; }
 .kpi-chip.warn{ background: rgba(232,162,61,.18); border-color: rgba(232,162,61,.4); }
 .kpi-chip.warn .kpi-value{ color: var(--amber); }
 .screen-overview-card{
@@ -510,6 +513,21 @@ table{ border-collapse: collapse; }
 .bar-rate{ font-size:11px; font-weight:800; color: var(--steel); margin-bottom:2px; }
 .perf-table{ margin-top:14px; }
 .perf-table td.rate-high{ color: var(--green); font-weight:800; }
+.bar-seg-fail{ background: var(--red); }
+
+/* ===================== 유효성 검증 퍼널 ===================== */
+.funnel{ display:flex; flex-direction:column; gap:12px; padding: 8px 2px 4px; }
+.funnel-step{ display:flex; align-items:center; gap:10px; }
+.funnel-label{ width:76px; font-size:12px; font-weight:700; color: var(--ink-soft); flex-shrink:0; }
+.funnel-bar-track{ flex:1; background:#F1F3F5; border-radius:6px; height:24px; overflow:hidden; }
+.funnel-bar-fill{
+  height:100%; background: var(--steel); border-radius:6px 0 0 6px;
+  display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
+  color:#fff; font-size:11px; font-weight:700; transition: width .3s ease; white-space:nowrap;
+}
+.funnel-step:nth-child(2) .funnel-bar-fill{ background: #3E7CB1; }
+.funnel-step:nth-child(3) .funnel-bar-fill{ background: var(--amber); }
+.funnel-count{ width:56px; text-align:right; font-size:12px; font-weight:800; color: var(--navy); flex-shrink:0; }
 
 /* ===================== 수평전개 팝업 & 추이차트 ===================== */
 .hd-popup-modal{ max-width: 520px; }
@@ -541,6 +559,7 @@ table{ border-collapse: collapse; }
   .postcheck-grid{ grid-template-columns: 1fr; }
   .hook-inner{ flex-direction: column; align-items: flex-start; }
   .screen-overview-row{ grid-template-columns: repeat(2, 1fr); }
+  .kpi-strip{ grid-template-columns: 1fr; }
   .tabs-inner{ overflow-x:auto; }
   .type-select-grid{ grid-template-columns: 1fr; }
 }

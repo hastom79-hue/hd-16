@@ -311,6 +311,74 @@ let TASKS = [
     parentId: null, regenOf: null, favorite: false,
     regDate: "2026-05-01"
   },
+  {
+    id: "T-2026-0028", dept: "생산관리부", team: "오더데스크과",
+    title: "긴급수주 대응 리드타임 단축",
+    user: "김도현", resource: "생산비가동이슈", improve: "납기 개선",
+    category: "important", sqdc: "D",
+    phenomenon: "긴급수주 발생 시 공정 재배치 지연으로 납기 임박", current: "긴급수주 대응 리드타임 5.2일", target: "긴급수주 대응 리드타임 2일 이내", effect: "긴급 대응력 강화",
+    actFrom: "2025-10-15", actTo: "2025-12-15",
+    registered: true, stageIndex: 3, stageStatus: "done_all",
+    stageDates: { P: "2025-10-17", D: "2025-10-30", C: "2025-11-14", A: "2025-11-28" },
+    filesP: [{ name: "긴급수주_대응현황.xlsx", date: "2025-10-17" }],
+    filesDCA: [{ name: "리드타임_개선안.pptx", date: "2025-11-26" }],
+    review: { C: "승인", A: "승인" },
+    result: "3.8",
+    postcheck: ["2025-12-28", "2026-01-28", "2026-02-28"], completeYN: "N",
+    parentId: null, regenOf: null, favorite: false,
+    regDate: "2025-10-15"
+  },
+  {
+    id: "T-2026-0029", dept: "생산관리부", team: "오더데스크과",
+    title: "긴급수주 대응 리드타임 단축 (재발생 대응)",
+    user: "김도현", resource: "모듈 미해결과제", improve: "납기 개선",
+    category: "important", sqdc: "D",
+    phenomenon: "1차 개선 후에도 목표 리드타임 미달 재발", current: "긴급수주 대응 리드타임 3.8일", target: "긴급수주 대응 리드타임 2일 이내", effect: "긴급 대응력 강화",
+    actFrom: "2026-03-01", actTo: "2026-05-01",
+    registered: true, stageIndex: 2, stageStatus: "in_progress",
+    stageDates: { P: "2026-03-03", D: "2026-03-18", C: null, A: null },
+    filesP: [{ name: "재발원인_공정재분석.xlsx", date: "2026-03-03" }],
+    filesDCA: [],
+    review: { C: "", A: "" },
+    result: "",
+    postcheck: [null, null, null], completeYN: null,
+    parentId: "T-2026-0028", regenOf: "T-2026-0028", favorite: false,
+    regDate: "2026-03-01"
+  },
+  {
+    id: "T-2026-0032", dept: "생산운영부", team: "설비관리팀",
+    title: "노후 컨베이어 소음 개선",
+    user: "구본무", resource: "생산비가동이슈", improve: "안전성 개선",
+    category: "normal", sqdc: "S",
+    phenomenon: "컨베이어 베어링 마모로 인한 소음 증가", current: "소음 82dB", target: "소음 70dB 이하", effect: "작업환경 개선",
+    actFrom: "2026-04-01", actTo: "2026-06-01",
+    registered: true, stageIndex: 3, stageStatus: "done_all",
+    stageDates: { P: "2026-04-03", D: "2026-04-16", C: "2026-05-02", A: "2026-05-18" },
+    filesP: [{ name: "소음측정_결과.xlsx", date: "2026-04-03" }],
+    filesDCA: [{ name: "베어링교체_대책서.pdf", date: "2026-05-16" }],
+    review: { C: "승인", A: "승인" },
+    result: "71",
+    postcheck: ["2026-06-18", null, null], completeYN: null,
+    parentId: null, regenOf: null, favorite: false,
+    regDate: "2026-04-01"
+  },
+  {
+    id: "T-2026-0034", dept: "자재운영부", team: "외자운영팀",
+    title: "수입 원자재 검수 리드타임 단축",
+    user: "윤성민", resource: "정기과제접수(반기별)", improve: "납기 개선",
+    category: "normal", sqdc: "D",
+    phenomenon: "검수 서류 대조 방식이 수작업으로 지연 발생", current: "검수 리드타임 1.8일", target: "검수 리드타임 0.5일 이내", effect: "입고 처리 속도 향상",
+    actFrom: "2026-03-15", actTo: "2026-05-15",
+    registered: true, stageIndex: 3, stageStatus: "done_all",
+    stageDates: { P: "2026-03-17", D: "2026-03-30", C: "2026-04-15", A: "2026-04-30" },
+    filesP: [{ name: "검수프로세스_현황.xlsx", date: "2026-03-17" }],
+    filesDCA: [{ name: "검수전산화_제안서.pptx", date: "2026-04-28" }],
+    review: { C: "승인", A: "승인" },
+    result: "0.6",
+    postcheck: ["2026-05-30", "2026-06-30", "2026-07-30"], completeYN: null,
+    parentId: null, regenOf: null, favorite: false,
+    regDate: "2026-03-15"
+  },
 ];
 
 /* ---------------- 소그룹활동 데이터 ---------------- */
@@ -580,6 +648,7 @@ function bindTabs(){
       $("#" + btn.dataset.screen).classList.add("active");
       if (btn.dataset.screen === "listScreen") renderListScreen();
       if (btn.dataset.screen === "dashScreen") renderDashScreen();
+      if (btn.dataset.screen === "regenTrendScreen") renderRegenTrendScreen();
       if (btn.dataset.screen === "sgMainScreen") renderSgMainScreen();
       if (btn.dataset.screen === "sgListScreen") renderSgListScreen();
       if (btn.dataset.screen === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
@@ -854,6 +923,98 @@ function bindDashScreen(){
   });
 }
 
+/* ================= 유효성 검증·재이관 추이 대시보드 ================= */
+function buildRegenRecords(){
+  return TASKS.filter(t => t.completeYN === "N").map(t => {
+    const child = TASKS.find(x => x.regenOf === t.id);
+    return {
+      id: t.id, title: t.title, dept: t.dept, team: t.team,
+      failDate: t.postcheck[2] || t.postcheck[1] || t.postcheck[0] || t.regDate,
+      childId: child ? child.id : null,
+      childRegDate: child ? child.regDate : null,
+      childProgress: child
+        ? (child.stageStatus === "done_all" ? "완료" : `${STAGES[child.stageIndex]}단계 진행중`)
+        : "미생성"
+    };
+  }).sort((a, b) => (b.failDate || "").localeCompare(a.failDate || ""));
+}
+
+function renderRegenTrendScreen(){
+  const regenRecords = buildRegenRecords();
+  const decided = TASKS.filter(t => t.completeYN === "Y" || t.completeYN === "N").length;
+  const failCount = regenRecords.length;
+  const rate = decided ? Math.round((failCount / decided) * 100) : 0;
+  const regenerated = regenRecords.filter(r => r.childId).length;
+
+  $("#regenStatStrip").innerHTML = `
+    <div class="stat-card"><span class="stat-label">완료판정 건수(달성+미달성)</span><span class="stat-value">${decided}</span></div>
+    <div class="stat-card accent-red"><span class="stat-label">미달성(재이관) 확정 건수</span><span class="stat-value">${failCount}</span></div>
+    <div class="stat-card accent-amber"><span class="stat-label">재이관율</span><span class="stat-value">${rate}%</span></div>
+    <div class="stat-card accent-navy"><span class="stat-label">신규과제로 재생성 완료</span><span class="stat-value">${regenerated}<small>/${failCount}</small></span></div>
+  `;
+
+  // --- M+1/M+2/M+3 단계별 현황 (사후검증 진행중, 완료판정 전) ---
+  const pipeline = TASKS.filter(t => t.stageStatus === "done_all" && t.completeYN === null);
+  const m1 = pipeline.filter(t => t.postcheck[0]).length;
+  const m2 = pipeline.filter(t => t.postcheck[1]).length;
+  const m3 = pipeline.filter(t => t.postcheck[2]).length;
+  const maxM = Math.max(1, pipeline.length);
+  $("#regenFunnel").innerHTML = [
+    ["M+1", m1], ["M+2", m2], ["M+3", m3]
+  ].map(([label, count]) => `
+    <div class="funnel-step">
+      <div class="funnel-label">${label} 완료</div>
+      <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:${Math.max(Math.round((count / maxM) * 100), count ? 8 : 0)}%">${count ? count + "건" : ""}</div></div>
+      <div class="funnel-count">${count} / ${pipeline.length}</div>
+    </div>
+  `).join("") + (pipeline.length ? "" : `<div class="case-empty">현재 사후검증 진행중인 과제가 없습니다.</div>`);
+
+  // --- 분기별 재이관 추이 ---
+  const byQuarter = {};
+  regenRecords.forEach(r => {
+    const q = dateToQuarterLabel(r.failDate);
+    if (!q) return;
+    byQuarter[q] = (byQuarter[q] || 0) + 1;
+  });
+  const labels = Object.keys(byQuarter).sort();
+  const chart = $("#regenTrendChart");
+  chart.innerHTML = "";
+  const maxV = Math.max(1, ...labels.map(l => byQuarter[l]));
+  labels.forEach(l => {
+    const v = byQuarter[l];
+    const h = Math.round((v / maxV) * 140);
+    const col = document.createElement("div");
+    col.className = "bar-col";
+    col.innerHTML = `
+      <div class="bar-rate" style="color:var(--red)">${v}건</div>
+      <div class="bar-stack" style="height:${Math.max(h, 2)}px">
+        <div class="bar-seg-fail" style="height:${h}px" title="${v}건"></div>
+      </div>
+      <div class="bar-label">${l}</div>
+    `;
+    chart.appendChild(col);
+  });
+  if (!labels.length) chart.innerHTML = `<div class="case-empty" style="padding:20px">재이관 확정 데이터가 아직 없습니다.</div>`;
+  $("#regenTrendTable").innerHTML = `<tr><th>분기</th><th>재이관 확정 건수</th></tr>` +
+    labels.map(l => `<tr><th>${l}</th><td>${byQuarter[l]}</td></tr>`).join("");
+
+  // --- 재이관 이력 테이블 ---
+  $("#regenHistoryBody").innerHTML = regenRecords.length ? regenRecords.map(r => `
+    <tr>
+      <td>${r.dept} / ${r.team}</td>
+      <td style="text-align:left;font-weight:600">${r.id} · ${r.title}</td>
+      <td>${r.failDate}</td>
+      <td>${r.childId || "—"}</td>
+      <td>${r.childRegDate || "—"}</td>
+      <td>${r.childProgress}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">재이관 이력이 없습니다.</td></tr>`;
+}
+
+function bindRegenTrendScreen(){
+  // 정적 필터 없음 — 탭 진입 시 자동 렌더 (bindTabs에서 처리)
+}
+
 /* ================= MODAL: 등록/진행 ================= */
 function openRegisterModal(){
   const id = "T-2026-" + String(taskCounter++).padStart(4, "0");
@@ -930,6 +1091,7 @@ function refreshAllScreens(){
   renderMainScreen();
   if ($("#listScreen").classList.contains("active")) renderListScreen();
   if ($("#dashScreen").classList.contains("active")) renderDashScreen();
+  if ($("#regenTrendScreen").classList.contains("active")) renderRegenTrendScreen();
   renderKpiStrip();
 }
 
@@ -1981,6 +2143,7 @@ function bindEvents(){
   bindMainToolbar();
   bindListScreen();
   bindDashScreen();
+  bindRegenTrendScreen();
   bindAdmin();
   bindTypeSelect();
   bindSgListScreen();
