@@ -142,6 +142,34 @@ table{ border-collapse: collapse; }
 /* ===================== MAIN ===================== */
 .main{ max-width: 1280px; margin: 0 auto; padding: 22px 24px 40px; }
 
+/* ---- 통계 카드 스트립 (panel-strip / stat-card) ---- */
+.panel-strip{
+  display:grid; grid-template-columns: repeat(4, 1fr); gap:14px;
+  margin-bottom: 18px;
+}
+.stat-card{
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--steel);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display:flex; flex-direction: column; gap: 6px;
+  min-width: 0;
+}
+.stat-card.accent-red{ border-left-color: var(--red); }
+.stat-card.accent-amber{ border-left-color: var(--amber); }
+.stat-card.accent-navy{ border-left-color: var(--navy); }
+.stat-card.accent-green{ border-left-color: var(--green); }
+.stat-label{
+  font-size:12px; color: var(--ink-soft); font-weight:600;
+  white-space: nowrap; overflow:hidden; text-overflow: ellipsis;
+}
+.stat-value{
+  font-size: 26px; font-weight: 900; color: var(--navy);
+  font-variant-numeric: tabular-nums; line-height:1.1;
+}
+.stat-value small{ font-size: 14px; font-weight:700; color: var(--ink-soft); margin-left:3px; }
+
 /* ---- toolbar / filter-bar (shared) ---- */
 .toolbar{
   display:flex; align-items:center; justify-content: space-between;
@@ -529,6 +557,24 @@ table{ border-collapse: collapse; }
 .funnel-step:nth-child(3) .funnel-bar-fill{ background: var(--amber); }
 .funnel-count{ width:56px; text-align:right; font-size:12px; font-weight:800; color: var(--navy); flex-shrink:0; }
 
+/* ---- 랭킹 리스트 (발굴팀 / 적용 작업장) ---- */
+.rank-sub{ font-size:11px; font-weight:500; color: var(--ink-soft); }
+.rank-list{ display:flex; flex-direction:column; gap:10px; padding: 8px 2px 4px; max-height: 360px; overflow-y:auto; }
+.rank-row{ display:flex; align-items:center; gap:10px; }
+.rank-label{
+  width:130px; font-size:12px; font-weight:700; color: var(--ink-soft); flex-shrink:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.rank-track{ flex:1; background:#F1F3F5; border-radius:6px; height:22px; overflow:hidden; }
+.rank-fill{
+  height:100%; border-radius:6px 0 0 6px;
+  display:flex; align-items:center; justify-content:flex-end; padding-right:8px;
+  font-size:11px; font-weight:700; white-space:nowrap; transition: width .3s ease;
+}
+.rank-fill.discover{ background: var(--steel); color:#fff; }
+.rank-fill.apply{ background: var(--amber); color:#5A3B0A; }
+.rank-count{ width:46px; text-align:right; font-size:12px; font-weight:800; color: var(--navy); flex-shrink:0; }
+
 /* ===================== 수평전개 팝업 & 추이차트 ===================== */
 .hd-popup-modal{ max-width: 520px; }
 .hd-popup-body{ padding: 20px 24px 26px; }
@@ -553,6 +599,7 @@ table{ border-collapse: collapse; }
 /* ===================== RESPONSIVE ===================== */
 @media (max-width: 900px){
   .dash-grid{ grid-template-columns: 1fr; }
+  .panel-strip{ grid-template-columns: repeat(2, 1fr); }
   .modal-body{ grid-template-columns: 1fr; }
   .form-col{ border-right:none; border-bottom: 1px solid var(--line); }
   .team-row{ grid-template-columns: 1fr; }

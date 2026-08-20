@@ -84,6 +84,7 @@
     <button class="tab-btn" data-screen="sgListScreen">소그룹활동 조회</button>
     <button class="tab-btn" data-screen="sgEvalHistoryScreen">소그룹 평가이력 조회</button>
     <button class="tab-btn" data-screen="sgPerfScreen">소그룹 성과 대시보드</button>
+    <button class="tab-btn" data-screen="hdStatusScreen">수평전개 현황</button>
   </div>
 </nav>
 
@@ -464,6 +465,42 @@
         <span><i class="lg-dot" style="background:var(--amber)"></i>수평전개 적용건수</span>
       </div>
       <table class="matrix-table perf-table" id="hdTrendTable"></table>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN — 수평전개 팀·작업장 현황 대시보드
+  ====================================================== -->
+  <section class="screen" id="hdStatusScreen">
+    <div class="board-head">
+      <h2>수평전개 팀 · 작업장 현황</h2>
+      <p class="board-sub">고등급 사례가 어느 팀에서 많이 발굴되는지, 어느 작업장·라인으로 수평전개가 많이 적용되었는지 실시간으로 추적합니다.</p>
+    </div>
+
+    <div class="panel-strip" id="hdStatusStrip"></div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>🔍 발굴팀 랭킹 <span class="rank-sub">(고등급 사례가 나온 팀)</span></h3>
+        <div class="rank-list" id="discoverRankList"></div>
+      </div>
+      <div class="dash-card">
+        <h3>🔁 적용 작업장·라인 랭킹 <span class="rank-sub">(수평전개 받은 곳)</span></h3>
+        <div class="rank-list" id="applyRankList"></div>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>수평전개 상세 이력</h3>
+      <p class="board-sub" style="margin-bottom:10px">발굴팀 → 적용 작업장/라인 연결 이력입니다.</p>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table">
+          <thead>
+            <tr><th>발굴팀</th><th style="text-align:left">고등급 사례(원본 과제)</th><th>등급</th><th>적용 작업장/라인</th><th>적용일</th></tr>
+          </thead>
+          <tbody id="hdDetailBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 

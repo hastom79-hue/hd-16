@@ -653,6 +653,7 @@ function bindTabs(){
       if (btn.dataset.screen === "sgListScreen") renderSgListScreen();
       if (btn.dataset.screen === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
       if (btn.dataset.screen === "sgPerfScreen") renderSgPerfScreen();
+      if (btn.dataset.screen === "hdStatusScreen") renderHdStatusScreen();
     });
   });
 }
@@ -1427,6 +1428,7 @@ function refreshSgScreens(){
   if ($("#sgListScreen").classList.contains("active")) renderSgListScreen();
   if ($("#sgEvalHistoryScreen").classList.contains("active")) renderSgEvalHistoryScreen();
   if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
+  if ($("#hdStatusScreen").classList.contains("active")) renderHdStatusScreen();
   renderKpiStrip();
 }
 
@@ -1656,6 +1658,8 @@ function renderHdList(){
     t.horizontalDeployments.splice(+b.dataset.hdDel, 1);
     renderHdList();
     renderSgEvalHistoryScreen();
+    if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
+    if ($("#hdStatusScreen").classList.contains("active")) renderHdStatusScreen();
     renderKpiStrip();
   }));
 }
@@ -1672,6 +1676,7 @@ function handleAddDeployment(){
   renderHdList();
   renderSgEvalHistoryScreen();
   if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
+  if ($("#hdStatusScreen").classList.contains("active")) renderHdStatusScreen();
   renderKpiStrip();
 }
 function bindHdPopup(){
@@ -1943,6 +1948,68 @@ function renderSgPerfScreen(){
   const quarterHighMap = aggregateCountBy(highOnly, dateToQuarterLabel, "date");
   const quarterDeployMap = aggregateCountBy(deployRecords, dateToQuarterLabel, "appliedDate");
   renderTrendChart($("#hdTrendChart"), $("#hdTrendTable"), quarterHighMap, quarterDeployMap);
+}
+
+/* ================= SCREEN — 수평전개 팀·작업장 현황 ================= */
+function teamDiscoveryRanking(){
+  const map = {};
+  buildEvalRecords().filter(r => isHighGrade(r.grade)).forEach(r => {
+    map[r.team] = (map[r.team] || 0) + 1;
+  });
+  return Object.entries(map).map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count);
+}
+
+function workplaceApplyRanking(){
+  const map = {};
+  buildDeploymentRecords().forEach(r => {
+    map[r.workplace] = (map[r.workplace] || 0) + 1;
+  });
+  return Object.entries(map).map(([label, count]) => ({ label, count })).sort((a, b) => b.count - a.count);
+}
+
+function renderRankList(el, data, type){
+  if (!data.length){ el.innerHTML = `<div class="case-empty">데이터가 아직 없습니다.</div>`; return; }
+  const max = Math.max(1, ...data.map(d => d.count));
+  el.innerHTML = data.map(d => `
+    <div class="rank-row">
+      <div class="rank-label" title="${d.label}">${d.label}</div>
+      <div class="rank-track"><div class="rank-fill ${type}" style="width:${Math.max(Math.round((d.count / max) * 100), 12)}%">${d.count}건</div></div>
+      <div class="rank-count">${d.count}건</div>
+    </div>
+  `).join("");
+}
+
+function renderHdStatusScreen(){
+  const discoverRanking = teamDiscoveryRanking();
+  const applyRanking = workplaceApplyRanking();
+  const topDiscover = discoverRanking[0];
+  const topApply = applyRanking[0];
+
+  $("#hdStatusStrip").innerHTML = `
+    <div class="stat-card accent-navy"><span class="stat-label">고등급 발굴팀 수</span><span class="stat-value">${discoverRanking.length}</span></div>
+    <div class="stat-card accent-amber"><span class="stat-label">수평전개 적용 작업장 수</span><span class="stat-value">${applyRanking.length}</span></div>
+    <div class="stat-card accent-green"><span class="stat-label">최다 발굴팀</span><span class="stat-value" style="font-size:16px">${topDiscover ? topDiscover.label : "—"}<small>${topDiscover ? " " + topDiscover.count + "건" : ""}</small></span></div>
+    <div class="stat-card accent-red"><span class="stat-label">최다 적용 작업장</span><span class="stat-value" style="font-size:16px">${topApply ? topApply.label : "—"}<small>${topApply ? " " + topApply.count + "건" : ""}</small></span></div>
+  `;
+
+  renderRankList($("#discoverRankList"), discoverRanking, "discover");
+  renderRankList($("#applyRankList"), applyRanking, "apply");
+
+  const details = buildDeploymentRecords().map(r => {
+    const t = sgGetTask(r.taskId);
+    const grade = t ? (t.eval2.grade || t.eval1.grade || "-") : "-";
+    return { ...r, originTeam: t ? t.team : r.team, grade };
+  }).sort((a, b) => (b.appliedDate || "").localeCompare(a.appliedDate || ""));
+
+  $("#hdDetailBody").innerHTML = details.length ? details.map(r => `
+    <tr>
+      <td>${r.originTeam}</td>
+      <td style="text-align:left;font-weight:600">${r.title}</td>
+      <td><span class="grade-pill grade-${gradeSlug(r.grade)}">${r.grade}</span></td>
+      <td>${r.workplace}</td>
+      <td>${r.appliedDate}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">수평전개 이력이 아직 없습니다.</td></tr>`;
 }
 
 /* ================= 소그룹활동 등록/평가 모달 ================= */
