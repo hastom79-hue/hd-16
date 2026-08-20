@@ -416,7 +416,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-03-15"
   },
   {
-    id: "SG-2026-0004", dept: "생산기술부", team: "제작기술과", user: "이향기",
+    id: "SG-2026-0004", dept: "생산기술부", team: "조립부", user: "이향기",
     improve: "원가 개선", sqdc: "C",
     title: "제작공정 부자재 재고 절감 활동",
     phenomenon: "부자재 과다 발주로 재고 비용 증가", current: "재고금액 1,200만원", target: "재고금액 800만원 이하",
@@ -430,7 +430,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-01-05"
   },
   {
-    id: "SG-2026-0009", dept: "생산운영부", team: "생산계획과", user: "최다인",
+    id: "SG-2026-0009", dept: "자재운영부", team: "내자운영팀", user: "최다인",
     improve: "납기 개선", sqdc: "D",
     title: "자재 입고 검수 체크리스트 표준화 활동",
     phenomenon: "검수 누락으로 인한 재작업 발생", current: "검수 누락률 6%", target: "검수 누락률 1% 이하",
@@ -446,11 +446,11 @@ let SG_TASKS = [
     favorite: false, regDate: "2025-12-18"
   },
   {
-    id: "SG-2026-0002", dept: "생산관리부", team: "기준정보과", user: "장서윤",
+    id: "SG-2026-0002", dept: "생산운영부", team: "설비관리팀", user: "장서윤",
     improve: "품질 개선", sqdc: "Q",
-    title: "수주 입력 오류 감소 활동",
-    phenomenon: "수기 입력 방식으로 인한 오류 반복", current: "입력 오류 월 9건", target: "입력 오류 월 2건 이하",
-    files: [{ name: "입력오류_유형표.xlsx", date: "2025-07-20" }],
+    title: "설비 가동일지 기록 오류 감소 활동",
+    phenomenon: "수기 기록 방식으로 인한 가동일지 오류 반복", current: "기록 오류 월 9건", target: "기록 오류 월 2건 이하",
+    files: [{ name: "기록오류_유형표.xlsx", date: "2025-07-20" }],
     resultLevel: "70", doneYN: true, doneDate: "2025-08-25",
     eval1: { grade: "B", date: "2025-08-28", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
@@ -460,18 +460,18 @@ let SG_TASKS = [
     favorite: false, regDate: "2025-08-01"
   },
   {
-    id: "SG-2026-0003", dept: "생산관리부", team: "오더데스크과", user: "김도현",
+    id: "SG-2026-0003", dept: "생산품질부", team: "부품품질팀", user: "김도현",
     improve: "납기 개선", sqdc: "D",
-    title: "고객 클레임 대응시간 단축 소그룹",
-    phenomenon: "클레임 접수 후 담당자 배정 지연", current: "평균 대응시간 14시간", target: "평균 대응시간 4시간 이내",
+    title: "품질 클레임 현장 대응시간 단축 소그룹",
+    phenomenon: "클레임 접수 후 현장 담당자 배정 지연", current: "평균 대응시간 14시간", target: "평균 대응시간 4시간 이내",
     files: [{ name: "클레임대응_프로세스.pptx", date: "2025-09-08" }],
     resultLevel: "95", doneYN: true, doneDate: "2025-09-28",
     eval1: { grade: "A", date: "2025-09-30", checked: 6 },
     eval2: { grade: "S", date: "2025-10-06", checked: 5 },
-    verifyDesc: "클레임 대응시간 10시간 단축, 고객만족도 상승", verifyMh: "6M/H, 260,000원",
+    verifyDesc: "클레임 대응시간 10시간 단축, 현장 만족도 상승", verifyMh: "6M/H, 260,000원",
     stdTimeApplied: true, stdTimeDate: "2025-10-08",
     horizontalDeployments: [
-      { workplace: "고객지원2팀", appliedDate: "2025-11-10" }
+      { workplace: "부품검사2라인", appliedDate: "2025-11-10" }
     ],
     favorite: true, regDate: "2025-09-05"
   },
@@ -490,7 +490,7 @@ let SG_TASKS = [
     favorite: false, regDate: "2025-10-10"
   },
   {
-    id: "SG-2026-0006", dept: "자재운영부", team: "외자운영팀", user: "윤성민",
+    id: "SG-2026-0006", dept: "자재운영부", team: "내자운영팀", user: "윤성민",
     improve: "원가 개선", sqdc: "C",
     title: "포장 자재 재사용률 향상 활동",
     phenomenon: "1회성 포장재 폐기 비용 증가", current: "재사용률 22%", target: "재사용률 60% 이상",
@@ -567,10 +567,10 @@ let SG_TASKS = [
     favorite: false, regDate: "2026-03-05"
   },
   {
-    id: "SG-2026-0015", dept: "생산운영부", team: "글로벌운영팀", user: "최다인",
+    id: "SG-2026-0015", dept: "생산운영부", team: "설비관리팀", user: "최다인",
     improve: "품질 개선", sqdc: "Q",
-    title: "생산일정 변경 알림체계 개선",
-    phenomenon: "일정 변경 알림 누락으로 혼선 발생", current: "알림 누락률 15%", target: "알림 누락률 2% 이하",
+    title: "설비 가동 일정 변경 알림체계 개선",
+    phenomenon: "설비 가동 일정 변경 알림 누락으로 현장 혼선 발생", current: "알림 누락률 15%", target: "알림 누락률 2% 이하",
     files: [],
     resultLevel: "50", doneYN: false, doneDate: null,
     eval1: { grade: "C", date: "2026-04-20", checked: 3 },
