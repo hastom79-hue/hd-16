@@ -57,6 +57,8 @@
     <button class="tab-btn" data-screen="dashScreen">9.6.5 중요과제 대시보드</button>
     <button class="tab-btn" data-screen="sgMainScreen">소그룹활동 (메인)</button>
     <button class="tab-btn" data-screen="sgListScreen">소그룹활동 조회</button>
+    <button class="tab-btn" data-screen="sgEvalHistoryScreen">소그룹 평가이력 조회</button>
+    <button class="tab-btn" data-screen="sgPerfScreen">소그룹 성과 대시보드</button>
   </div>
 </nav>
 
@@ -239,7 +241,7 @@
       <label>구분(SQDC) <select id="sgSqdc"><option value="">All</option><option value="S">S</option><option value="Q">Q</option><option value="D">D</option><option value="C">C</option></select></label>
       <label>과제진행현황 <select id="sgStatus"><option value="">All</option><option value="진행">진행</option><option value="완료">완료</option></select></label>
       <label>진행팀 <select id="sgTeam"><option value="">All</option></select></label>
-      <label>평가결과 <select id="sgEvalFilter"><option value="">All</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="미평가">미평가</option></select></label>
+      <label>평가결과 <select id="sgEvalFilter"><option value="">All</option><option value="S+">S+</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="미평가">미평가</option></select></label>
       <button class="tbtn" id="btnSgSearch">조회</button>
       <label class="perm-toggle"><input type="checkbox" id="sgPermToggle" checked> 평가결과 열람 권한(생산혁신팀)</label>
     </div>
@@ -260,6 +262,95 @@
         </thead>
         <tbody id="sgListBody"></tbody>
       </table>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN 5 — 소그룹 평가이력 조회 (우수사례 포함)
+  ====================================================== -->
+  <section class="screen" id="sgEvalHistoryScreen">
+    <div class="board-head">
+      <h2>소그룹활동 평가이력 조회</h2>
+      <p class="board-sub">1차·2차 평가 이력을 전부 조회하고, A등급(우수) 사례를 별도로 모아 벤치마킹 자료로 활용합니다.</p>
+    </div>
+
+    <div class="filter-bar wrap">
+      <label>평가등급 <select id="ehGrade"><option value="">All</option><option value="S+">S+</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></label>
+      <label>평가차수 <select id="ehRound"><option value="">All</option><option value="1차">1차</option><option value="2차">2차</option></select></label>
+      <label>팀 <select id="ehTeam"><option value="">All</option></select></label>
+      <label>평가일
+        <input type="date" id="ehDateFrom" value="2025-01-01">
+        ~ <input type="date" id="ehDateTo" value="2026-12-31">
+      </label>
+      <button class="tbtn" id="btnEhSearch">조회</button>
+    </div>
+
+    <div class="dash-card" style="margin-bottom:16px">
+      <div class="followup-head">
+        <h3>🏆 고등급 사례 (S+ · S · A) — 분기 메일링 배포</h3>
+        <div class="mail-controls">
+          <label>발송 주기 <select id="mailQuarter"></select></label>
+          <button class="tbtn" id="btnSelectAllHigh">전체선택</button>
+          <button class="btn btn-primary" id="btnSendMail" disabled>📧 선택 항목 메일 발송</button>
+        </div>
+      </div>
+      <p class="board-sub" style="margin-bottom:10px">체크한 고등급 사례를 분기 단위로 관리자 그룹과 현업 담당팀에 자동 메일링합니다.</p>
+      <div class="table-wrap">
+        <table class="task-table">
+          <thead>
+            <tr>
+              <th style="width:34px"><input type="checkbox" id="chkAllHigh"></th>
+              <th>등급</th><th>평가차수</th><th>평가일</th><th>팀</th>
+              <th style="text-align:left">과제명</th><th style="text-align:left">검증결과</th><th>발송상태</th>
+            </tr>
+          </thead>
+          <tbody id="highGradeBody"></tbody>
+        </table>
+      </div>
+      <div class="mail-log" id="mailLog"></div>
+    </div>
+
+    <div class="table-wrap">
+      <table class="task-table">
+        <thead>
+          <tr>
+            <th>평가차수</th><th>평가일</th><th>팀</th><th style="text-align:left">과제명</th>
+            <th>등급</th><th>점검충족</th><th>검증결과</th><th>표준반영</th>
+          </tr>
+        </thead>
+        <tbody id="ehBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN 6 — 소그룹 성과 대시보드 (고등급 발굴율)
+  ====================================================== -->
+  <section class="screen" id="sgPerfScreen">
+    <div class="board-head">
+      <h2>소그룹활동 고등급(S+·S·A) 발굴 대시보드</h2>
+      <p class="board-sub">분기·연간 단위로 전체 평가건수 대비 고등급 사례가 얼마나 발굴되고 있는지 추적합니다.</p>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>분기별 고등급 발굴 현황</h3>
+        <div class="bar-chart" id="perfQuarterChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot lg-done"></i>고등급(S+·S·A)</span>
+          <span><i class="lg-dot lg-inprog"></i>일반(B·C)</span>
+        </div>
+        <table class="matrix-table perf-table" id="perfQuarterTable"></table>
+      </div>
+      <div class="dash-card">
+        <h3>연도별 고등급 발굴 현황</h3>
+        <div class="bar-chart" id="perfYearChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot lg-done"></i>고등급(S+·S·A)</span>
+          <span><i class="lg-dot lg-inprog"></i>일반(B·C)</span>
+        </div>
+        <table class="matrix-table perf-table" id="perfYearTable"></table>
+      </div>
     </div>
   </section>
 
@@ -364,7 +455,7 @@
 
         <div class="eval-block" id="eval2Block">
           <h4>소그룹활동 2차평가</h4>
-          <p class="postcheck-sub">1차평가 A등급 과제만 2차평가 대상입니다 (B/C는 2차평가 불필요). 평가권한: 생산혁신팀.</p>
+          <p class="postcheck-sub">1차평가 고등급(S+·S·A) 과제만 2차평가 대상입니다 (B·C는 2차평가 불필요). 평가권한: 생산혁신팀.</p>
           <button class="btn btn-approve" id="openEval2Btn" disabled>2차평가 실시</button>
           <div class="eval-result" id="eval2Result">대상 아님</div>
         </div>
@@ -396,7 +487,7 @@
       <div class="field-row two" style="margin-top:14px">
         <div class="field">
           <label>평가 등급</label>
-          <select id="evalGrade"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
+          <select id="evalGrade"><option value="S+">S+</option><option value="S">S</option><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
         </div>
         <div class="field"><label>평가일자</label><input type="text" id="evalDate" disabled></div>
       </div>

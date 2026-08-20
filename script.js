@@ -8,6 +8,11 @@ const STAGES = ["P", "D", "C", "A"];
 const STAGE_LABEL = { P: "Plan", D: "Do", C: "Check", A: "Act" };
 const CURRENT_USER = { name: "이향기", team: "HDPS파트", dept: "생산기술부" };
 const NUM_REGEX = /^\d+(\.\d+)?$/;
+const HIGH_GRADES = ["S+", "S", "A"];
+function gradeSlug(grade){
+  return { "S+": "splus", "S": "s", "A": "a", "B": "b", "C": "c" }[grade] || "";
+}
+function isHighGrade(grade){ return HIGH_GRADES.includes(grade); }
 
 let CONFIG = { noti: 3, esc: 60, post: 3 };
 let activeTaskId = null;
@@ -114,8 +119,8 @@ let SG_TASKS = [
     phenomenon: "공구 방치로 인한 작업 동선 방해", current: "정리정돈 점검 68점", target: "정리정돈 점검 90점 이상",
     files: [{ name: "5S_활동사진.zip", date: "2026-02-10" }],
     resultLevel: "88", doneYN: true, doneDate: "2026-03-20",
-    eval1: { grade: "A", date: "2026-03-22", checked: 6 },
-    eval2: { grade: "A", date: "2026-03-28", checked: 5 },
+    eval1: { grade: "S", date: "2026-03-22", checked: 6 },
+    eval2: { grade: "S+", date: "2026-03-28", checked: 5 },
     verifyDesc: "정리정돈 점검 점수 20점 상승, 동선 개선 확인", verifyMh: "8M/H, 320,000원",
     stdTimeApplied: true, stdTimeDate: "2026-03-29",
     favorite: false, regDate: "2026-02-08"
@@ -145,6 +150,19 @@ let SG_TASKS = [
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
     favorite: false, regDate: "2026-01-05"
+  },
+  {
+    id: "SG-2026-0009", dept: "생산운영부", team: "생산계획과", user: "최다인",
+    improve: "납기 개선", sqdc: "D",
+    title: "자재 입고 검수 체크리스트 표준화 활동",
+    phenomenon: "검수 누락으로 인한 재작업 발생", current: "검수 누락률 6%", target: "검수 누락률 1% 이하",
+    files: [{ name: "체크리스트_v1.pdf", date: "2025-12-20" }],
+    resultLevel: "91", doneYN: true, doneDate: "2026-01-15",
+    eval1: { grade: "A", date: "2026-01-18", checked: 5 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "검수 누락률 5%p 개선, 재작업 공수 절감", verifyMh: "5M/H, 210,000원",
+    stdTimeApplied: false, stdTimeDate: null,
+    favorite: false, regDate: "2025-12-18"
   }
 ];
 
@@ -199,6 +217,8 @@ function bindTabs(){
       if (btn.dataset.screen === "dashScreen") renderDashScreen();
       if (btn.dataset.screen === "sgMainScreen") renderSgMainScreen();
       if (btn.dataset.screen === "sgListScreen") renderSgListScreen();
+      if (btn.dataset.screen === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
+      if (btn.dataset.screen === "sgPerfScreen") renderSgPerfScreen();
     });
   });
 }
@@ -790,6 +810,8 @@ function bindTypeSelect(){
 function refreshSgScreens(){
   if ($("#sgMainScreen").classList.contains("active")) renderSgMainScreen();
   if ($("#sgListScreen").classList.contains("active")) renderSgListScreen();
+  if ($("#sgEvalHistoryScreen").classList.contains("active")) renderSgEvalHistoryScreen();
+  if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
 }
 
 /* ================= SCREEN 4 — 소그룹활동 (메인, 부서별) ================= */
@@ -828,7 +850,7 @@ function renderSgMainScreen(){
       teams[team].forEach(t => {
         const finalGrade = t.eval2.grade || t.eval1.grade || "";
         const gradeBadge = finalGrade
-          ? `<span class="cat-dot ${finalGrade === "A" ? "important" : "normal"}">${finalGrade}등급</span>`
+          ? `<span class="cat-dot ${isHighGrade(finalGrade) ? "important" : "normal"}">${finalGrade}등급</span>`
           : `<span class="cat-dot" style="color:var(--ink-soft)">미평가</span>`;
         const row = document.createElement("div");
         row.className = "team-row";
@@ -915,7 +937,7 @@ function renderSgListScreen(){
   $("#sgListBody").innerHTML = filtered.map(t => {
     const finalGrade = t.eval2.grade || t.eval1.grade || "미평가";
     const evalCell = permOk
-      ? `${t.eval1.grade || "—"} / ${t.eval1.grade === "A" ? (t.eval2.grade || "대기") : "불필요"}`
+      ? `${t.eval1.grade || "—"} / ${isHighGrade(t.eval1.grade) ? (t.eval2.grade || "대기") : "불필요"}`
       : `<span class="locked-cell">🔒 권한없음</span>`;
     const verifyCell = permOk ? (t.verifyDesc ? "✅ " + (t.stdTimeApplied ? "반영" : "미반영") : "—") : `<span class="locked-cell">🔒</span>`;
     return `
@@ -943,6 +965,224 @@ function bindSgListScreen(){
     opt.value = team; opt.textContent = team;
     teamSel.appendChild(opt);
   });
+}
+
+/* ================= SCREEN 5 — 소그룹 평가이력 조회 ================= */
+function buildEvalRecords(){
+  const records = [];
+  SG_TASKS.forEach(t => {
+    [["1차", t.eval1], ["2차", t.eval2]].forEach(([round, ev]) => {
+      if (!ev || !ev.grade) return;
+      records.push({
+        taskId: t.id, title: t.title, team: t.team, user: t.user,
+        round, grade: ev.grade, date: ev.date, checked: ev.checked,
+        verifyDesc: t.verifyDesc, stdTimeApplied: t.stdTimeApplied
+      });
+    });
+  });
+  return records.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+}
+
+/* 분기 계산: today 기준 앞뒤 분기 라벨 생성 */
+function currentQuarterLabel(){
+  const d = new Date();
+  const q = Math.floor(d.getMonth() / 3) + 1;
+  return `${d.getFullYear()} Q${q}`;
+}
+function quarterOptionsAround(){
+  const d = new Date();
+  const labels = [];
+  for (let offset = -1; offset <= 1; offset++){
+    const base = new Date(d.getFullYear(), d.getMonth() + offset * 3, 1);
+    const q = Math.floor(base.getMonth() / 3) + 1;
+    labels.push(`${base.getFullYear()} Q${q}`);
+  }
+  return [...new Set(labels)];
+}
+
+let MAIL_LOG = []; // { date, quarter, count, recipients, caseIds }
+let sentRecordKeys = new Set(); // "taskId|round" 이미 발송된 사례
+
+function recordKey(r){ return r.taskId + "|" + r.round; }
+
+function renderSgEvalHistoryScreen(){
+  const all = buildEvalRecords();
+  const gradeF = $("#ehGrade").value;
+  const roundF = $("#ehRound").value;
+  const teamF = $("#ehTeam").value;
+  const dFrom = $("#ehDateFrom").value, dTo = $("#ehDateTo").value;
+
+  const filtered = all.filter(r => {
+    if (gradeF && r.grade !== gradeF) return false;
+    if (roundF && r.round !== roundF) return false;
+    if (teamF && r.team !== teamF) return false;
+    if (dFrom && r.date && r.date < dFrom) return false;
+    if (dTo && r.date && r.date > dTo) return false;
+    return true;
+  });
+
+  /* ---- 고등급(S+·S·A) 사례 멀티셀렉트 + 메일 발송 테이블 ---- */
+  const highCases = all.filter(r => isHighGrade(r.grade));
+  const highBody = $("#highGradeBody");
+  highBody.innerHTML = highCases.length ? highCases.map(r => {
+    const key = recordKey(r);
+    const sent = sentRecordKeys.has(key);
+    return `
+      <tr>
+        <td><input type="checkbox" class="high-chk" data-key="${key}" ${sent ? "disabled" : ""}></td>
+        <td><span class="grade-pill grade-${gradeSlug(r.grade)}">${r.grade}</span></td>
+        <td>${r.round}</td><td>${r.date}</td><td>${r.team}</td>
+        <td style="text-align:left;font-weight:600">${r.title}</td>
+        <td style="text-align:left;font-size:11.5px">${r.verifyDesc || "—"}</td>
+        <td>${sent ? `<span class="sent-tag">✅ 발송완료</span>` : "미발송"}</td>
+      </tr>`;
+  }).join("") : `<tr><td colspan="8" style="padding:16px;color:#9AA7B2">고등급(S+·S·A) 사례가 아직 없습니다.</td></tr>`;
+
+  $all(".high-chk").forEach(chk => chk.addEventListener("change", updateSendMailBtn));
+  updateSendMailBtn();
+  renderMailLog();
+
+  /* ---- 전체 평가이력 표 ---- */
+  $("#ehBody").innerHTML = filtered.map(r => `
+    <tr>
+      <td>${r.round}</td><td>${r.date}</td><td>${r.team}</td>
+      <td style="text-align:left;font-weight:600">${r.title}</td>
+      <td><span class="grade-pill grade-${gradeSlug(r.grade)}">${r.grade}</span></td>
+      <td>${r.checked}건</td>
+      <td style="text-align:left;font-size:11.5px">${r.verifyDesc || "—"}</td>
+      <td>${r.stdTimeApplied ? "✅ 반영" : "—"}</td>
+    </tr>
+  `).join("") || `<tr><td colspan="8" style="padding:20px;color:#9AA7B2">조건에 맞는 평가이력이 없습니다.</td></tr>`;
+}
+
+function updateSendMailBtn(){
+  const checked = $all(".high-chk:checked").length;
+  $("#btnSendMail").disabled = checked === 0;
+  $("#btnSendMail").textContent = checked > 0 ? `📧 선택 항목 메일 발송 (${checked}건)` : "📧 선택 항목 메일 발송";
+}
+
+function renderMailLog(){
+  const log = $("#mailLog");
+  if (!MAIL_LOG.length){ log.innerHTML = ""; return; }
+  log.innerHTML = "<div style='font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-bottom:4px'>발송 이력</div>" +
+    MAIL_LOG.slice().reverse().map(m => `
+      <div class="mail-log-item">
+        📧 <b>${m.quarter}</b> 분기 배포 · ${m.date} · 고등급 사례 <b>${m.count}건</b> → ${m.recipients}
+      </div>
+    `).join("");
+}
+
+function handleSendMail(){
+  const checked = [...$all(".high-chk:checked")];
+  if (!checked.length){ toast("발송할 고등급 사례를 선택해 주세요.", "red"); return; }
+  const all = buildEvalRecords();
+  const keys = checked.map(c => c.dataset.key);
+  const selectedRecords = all.filter(r => keys.includes(recordKey(r)));
+  const teams = [...new Set(selectedRecords.map(r => r.team))];
+  const quarter = $("#mailQuarter").value;
+  const recipients = `관리자 그룹(생산혁신팀 임원진) + 현업 담당팀(${teams.join(", ")})`;
+
+  keys.forEach(k => sentRecordKeys.add(k));
+  MAIL_LOG.push({ date: todayStr(), quarter, count: selectedRecords.length, recipients, caseIds: keys });
+
+  toast(`${quarter} 분기 고등급 사례 ${selectedRecords.length}건을 ${recipients}에 메일 발송했습니다.`, "green");
+  renderSgEvalHistoryScreen();
+}
+
+function bindSgEvalHistoryScreen(){
+  $("#btnEhSearch").addEventListener("click", renderSgEvalHistoryScreen);
+  const teamSel = $("#ehTeam");
+  [...new Set(SG_TASKS.map(t => t.team))].forEach(team => {
+    const opt = document.createElement("option");
+    opt.value = team; opt.textContent = team;
+    teamSel.appendChild(opt);
+  });
+
+  const qSel = $("#mailQuarter");
+  quarterOptionsAround().forEach(q => {
+    const opt = document.createElement("option");
+    opt.value = q; opt.textContent = q;
+    if (q === currentQuarterLabel()) opt.selected = true;
+    qSel.appendChild(opt);
+  });
+
+  $("#chkAllHigh").addEventListener("change", (e) => {
+    $all(".high-chk:not(:disabled)").forEach(c => c.checked = e.target.checked);
+    updateSendMailBtn();
+  });
+  $("#btnSelectAllHigh").addEventListener("click", () => {
+    $all(".high-chk:not(:disabled)").forEach(c => c.checked = true);
+    $("#chkAllHigh").checked = true;
+    updateSendMailBtn();
+  });
+  $("#btnSendMail").addEventListener("click", handleSendMail);
+}
+
+/* ================= SCREEN 6 — 소그룹 성과 대시보드 (발굴율) ================= */
+function dateToQuarterLabel(dateStr){
+  if (!dateStr) return null;
+  const d = new Date(dateStr + "T00:00:00");
+  const q = Math.floor(d.getMonth() / 3) + 1;
+  return `${d.getFullYear()} Q${q}`;
+}
+function dateToYear(dateStr){
+  if (!dateStr) return null;
+  return dateStr.slice(0, 4);
+}
+
+function aggregateBy(records, keyFn){
+  const map = {};
+  records.forEach(r => {
+    const key = keyFn(r.date);
+    if (!key) return;
+    if (!map[key]) map[key] = { total: 0, high: 0 };
+    map[key].total++;
+    if (isHighGrade(r.grade)) map[key].high++;
+  });
+  return map;
+}
+
+function renderRateChart(chartEl, tableEl, map, unitLabel){
+  const labels = Object.keys(map).sort();
+  chartEl.innerHTML = "";
+  const maxTotal = Math.max(1, ...labels.map(l => map[l].total));
+
+  labels.forEach(label => {
+    const { total, high } = map[label];
+    const normal = total - high;
+    const rate = total ? Math.round((high / total) * 100) : 0;
+    const highH = Math.round((high / maxTotal) * 140);
+    const normalH = Math.round((normal / maxTotal) * 140);
+    const col = document.createElement("div");
+    col.className = "bar-col";
+    col.innerHTML = `
+      <div class="bar-rate">${rate}%</div>
+      <div class="bar-stack" style="height:${Math.max(highH + normalH, 2)}px">
+        <div class="bar-seg-inprog" style="height:${normalH}px" title="일반 ${normal}건"></div>
+        <div class="bar-seg-done" style="height:${highH}px" title="고등급 ${high}건"></div>
+      </div>
+      <div class="bar-label">${label}<br><b>${total}건</b></div>
+    `;
+    chartEl.appendChild(col);
+  });
+  if (!labels.length){
+    chartEl.innerHTML = `<div class="case-empty" style="padding:20px">${unitLabel} 평가 데이터가 아직 없습니다.</div>`;
+  }
+
+  tableEl.innerHTML = `<tr><th>${unitLabel}</th><th>전체 평가건수</th><th>고등급(S+·S·A)</th><th>발굴율</th></tr>` +
+    labels.map(label => {
+      const { total, high } = map[label];
+      const rate = total ? Math.round((high / total) * 100) : 0;
+      return `<tr><th>${label}</th><td>${total}</td><td>${high}</td><td class="${rate >= 50 ? "rate-high" : ""}">${rate}%</td></tr>`;
+    }).join("");
+}
+
+function renderSgPerfScreen(){
+  const all = buildEvalRecords();
+  const byQuarter = aggregateBy(all, dateToQuarterLabel);
+  const byYear = aggregateBy(all, dateToYear);
+  renderRateChart($("#perfQuarterChart"), $("#perfQuarterTable"), byQuarter, "분기");
+  renderRateChart($("#perfYearChart"), $("#perfYearTable"), byYear, "연도");
 }
 
 /* ================= 소그룹활동 등록/평가 모달 ================= */
@@ -992,13 +1232,13 @@ function openSgTaskModal(id){
   const hasTitle = !!t.title;
   $("#openEval1Btn").disabled = !hasTitle;
   $("#eval1Result").textContent = t.eval1.grade ? `${t.eval1.grade}등급 · ${t.eval1.date} (점검 ${t.eval1.checked}건 충족)` : "미평가";
-  $("#eval1Result").className = "eval-result" + (t.eval1.grade ? " grade-" + t.eval1.grade : "");
+  $("#eval1Result").className = "eval-result" + (t.eval1.grade ? " grade-" + gradeSlug(t.eval1.grade) : "");
 
-  const eval2Eligible = t.eval1.grade === "A";
+  const eval2Eligible = isHighGrade(t.eval1.grade);
   $("#eval2Block").style.opacity = eval2Eligible ? "1" : ".5";
   $("#openEval2Btn").disabled = !eval2Eligible;
-  $("#eval2Result").textContent = !eval2Eligible ? "대상 아님 (1차 A등급만 해당)" : (t.eval2.grade ? `${t.eval2.grade}등급 · ${t.eval2.date}` : "미평가");
-  $("#eval2Result").className = "eval-result" + (eval2Eligible && t.eval2.grade ? " grade-" + t.eval2.grade : "");
+  $("#eval2Result").textContent = !eval2Eligible ? "대상 아님 (1차 고등급 S+·S·A만 해당)" : (t.eval2.grade ? `${t.eval2.grade}등급 · ${t.eval2.date}` : "미평가");
+  $("#eval2Result").className = "eval-result" + (eval2Eligible && t.eval2.grade ? " grade-" + gradeSlug(t.eval2.grade) : "");
 
   $("#sgOverlay").classList.add("open");
 }
@@ -1146,6 +1386,7 @@ function bindEvents(){
   bindTypeSelect();
   bindSgListScreen();
   bindSgMainToolbar();
+  bindSgEvalHistoryScreen();
   bindSgModal();
 }
 
