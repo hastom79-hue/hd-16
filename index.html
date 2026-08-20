@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GMES · 문제해결과제 관리</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ TOP BAR ============ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="brand-mark">HD</span>
+    <div class="brand-text">
+      <strong>GMES</strong>
+      <span>문제해결과제 관리시스템</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="factory-select">
+      <span class="dot"></span>
+      [CE01] 울산공장
+    </div>
+    <button class="btn btn-admin" id="openAdminBtn">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 000-1.88l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7.3 7.3 0 00-1.63-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54c-.59.23-1.14.55-1.63.94l-2.39-.96a.5.5 0 00-.6.22L2.7 8.84a.5.5 0 00.12.64l2.03 1.58a7.07 7.07 0 000 1.88l-2.03 1.58a.5.5 0 00-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.5.39 1.04.71 1.63.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.23 1.14-.55 1.63-.94l2.39.96c.24.1.47 0 .6-.22l1.92-3.32a.5.5 0 00-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg>
+      Admin 설정
+    </button>
+    <button class="btn btn-primary" id="openRegisterBtn">+ 신규 과제 등록</button>
+  </div>
+</header>
+
+<!-- ============ THESIS STRIP ============ -->
+<section class="thesis-strip">
+  <div class="thesis-inner">
+    <p class="thesis-quote">
+      <span class="thesis-kicker">Synthesis</span>
+      단일 상태 객체(Task)가 <b>통제되고(Lock)</b>, <b>경로를 찾으며(Route)</b>, <b>기록된 뒤(View)</b>, 성과에 따라 <b>자가 증식(Loop)</b>하는 하나의 아키텍처 라이프사이클.
+    </p>
+    <div class="chapter-rail">
+      <div class="chapter-chip"><em>01</em>아키텍처 청사진</div>
+      <div class="chapter-chip"><em>02</em>진입 관문</div>
+      <div class="chapter-chip"><em>03</em>지능형 라우팅</div>
+      <div class="chapter-chip"><em>04</em>데이터 금고</div>
+      <div class="chapter-chip"><em>05</em>사후 세계</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCREEN TABS ============ -->
+<nav class="screen-tabs">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-screen="mainScreen">부서별 현황 (메인)</button>
+    <button class="tab-btn" data-screen="listScreen">조회 (List)</button>
+    <button class="tab-btn" data-screen="dashScreen">9.6.5 중요과제 대시보드</button>
+    <button class="tab-btn" data-screen="sgListScreen">소그룹활동 조회</button>
+    <button class="tab-btn" data-screen="s5sScreen">5S 점검항목관리</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- =====================================================
+       SCREEN 1 — 부서별 계층 대시보드 (메인)
+  ====================================================== -->
+  <section class="screen active" id="mainScreen">
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button class="tbtn" id="btnSearch">🔍 조회</button>
+        <button class="tbtn" id="btnNewFromToolbar">🆕 신규</button>
+        <button class="tbtn" id="btnSaveAll">💾 저장</button>
+        <button class="tbtn" id="btnDeleteRow" disabled>🗑 삭제</button>
+        <button class="tbtn" id="btnExportMain">🖨 출력</button>
+      </div>
+      <button class="tbtn fav-toggle" id="btnFavToggle">☆ 즐겨찾기</button>
+    </div>
+
+    <div class="filter-bar">
+      <label>공장 <select id="fltFactory"><option>울산공장</option></select></label>
+      <label>작업장 <select id="fltWorkplace"><option>All</option></select></label>
+      <label>팀명 <select id="fltTeam"><option>All</option></select></label>
+      <label>등록일
+        <input type="date" id="fltDateFrom" value="2025-01-01">
+        ~ <input type="date" id="fltDateTo" value="2026-12-31">
+      </label>
+      <label>표준화 <select id="fltStd"><option>All</option></select></label>
+      <button class="tbtn ghost" id="btnCopyTask">⧉ 복사등록(btn_copy)</button>
+    </div>
+
+    <div class="dept-tree" id="deptTree"><!-- injected --></div>
+
+  </section>
+
+  <!-- =====================================================
+       SCREEN 2 — 조회 (List)
+  ====================================================== -->
+  <section class="screen" id="listScreen">
+    <div class="board-head">
+      <h2>문제해결 과제 조회</h2>
+      <p class="board-sub">등록일 · 등록자 · 과제구분 등 세부 조건으로 전체 과제를 조회합니다.</p>
+    </div>
+
+    <div class="filter-bar wrap">
+      <label>등록일
+        <input type="date" id="lstDateFrom" value="2025-01-01">
+        ~ <input type="date" id="lstDateTo" value="2026-12-31">
+      </label>
+      <label>등록자 <input type="text" id="lstUser" placeholder="이름 검색"></label>
+      <label>과제구분 <select id="lstCategory"><option value="">All</option><option value="important">중요과제</option><option value="normal">일상과제</option><option value="pending">판정대기</option></select></label>
+      <label>개선구분 <select id="lstImprove"><option value="">All</option><option>안전성 개선</option><option>품질 개선</option><option>납기 개선</option><option>원가 개선</option></select></label>
+      <label>진행팀 <select id="lstTeam"><option value="">All</option></select></label>
+      <label>과제리소스 <select id="lstResource"><option value="">All</option><option>정기과제접수(반기별)</option><option>생산비가동이슈</option><option>모듈 미해결과제</option><option>기타</option></select></label>
+      <label>과제검토 <select id="lstReview"><option value="">All</option><option>모듈리더 1차검토</option><option>팀장 2차확정</option></select></label>
+      <label>완료과제 <select id="lstDone"><option value="All">Y/N/All</option><option value="Y">Y</option><option value="N">N</option></select></label>
+      <button class="tbtn" id="btnListSearch">조회</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="task-table list-table">
+        <thead>
+          <tr>
+            <th>①등록일</th><th>②등록자</th><th>③진행팀</th><th>④제목</th>
+            <th>⑤과제구분<br><small>1차/확정</small></th>
+            <th>⑥개선구분</th>
+            <th>⑦P단계<br><small>완료/첨부</small></th>
+            <th>⑧D·C·A단계<br><small>완료/완료/완료/첨부</small></th>
+            <th>⑨정량목표<br><small>개선전/개선후/결과</small></th>
+            <th>⑩유효점검<br><small>M+1/M+2/M+3</small></th>
+            <th>⑪과제완료</th>
+            <th>⑫비고</th>
+          </tr>
+        </thead>
+        <tbody id="listTableBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN 3 — 9.6.5 중요과제 마스터 대시보드
+  ====================================================== -->
+  <section class="screen" id="dashScreen">
+    <div class="board-head">
+      <h2>9.6.5 문제해결과제 등록/관리 — 중요과제 마스터 대시보드</h2>
+      <p class="board-sub">SQDC 유형별 중요과제 분류, 부서단위 조직별 진행현황(완료여부), 중요과제 세부 진행현황을 관리합니다.</p>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>1. 중요과제의 SQDC 분류</h3>
+        <div class="table-wrap">
+          <table class="matrix-table" id="sqdcMatrix"></table>
+        </div>
+      </div>
+      <div class="dash-card">
+        <h3>2. 과제 진행현황</h3>
+        <div class="bar-chart" id="deptBarChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot lg-done"></i>완료</span>
+          <span><i class="lg-dot lg-inprog"></i>진행</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <div class="followup-head">
+        <h3>3. 중요과제 Follow up</h3>
+        <button class="tbtn" id="btnExportCsv">⬇ Excel 추출 (CSV)</button>
+      </div>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table followup-table">
+          <thead>
+            <tr>
+              <th>등록일</th><th>등록자</th><th>진행팀</th><th>과제리소스</th><th>제목</th>
+              <th>과제구분<br><small>1차/확정</small></th><th>개선구분</th>
+              <th>P단계<br><small>완료</small></th>
+              <th>D/C/A단계<br><small>완료/완료/완료</small></th>
+              <th>정량목표<br><small>개선전/개선후</small></th>
+              <th>결과</th>
+              <th>유효성점검<br><small>1/2/3</small></th>
+              <th>과제완료</th><th>비고</th>
+            </tr>
+          </thead>
+          <tbody id="followupBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN 4 — 소그룹활동 조회 (List)
+  ====================================================== -->
+  <section class="screen" id="sgListScreen">
+    <div class="board-head">
+      <h2>소그룹활동 과제 조회</h2>
+      <p class="board-sub">분기별 소그룹활동(팀 단위) 과제를 조회합니다. 평가결과는 권한이 부여된 인원에게만 표시됩니다.</p>
+    </div>
+
+    <div class="filter-bar wrap">
+      <label>등록일
+        <input type="date" id="sgDateFrom" value="2025-01-01">
+        ~ <input type="date" id="sgDateTo" value="2026-12-31">
+      </label>
+      <label>등록자 <input type="text" id="sgUser" placeholder="이름 검색"></label>
+      <label>구분(SQDC) <select id="sgSqdc"><option value="">All</option><option value="S">S</option><option value="Q">Q</option><option value="D">D</option><option value="C">C</option></select></label>
+      <label>과제진행현황 <select id="sgStatus"><option value="">All</option><option value="진행">진행</option><option value="완료">완료</option></select></label>
+      <label>진행팀 <select id="sgTeam"><option value="">All</option></select></label>
+      <label>평가결과 <select id="sgEvalFilter"><option value="">All</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="미평가">미평가</option></select></label>
+      <button class="tbtn" id="btnSgSearch">조회</button>
+      <label class="perm-toggle"><input type="checkbox" id="sgPermToggle" checked> 평가결과 열람 권한(생산혁신팀)</label>
+    </div>
+
+    <div class="table-wrap">
+      <table class="task-table list-table">
+        <thead>
+          <tr>
+            <th>등록일</th><th>등록자</th><th>진행팀</th><th>과제제목</th>
+            <th>구분<br><small>SQDC</small></th>
+            <th>정량적목표<br><small>개선전/개선후</small></th>
+            <th>과제진행현황<br><small>진행/완료</small></th>
+            <th>완료일</th><th>첨부</th>
+            <th>평가결과<br><small>1차/2차</small></th>
+            <th>검증결과<br><small>효과/표준반영</small></th>
+            <th>비고</th>
+          </tr>
+        </thead>
+        <tbody id="sgListBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- =====================================================
+       SCREEN 5 — 5S 점검항목관리 (소그룹 평가항목 기준정보)
+  ====================================================== -->
+  <section class="screen" id="s5sScreen">
+    <div class="board-head">
+      <h2>HDPS32 팀별 5S 점검항목관리</h2>
+      <p class="board-sub">소그룹활동 과제 평가항목 구성은 이 '팀별 5S 점검항목관리'와 동일하게 구성됩니다. 평가항목 구성권한: 생산혁신팀.</p>
+    </div>
+
+    <div class="filter-bar">
+      <label>팀 <select id="s5sTeam"><option value="">All</option></select></label>
+      <label>5S 구분 <select id="s5sType"><option value="">All</option><option>정리</option><option>정돈</option><option>청소</option><option>청결</option><option>습관화</option></select></label>
+      <label>사용여부 <select id="s5sUse"><option value="">All</option><option value="사용">사용</option><option value="">미사용</option></select></label>
+      <label>항목명 <input type="text" id="s5sSearch" placeholder="검색"></label>
+      <button class="tbtn" id="btnS5sSearch">조회</button>
+      <button class="tbtn" id="btnS5sSave" style="margin-left:auto">💾 저장</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="task-table">
+        <thead>
+          <tr><th>No</th><th>5S구분</th><th>점검항목</th><th style="text-align:left">점검항목명</th><th>사용여부</th><th>등록자</th><th>등록일</th></tr>
+        </thead>
+        <tbody id="s5sBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ CLOSING HOOK ============ -->
+<footer class="hook-banner">
+  <div class="hook-inner">
+    <div class="hook-text">
+      <p class="hook-q">"알림 누락으로 과제가 멈춘다면, 과연 완벽한 시스템일까요?"</p>
+      <p class="hook-sub">Lock·Route·View·Loop가 아무리 견고해도, 마지막 퍼즐은 <b>독촉 알림과 에스컬레이션 주기</b>입니다. 이 값들은 하드코딩되지 않고 Admin 설정에서 실시간으로 조정됩니다.</p>
+    </div>
+    <button class="btn btn-primary" id="openAdminFromHook">알림 정책 확인하기 →</button>
+  </div>
+</footer>
+
+<!-- ============ TYPE SELECT POPUP (PDCA 과제 등록) ============ -->
+<div class="overlay" id="typeSelectOverlay">
+  <div class="modal type-select-modal">
+    <div class="modal-head">
+      <h3>PDCA 과제 등록</h3>
+      <button class="icon-btn" id="closeTypeSelectBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="type-select-body">
+      <p class="type-select-desc">문제해결과제, 소그룹활동 과제 — PDCA 실행과제의 유형에 따라 선택하시어 활동내역을 등록해주시기 바랍니다.</p>
+      <div class="type-select-grid">
+        <div class="type-card">
+          <h4>1) 문제해결과제</h4>
+          <p>공장에서 발생하는 문제점 중 근인제거가 필요한 과제<br>(SQDC 정량적 분석) · 반기별 혁신과제 등록 (팀 단위)</p>
+          <button class="btn btn-primary type-select-btn" id="selectTypeProblem">문제해결과제 등록</button>
+        </div>
+        <div class="type-card">
+          <h4>2) 소그룹활동</h4>
+          <p>현장조직에서 실행하는 소그룹활동 과제<br>분기별 소그룹활동 등록 (소그룹 단위)</p>
+          <button class="btn btn-navy type-select-btn" id="selectTypeGroup">소그룹활동 과제 등록</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 소그룹활동 과제 등록/평가 모달 ============ -->
+<div class="overlay" id="sgOverlay">
+  <div class="modal" id="sgModal">
+    <div class="modal-head">
+      <h3 id="sgModalTitle">소그룹활동 과제</h3>
+      <button class="icon-btn" id="closeSgModalBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="modal-body sg-body">
+      <div class="form-col">
+        <p class="chapter-eyebrow">소그룹활동 과제 등록</p>
+
+        <div class="field-row two">
+          <div class="field"><label>등록일</label><input type="text" id="sgRegDate" disabled></div>
+          <div class="field"><label>공장</label><input type="text" value="[CE01] 울산공장" disabled></div>
+        </div>
+        <div class="field-row two">
+          <div class="field"><label>등록자</label><input type="text" id="sgUserField" disabled></div>
+          <div class="field"><label>진행팀</label><input type="text" id="sgTeamField" disabled></div>
+        </div>
+        <div class="field-row two">
+          <div class="field">
+            <label>개선구분</label>
+            <select id="sgImprove"><option>안전성 개선</option><option>품질 개선</option><option>납기 개선</option><option>원가 개선</option></select>
+          </div>
+          <div class="field">
+            <label>개선위치(S·Q·D·C)</label>
+            <select id="sgSqdcField"><option value="">선택</option><option value="S">S</option><option value="Q">Q</option><option value="D">D</option><option value="C">C</option></select>
+          </div>
+        </div>
+        <div class="field"><label>제목 <span class="req">*</span></label><input type="text" id="sgTitle" placeholder="예) 작업장 정리정돈 개선활동"></div>
+        <div class="field"><label>현상</label><input type="text" id="sgPhenomenon"></div>
+        <div class="field-row two">
+          <div class="field"><label>현수준</label><input type="text" id="sgCurrent"></div>
+          <div class="field"><label>목표수준</label><input type="text" id="sgTarget"></div>
+        </div>
+
+        <div class="file-attach" style="margin-top:4px">
+          <div class="file-attach-head"><span>PDCA 과제 엑셀파일 등록</span><button class="mini-btn" id="sgAddFileBtn">📎 첨부</button></div>
+          <table class="file-table"><tbody id="sgFiles"><tr class="empty-row"><td colspan="3">Nothing to display</td></tr></tbody></table>
+        </div>
+
+        <div class="field-row two" style="margin-top:14px">
+          <div class="field"><label>결과수준</label><input type="text" id="sgResultLevel" placeholder="정량 결과 수치"></div>
+          <div class="field">
+            <label class="chk"><input type="checkbox" id="sgDoneYN"> 완료여부</label>
+            <span class="hint" id="sgDoneDate">완료일 —</span>
+          </div>
+        </div>
+        <button class="btn btn-confirm-reg" id="sgConfirmBtn">✔ 등록 저장</button>
+      </div>
+
+      <div class="pdca-col">
+        <p class="chapter-eyebrow">소그룹활동 평가 (권한: 파트장/역신팀 → 생산혁신팀)</p>
+
+        <div class="eval-block">
+          <h4>소그룹활동 1차평가</h4>
+          <p class="postcheck-sub">평가권한: 등록자의 파트장/혁신팀. 클릭 시 평가표(5S 점검항목) 팝업.</p>
+          <button class="btn btn-approve" id="openEval1Btn" disabled>1차평가 실시</button>
+          <div class="eval-result" id="eval1Result">미평가</div>
+        </div>
+
+        <div class="eval-block" id="eval2Block">
+          <h4>소그룹활동 2차평가</h4>
+          <p class="postcheck-sub">1차평가 A등급 과제만 2차평가 대상입니다 (B/C는 2차평가 불필요). 평가권한: 생산혁신팀.</p>
+          <button class="btn btn-approve" id="openEval2Btn" disabled>2차평가 실시</button>
+          <div class="eval-result" id="eval2Result">대상 아님</div>
+        </div>
+
+        <div class="postcheck-block">
+          <h4>개선효과 검증결과 (생산기술)</h4>
+          <div class="field-row two">
+            <div class="field"><label>검증결과 설명</label><input type="text" id="sgVerifyDesc" placeholder="개선효과 요약"></div>
+            <div class="field"><label>M/H · 금액표기</label><input type="text" id="sgVerifyMh" placeholder="예) 12M/H, 850,000원"></div>
+          </div>
+          <label class="chk"><input type="checkbox" id="sgStdTime"> 표준시간 반영 여부(생산기술)</label>
+          <span class="hint" id="sgStdTimeDate">완료 저장일 —</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 평가표 팝업 (5S 체크리스트) ============ -->
+<div class="overlay" id="evalPopupOverlay">
+  <div class="modal eval-popup-modal">
+    <div class="modal-head">
+      <h3 id="evalPopupTitle">평가표</h3>
+      <button class="icon-btn" id="closeEvalPopupBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="eval-popup-body">
+      <p class="postcheck-sub">'팀별 5S 점검항목관리'의 사용 항목을 기준으로 체크합니다.</p>
+      <div class="eval-checklist" id="evalChecklist"></div>
+      <div class="field-row two" style="margin-top:14px">
+        <div class="field">
+          <label>평가 등급</label>
+          <select id="evalGrade"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
+        </div>
+        <div class="field"><label>평가일자</label><input type="text" id="evalDate" disabled></div>
+      </div>
+      <button class="btn btn-confirm-reg" id="saveEvalBtn">평가 완료 · 저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REGISTER / TASK MODAL ============ -->
+<div class="overlay" id="taskOverlay">
+  <div class="modal" id="taskModal">
+    <div class="modal-head">
+      <h3 id="modalTitle">문제해결 과제 등록</h3>
+      <button class="icon-btn" id="favBtn" title="즐겨찾기">☆</button>
+      <button class="icon-btn" id="closeModalBtn" aria-label="닫기">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <!-- LEFT: 등록 Part -->
+      <div class="form-col" id="formCol">
+        <p class="chapter-eyebrow">STEP 02 · 진입 관문 — 등록 Part (저장 후 잠금)</p>
+
+        <div class="field-row two">
+          <div class="field">
+            <label>등록일</label>
+            <input type="text" id="fRegDate" disabled>
+            <span class="hint">등록일자로 자동 선택</span>
+          </div>
+          <div class="field">
+            <label>등록자 / 소속팀</label>
+            <input type="text" id="fRegUser" disabled>
+            <span class="hint">로그인 세션에서 자동 주입</span>
+          </div>
+        </div>
+
+        <div class="field-row two">
+          <div class="field">
+            <label>과제 리소스</label>
+            <select id="fResource">
+              <option value="정기과제접수(반기별)">정기과제접수 (반기별)</option>
+              <option value="생산비가동이슈">생산비가동이슈</option>
+              <option value="모듈 미해결과제">모듈 미해결과제</option>
+              <option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>과제 구분</label>
+            <div class="locked-select">
+              <input type="text" id="fCategory" value="판정 대기" disabled>
+              <span class="lock-badge">🔒 시스템 판정</span>
+            </div>
+            <span class="hint">모듈리더 1차 판정 → 팀장 2차 확정 (사용자 지정 불가)</span>
+          </div>
+        </div>
+
+        <div class="field-row two">
+          <div class="field">
+            <label>개선구분</label>
+            <select id="fImprove">
+              <option>안전성 개선</option>
+              <option>품질 개선</option>
+              <option>납기 개선</option>
+              <option>원가 개선</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>개선위치 (S·Q·D·C)</label>
+            <select id="fSqdc" required>
+              <option value="">선택</option>
+              <option value="S">S — 안전</option>
+              <option value="Q">Q — 품질</option>
+              <option value="D">D — 납기</option>
+              <option value="C">C — 원가</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>제목 <span class="req">*</span></label>
+          <input type="text" id="fTitle" placeholder="예) 도킹 크레인 고장 예방 대책 수립">
+        </div>
+
+        <div class="field">
+          <label>현상</label>
+          <input type="text" id="fPhenomenon" placeholder="문제 현상 서술">
+        </div>
+
+        <div class="field-row three">
+          <div class="field">
+            <label>현수준</label>
+            <input type="text" id="fCurrent" placeholder="예) 재공장비 27건 이상">
+          </div>
+          <div class="field">
+            <label>목표수준</label>
+            <input type="text" id="fTarget" placeholder="예) 32 DPTU 감소">
+          </div>
+          <div class="field">
+            <label>기대효과</label>
+            <input type="text" id="fEffect" placeholder="예) 라인 비가동 손실 예방">
+          </div>
+        </div>
+
+        <div class="field">
+          <label>활동기간</label>
+          <div class="range-row">
+            <input type="date" id="fActFrom">
+            <span>~</span>
+            <input type="date" id="fActTo">
+          </div>
+        </div>
+
+        <button class="btn btn-confirm-reg" id="confirmRegBtn">✔ 등록 확정 · 저장 (Part 잠금)</button>
+        <p class="form-note">※ 등록 확정 시 이 왼쪽 Part 전체가 잠기며, 오른쪽 진행 Part가 활성화됩니다.</p>
+      </div>
+
+      <!-- RIGHT: 진행 Part -->
+      <div class="pdca-col" id="pdcaCol">
+        <p class="chapter-eyebrow">STEP 04 · 데이터 금고 — 진행 Part (등록 확정 전에는 비활성화)</p>
+
+        <div class="pdca-gauge" id="pdcaGauge"></div>
+
+        <div class="progress-locked-msg" id="progressLockedMsg">
+          🔒 왼쪽 등록 Part를 먼저 저장해야 진행 Part가 활성화됩니다.
+        </div>
+
+        <div class="stage-blocks" id="stageBlocks" style="display:none">
+
+          <!-- P block -->
+          <div class="stage-block" id="blockP">
+            <div class="stage-block-row">
+              <b>진행단계 (P)</b>
+              <label class="chk"><input type="checkbox" id="doneP"> 완료여부</label>
+              <span class="done-date" id="dateP">완료일자 —</span>
+            </div>
+            <div class="file-attach" data-target="P">
+              <div class="file-attach-head">
+                <span>파일첨부</span>
+                <div>
+                  <button class="mini-btn" data-add-file="P">📎 첨부</button>
+                </div>
+              </div>
+              <table class="file-table"><tbody id="filesP"><tr class="empty-row"><td colspan="3">Nothing to display</td></tr></tbody></table>
+              <div class="last-mod">최종수정일 <span id="lastModP">—</span></div>
+            </div>
+          </div>
+
+          <!-- D block -->
+          <div class="stage-block locked" id="blockD">
+            <div class="stage-block-row">
+              <b>진행단계 (D)</b>
+              <label class="chk"><input type="checkbox" id="doneD" disabled> 완료여부</label>
+              <span class="done-date" id="dateD">완료일자 —</span>
+            </div>
+          </div>
+
+          <!-- C block -->
+          <div class="stage-block locked" id="blockC">
+            <div class="stage-block-row">
+              <b>진행단계 (C)</b>
+              <label class="chk"><input type="checkbox" id="doneC" disabled> 완료여부</label>
+              <span class="done-date" id="dateC">완료일자 —</span>
+              <select id="reviewC" disabled>
+                <option value="">검토</option>
+                <option value="승인">승인</option>
+                <option value="반려">반려</option>
+              </select>
+            </div>
+            <div class="field" style="margin-top:8px">
+              <label>개선결과 입력 <span class="req">*</span></label>
+              <input type="text" id="fResult" placeholder="정량적 수치만 입력 (예: 12.5)" inputmode="decimal" disabled>
+              <span class="hint" id="resultHint">숫자 형식만 허용됩니다 (정규식 검증)</span>
+            </div>
+          </div>
+
+          <!-- A block -->
+          <div class="stage-block locked" id="blockA">
+            <div class="stage-block-row">
+              <b>진행단계 (A)</b>
+              <label class="chk"><input type="checkbox" id="doneA" disabled> 완료여부</label>
+              <span class="done-date" id="dateA">완료일자 —</span>
+              <select id="reviewA" disabled>
+                <option value="">검토</option>
+                <option value="승인">승인</option>
+                <option value="반려">반려</option>
+              </select>
+            </div>
+            <div class="file-attach" data-target="DCA">
+              <div class="file-attach-head">
+                <span>파일첨부 (D·C·A 공용)</span>
+                <div>
+                  <button class="mini-btn" data-add-file="DCA" disabled id="addFileDCA">📎 첨부</button>
+                </div>
+              </div>
+              <table class="file-table"><tbody id="filesDCA"><tr class="empty-row"><td colspan="3">Nothing to display</td></tr></tbody></table>
+              <div class="last-mod">최종수정일 <span id="lastModDCA">—</span></div>
+            </div>
+          </div>
+
+          <button class="btn btn-approve" id="stageActionBtn">P단계 완료 처리</button>
+        </div>
+
+        <div class="postcheck-block" id="postcheckBlock">
+          <p class="chapter-eyebrow" style="margin-bottom:2px">STEP 05 · 사후 세계 — 실패의 자산화</p>
+          <h4>M+1 / M+2 / M+3 유효성 점검 타임라인</h4>
+          <p class="postcheck-sub">A단계 완료 후 활성화됩니다. Key-in 후 저장하면 입력일자가 자동 선택됩니다. M+3 미달성 시 데이터는 폐기되지 않고 신규 Level 1 과제로 자동 재생성됩니다.</p>
+          <div class="postcheck-grid" id="postcheckGrid"></div>
+          <div class="m3-actions" id="m3Actions">
+            <button class="btn btn-success" id="passM3Btn" disabled>목표 달성 확정 (과제완료)</button>
+            <button class="btn btn-fail" id="failM3Btn" disabled>목표 미달성 처리 (재생성 트리거)</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ ADMIN DRAWER ============ -->
+<div class="overlay" id="adminOverlay">
+  <div class="drawer">
+    <div class="modal-head">
+      <h3>Admin · 글로벌 환경 설정</h3>
+      <button class="icon-btn" id="closeAdminBtn" aria-label="닫기">&times;</button>
+    </div>
+    <p class="drawer-sub">TB_GMES_SYS_CONFIG — 값 변경 시 코드 수정 없이 즉시 정책에 반영됩니다.</p>
+
+    <div class="config-item">
+      <div class="config-label">
+        <strong>기본 독촉 알림 주기</strong>
+        <span>NOTI_DEFAULT_CYCLE_DAY</span>
+      </div>
+      <div class="config-control">
+        <input type="range" id="cfgNoti" min="1" max="14" value="3">
+        <span class="config-val"><b id="cfgNotiVal">3</b>일</span>
+      </div>
+    </div>
+
+    <div class="config-item">
+      <div class="config-label">
+        <strong>지연 가속화 임계치</strong>
+        <span>ESCALATION_TRIGGER_DAY</span>
+      </div>
+      <div class="config-control">
+        <input type="range" id="cfgEsc" min="7" max="120" value="60">
+        <span class="config-val"><b id="cfgEscVal">60</b>일</span>
+      </div>
+    </div>
+
+    <div class="config-item">
+      <div class="config-label">
+        <strong>사후 검증 임계치</strong>
+        <span>POST_CHECK_MONTH_LIMIT</span>
+      </div>
+      <div class="config-control">
+        <input type="range" id="cfgPost" min="1" max="6" value="3">
+        <span class="config-val">M+<b id="cfgPostVal">3</b></span>
+      </div>
+    </div>
+
+    <div class="config-preview">
+      <span class="preview-dot"></span>
+      <p id="cfgPreviewText">현재 정책: <b>3일</b>마다 리마인드, <b>60일</b> 경과 시 에스컬레이션 가속, <b>M+3</b> 시점 최종 검증</p>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="hiddenFileInput" style="display:none">
+<div class="toast" id="toast"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
