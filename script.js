@@ -2766,6 +2766,40 @@ function renderConfigPreview(){
 }
 
 /* ================= INIT ================= */
+/* ================= 전역 툴팁 (탭 바 스크롤 컨테이너 밖에서 동작) ================= */
+function bindGlobalTooltip(){
+  const tip = document.createElement("div");
+  tip.className = "global-tooltip";
+  tip.id = "globalTooltip";
+  document.body.appendChild(tip);
+
+  document.querySelectorAll("[data-tip]").forEach(el => {
+    el.addEventListener("mouseenter", () => {
+      const text = el.dataset.tip;
+      if (!text) return;
+      tip.textContent = text;
+      tip.classList.add("show");
+
+      const rect = el.getBoundingClientRect();
+      let left = rect.left + rect.width / 2;
+      const top = rect.bottom + 8;
+      tip.style.top = top + "px";
+      tip.style.left = left + "px";
+      tip.style.transform = "translateX(-50%)";
+
+      requestAnimationFrame(() => {
+        const tipRect = tip.getBoundingClientRect();
+        if (tipRect.left < 6) tip.style.transform = "translateX(" + (-(rect.left + rect.width / 2) + 6) + "px)";
+        else if (tipRect.right > window.innerWidth - 6) {
+          const overflowRight = tipRect.right - (window.innerWidth - 6);
+          tip.style.transform = "translateX(calc(-50% - " + overflowRight + "px))";
+        }
+      });
+    });
+    el.addEventListener("mouseleave", () => tip.classList.remove("show"));
+  });
+}
+
 function bindEvents(){
   $("#closeModalBtn").addEventListener("click", closeTaskModal);
   $("#taskOverlay").addEventListener("click", (e) => { if (e.target.id === "taskOverlay") closeTaskModal(); });
@@ -2826,4 +2860,5 @@ document.addEventListener("DOMContentLoaded", () => {
   renderKpiStrip();
   renderExecMailBar();
   renderExecMailLog();
+  bindGlobalTooltip();
 });

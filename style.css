@@ -212,7 +212,7 @@ table{ border-collapse: collapse; }
 }
 .category-tabs-inner{
   max-width: 1280px; margin:0 auto; display:flex; gap: 8px; padding: 10px 24px;
-  overflow-x:auto; scrollbar-width: thin;
+  overflow-x:auto; overflow-y:hidden; scrollbar-width: thin;
 }
 .category-btn{
   position: relative;
@@ -231,7 +231,7 @@ table{ border-collapse: collapse; }
 }
 .tabs-inner{
   max-width: 1280px; margin:0 auto; display:flex; gap: 2px; padding: 0 24px;
-  overflow-x:auto; scrollbar-width: thin;
+  overflow-x:auto; overflow-y:hidden; scrollbar-width: thin;
 }
 .tab-btn{
   position: relative;
@@ -242,28 +242,18 @@ table{ border-collapse: collapse; }
 .tab-btn:hover{ color: var(--navy); }
 .tab-btn.active{ color: var(--navy); border-bottom-color: var(--steel); }
 
-/* 탭 커스텀 팝업 툴팁 (카테고리 탭 + 서브 탭 공용) */
-.tab-btn::after, .category-btn::after{
-  content: attr(data-tip);
-  position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(2px);
-  width: 200px; max-width: 60vw;
+/* 전역 툴팁 — nav 스크롤 컨테이너 밖(body 직속)에 JS로 위치시켜
+   더 이상 tabs-inner의 스크롤 가능 영역에 포함되지 않음(불필요한 세로 스크롤바 방지) */
+.global-tooltip{
+  position: fixed; z-index: 300;
+  max-width: 220px;
   background: var(--navy); color:#fff; font-size: 11.5px; font-weight: 500; line-height:1.5;
-  padding: 9px 11px; border-radius: 8px; white-space: normal; text-align:center;
-  box-shadow: 0 10px 24px rgba(20,48,76,.28);
-  opacity: 0; visibility: hidden; pointer-events: none;
-  transition: opacity .15s ease, transform .15s ease;
-  z-index: 200; margin-top: 8px;
+  padding: 9px 11px; border-radius: 8px; text-align:center;
+  box-shadow: 0 10px 24px rgba(20,48,76,.3);
+  opacity: 0; pointer-events: none;
+  transition: opacity .12s ease;
 }
-.tab-btn:hover::after, .category-btn:hover::after{
-  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(6px);
-}
-.category-btn::after{ background: #0D2338; }
-.tab-btn:first-child::after{ left: 0; transform: translateX(0) translateY(2px); }
-.tab-btn:first-child:hover::after{ transform: translateX(0) translateY(6px); }
-.tab-btn:last-child::after{ left: auto; right: 0; transform: translateX(0) translateY(2px); }
-.tab-btn:last-child:hover::after{ transform: translateX(0) translateY(6px); }
-.category-btn:first-child::after{ left: 0; transform: translateX(0) translateY(2px); }
-.category-btn:first-child:hover::after{ transform: translateX(0) translateY(6px); }
+.global-tooltip.show{ opacity: 1; }
 
 .screen{ display:none; }
 .screen.active{ display:block; }
