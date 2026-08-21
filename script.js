@@ -1655,27 +1655,37 @@ function renderKpiStrip(){
 }
 
 /* ---- 중요과제/일상과제 분류기준 (통합기준정보에 명문화된 규칙) ---- */
-const IMPORTANCE_CRITERIA = [
+let IMPORTANCE_CRITERIA = [
   {
-    id: "downtime", weight: 1,
+    id: "downtime", weight: 1, keyword: null,
     label: "① 라인 비가동 손실 영향도",
     desc: "과제리소스가 '생산비가동이슈'로 접수된 경우 — 라인 정지로 직결되는 이슈",
     check: (t) => t.resource === "생산비가동이슈"
   },
   {
-    id: "sqdc", weight: 1,
+    id: "sqdc", weight: 1, keyword: null,
     label: "② SQDC 정량적 지표 영향도",
     desc: "개선위치가 안전(S) 또는 납기(D)인 경우 — 공정 전체에 파급되는 지표",
     check: (t) => t.sqdc === "S" || t.sqdc === "D"
   },
   {
-    id: "chronic", weight: 1,
+    id: "chronic", weight: 1, keyword: null,
     label: "③ 공장 고질적 최우선순위 문제",
     desc: "M+3 미달로 재이관(regenOf)된 과제이거나, 동일 팀·동일 SQDC로 진행 중인 과제가 이미 있는 경우 — 반복/고질 이슈",
     check: (t, all) => !!t.regenOf || all.some(x => x.id !== t.id && x.team === t.team && x.sqdc === t.sqdc && x.stageStatus !== "done_all")
   }
 ];
-const IMPORTANCE_THRESHOLD = 2; // 3개 기준 중 이 점수 이상이면 중요과제
+let IMPORTANCE_THRESHOLD = 2; // 기준 중 이 점수 이상이면 중요과제
+
+/* 신규(커스텀) 기준 생성 헬퍼 — "제목에 키워드 포함 시" 조건으로 동적 생성 */
+function makeKeywordCriterion(label, keyword, weight){
+  return {
+    id: "custom_" + Date.now(), weight, keyword,
+    label,
+    desc: `제목에 "${keyword}" 키워드가 포함된 경우`,
+    check: (t) => !!keyword && t.title.includes(keyword)
+  };
+}
 
 function classifyImportance(t, allTasksList){
   const matched = IMPORTANCE_CRITERIA.filter(c => c.check(t, allTasksList));
@@ -2570,45 +2580,9 @@ function renderHdStatusScreen(){
 }
 
 /* ================= SCREEN — 통합기준정보 ================= */
-let MASTER_DEPT_USE = {};        // key `${dept}|${team}` -> boolean (기본 true)
-let MASTER_WORKPLACE_USE = {};   // key workplace -> boolean (기본 true)
-let MASTER_USER_EVAL_AUTH = { "이향기": true, "정민아": true };  // key user -> boolean (기본 false, 평가권한자 일부 시드)
-
-function buildDeptTeamMaster(){
-  const map = {};
-  TASKS.forEach(t => {
-    const key = t.dept + "|" + t.team;
-    if (!map[key]) map[key] = { key, dept: t.dept, team: t.team, problemCount: 0, sgCount: 0 };
-    map[key].problemCount++;
-  });
-  SG_TASKS.forEach(t => {
-    const key = t.dept + "|" + t.team;
-    if (!map[key]) map[key] = { key, dept: t.dept, team: t.team, problemCount: 0, sgCount: 0 };
-    map[key].sgCount++;
-  });
-  return Object.values(map).sort((a, b) => a.dept.localeCompare(b.dept) || a.team.localeCompare(b.team));
-}
-
-function buildWorkplaceMaster(){
-  const map = {};
-  buildDeploymentRecords().forEach(r => { map[r.workplace] = (map[r.workplace] || 0) + 1; });
-  return Object.entries(map).map(([workplace, count]) => ({ workplace, count })).sort((a, b) => b.count - a.count);
-}
-
-function buildUserMaster(){
-  const map = {};
-  TASKS.forEach(t => {
-    if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, problemCount: 0, sgCount: 0 };
-    map[t.user].problemCount++;
-  });
-  SG_TASKS.forEach(t => {
-    if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, problemCount: 0, sgCount: 0 };
-    map[t.user].sgCount++;
-  });
-  return Object.values(map).sort((a, b) => a.user.localeCompare(b.user));
-}
-
-/* ---- 경영진 메일링 수신자 마스터 ---- */
+let DEPT_TEAM_MASTER = [];   // { dept, team, use }
+let WORKPLACE_MASTER = [];   // { workplace, use }
+let USER_MASTER = [];        // { user, team, evalAuth }
 let EXEC_RECIPIENTS = [
   { name: "박승현", title: "대표이사(CEO)", email: "sh.park@hd-ce.com", use: true },
   { name: "이강수", title: "생산본부장", email: "ks.lee@hd-ce.com", use: true },
@@ -2618,72 +2592,150 @@ let EXEC_RECIPIENTS = [
   { name: "조은비", title: "경영기획팀장", email: "eb.jo@hd-ce.com", use: false }
 ];
 
-function renderMasterDataScreen(){
-  const deptRows = buildDeptTeamMaster();
-  $("#masterDeptBody").innerHTML = deptRows.length ? deptRows.map(r => {
-    const use = MASTER_DEPT_USE[r.key] !== false;
-    return `<tr>
-      <td>${r.dept}</td><td>${r.team}</td><td>${r.problemCount}</td><td>${r.sgCount}</td>
-      <td><label class="chk"><input type="checkbox" ${use ? "checked" : ""} data-master-dept="${r.key}"> 사용</label></td>
-    </tr>`;
-  }).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 부서/팀이 없습니다.</td></tr>`;
+let MASTER_DATA_INITIALIZED = false;
+let DEFAULT_MASTER_SNAPSHOT = null;
 
-  const wpRows = buildWorkplaceMaster();
-  $("#masterWorkplaceBody").innerHTML = wpRows.length ? wpRows.map(r => {
-    const use = MASTER_WORKPLACE_USE[r.workplace] !== false;
-    return `<tr>
-      <td style="text-align:left;font-weight:600">${r.workplace}</td><td>${r.count}</td>
-      <td><label class="chk"><input type="checkbox" ${use ? "checked" : ""} data-master-wp="${r.workplace}"> 사용</label></td>
-    </tr>`;
-  }).join("") : `<tr><td colspan="3" style="padding:20px;color:#9AA7B2">등록된 작업장/라인이 없습니다.</td></tr>`;
+function buildDeptTeamMasterSeed(){
+  const map = {};
+  TASKS.forEach(t => { const k = t.dept + "|" + t.team; if (!map[k]) map[k] = { dept: t.dept, team: t.team, use: true }; });
+  SG_TASKS.forEach(t => { const k = t.dept + "|" + t.team; if (!map[k]) map[k] = { dept: t.dept, team: t.team, use: true }; });
+  return Object.values(map).sort((a, b) => a.dept.localeCompare(b.dept) || a.team.localeCompare(b.team));
+}
+function buildWorkplaceMasterSeed(){
+  const set = new Set();
+  buildDeploymentRecords().forEach(r => set.add(r.workplace));
+  return [...set].sort().map(workplace => ({ workplace, use: true }));
+}
+function buildUserMasterSeed(){
+  const map = {};
+  TASKS.forEach(t => { if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, evalAuth: false }; });
+  SG_TASKS.forEach(t => { if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, evalAuth: false }; });
+  if (map["이향기"]) map["이향기"].evalAuth = true;
+  if (map["정민아"]) map["정민아"].evalAuth = true;
+  return Object.values(map).sort((a, b) => a.user.localeCompare(b.user));
+}
 
-  const userRows = buildUserMaster();
-  $("#masterUserBody").innerHTML = userRows.length ? userRows.map(r => {
-    const auth = MASTER_USER_EVAL_AUTH[r.user] === true;
-    return `<tr>
-      <td style="text-align:left;font-weight:600">${r.user}</td><td>${r.team}</td><td>${r.problemCount}</td><td>${r.sgCount}</td>
-      <td><label class="chk"><input type="checkbox" ${auth ? "checked" : ""} data-master-eval-auth="${r.user}"> 평가권한</label></td>
-    </tr>`;
-  }).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 담당자가 없습니다.</td></tr>`;
-
-  $all("[data-master-dept]").forEach(cb => cb.addEventListener("change", () => {
-    MASTER_DEPT_USE[cb.dataset.masterDept] = cb.checked;
-    toast(`${cb.dataset.masterDept.replace("|", " / ")} 사용여부가 ${cb.checked ? "사용" : "미사용"}으로 변경되었습니다.`, cb.checked ? "green" : "red");
+function initMasterDataOnce(){
+  if (MASTER_DATA_INITIALIZED) return;
+  DEPT_TEAM_MASTER = buildDeptTeamMasterSeed();
+  WORKPLACE_MASTER = buildWorkplaceMasterSeed();
+  USER_MASTER = buildUserMasterSeed();
+  DEFAULT_MASTER_SNAPSHOT = JSON.parse(JSON.stringify({
+    dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS
   }));
-  $all("[data-master-wp]").forEach(cb => cb.addEventListener("change", () => {
-    MASTER_WORKPLACE_USE[cb.dataset.masterWp] = cb.checked;
-    toast(`"${cb.dataset.masterWp}" 사용여부가 ${cb.checked ? "사용" : "미사용"}으로 변경되었습니다.`, cb.checked ? "green" : "red");
-  }));
-  $all("[data-master-eval-auth]").forEach(cb => cb.addEventListener("change", () => {
-    MASTER_USER_EVAL_AUTH[cb.dataset.masterEvalAuth] = cb.checked;
-    toast(`${cb.dataset.masterEvalAuth}님의 소그룹 평가권한이 ${cb.checked ? "부여" : "회수"}되었습니다.`, cb.checked ? "green" : "red");
-  }));
+  // 분류기준은 함수(check)를 포함하므로 별도로 직렬화 가능한 형태만 스냅샷
+  DEFAULT_MASTER_SNAPSHOT.criteria = IMPORTANCE_CRITERIA.map(c => ({ id: c.id, label: c.label, desc: c.desc, weight: c.weight, keyword: c.keyword }));
+  DEFAULT_MASTER_SNAPSHOT.threshold = IMPORTANCE_THRESHOLD;
+  MASTER_DATA_INITIALIZED = true;
+}
 
+function countDeptTeam(dept, team){
+  return {
+    problemCount: TASKS.filter(t => t.dept === dept && t.team === team).length,
+    sgCount: SG_TASKS.filter(t => t.dept === dept && t.team === team).length
+  };
+}
+function countWorkplace(workplace){
+  return buildDeploymentRecords().filter(r => r.workplace === workplace).length;
+}
+function countUser(user){
+  return {
+    problemCount: TASKS.filter(t => t.user === user).length,
+    sgCount: SG_TASKS.filter(t => t.user === user).length
+  };
+}
+
+function renderMasterDept(){
+  $("#masterDeptBody").innerHTML = DEPT_TEAM_MASTER.length ? DEPT_TEAM_MASTER.map((r, i) => {
+    const c = countDeptTeam(r.dept, r.team);
+    return `<tr>
+      <td><input type="checkbox" data-msel-dept="${i}"></td>
+      <td><input class="master-inline-input" type="text" value="${r.dept}" data-mfield-dept="dept" data-midx="${i}"></td>
+      <td><input class="master-inline-input" type="text" value="${r.team}" data-mfield-dept="team" data-midx="${i}"></td>
+      <td>${c.problemCount}</td><td>${c.sgCount}</td>
+      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-mfield-dept="use" data-midx="${i}"> 사용</label></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">등록된 부서/팀이 없습니다.</td></tr>`;
+
+  $all("[data-mfield-dept]").forEach(el => el.addEventListener("change", () => {
+    const r = DEPT_TEAM_MASTER[+el.dataset.midx];
+    const field = el.dataset.mfieldDept;
+    r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+  }));
+}
+
+function renderMasterWorkplace(){
+  $("#masterWorkplaceBody").innerHTML = WORKPLACE_MASTER.length ? WORKPLACE_MASTER.map((r, i) => `
+    <tr>
+      <td><input type="checkbox" data-msel-workplace="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.workplace}" data-mfield-workplace="workplace" data-midx="${i}"></td>
+      <td>${countWorkplace(r.workplace)}</td>
+      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-mfield-workplace="use" data-midx="${i}"> 사용</label></td>
+    </tr>
+  `).join("") : `<tr><td colspan="4" style="padding:20px;color:#9AA7B2">등록된 작업장/라인이 없습니다.</td></tr>`;
+
+  $all("[data-mfield-workplace]").forEach(el => el.addEventListener("change", () => {
+    const r = WORKPLACE_MASTER[+el.dataset.midx];
+    const field = el.dataset.mfieldWorkplace;
+    r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+  }));
+}
+
+function renderMasterUser(){
+  $("#masterUserBody").innerHTML = USER_MASTER.length ? USER_MASTER.map((r, i) => {
+    const c = countUser(r.user);
+    return `<tr>
+      <td><input type="checkbox" data-msel-user="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.user}" data-mfield-user="user" data-midx="${i}"></td>
+      <td><input class="master-inline-input" type="text" value="${r.team}" data-mfield-user="team" data-midx="${i}"></td>
+      <td>${c.problemCount}</td><td>${c.sgCount}</td>
+      <td><label class="chk"><input type="checkbox" ${r.evalAuth ? "checked" : ""} data-mfield-user="evalAuth" data-midx="${i}"> 평가권한</label></td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">등록된 담당자가 없습니다.</td></tr>`;
+
+  $all("[data-mfield-user]").forEach(el => el.addEventListener("change", () => {
+    const r = USER_MASTER[+el.dataset.midx];
+    const field = el.dataset.mfieldUser;
+    r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+  }));
+}
+
+function renderMasterExec(){
   $("#masterExecBody").innerHTML = EXEC_RECIPIENTS.length ? EXEC_RECIPIENTS.map((r, i) => `
     <tr>
-      <td style="text-align:left;font-weight:600">${r.name}</td>
-      <td>${r.title}</td>
-      <td style="text-align:left;font-size:11.5px;color:var(--ink-soft)">${r.email}</td>
-      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-master-exec="${i}"> 수신</label></td>
+      <td><input type="checkbox" data-msel-exec="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.name}" data-mfield-exec="name" data-midx="${i}"></td>
+      <td><input class="master-inline-input" type="text" value="${r.title}" data-mfield-exec="title" data-midx="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.email}" data-mfield-exec="email" data-midx="${i}"></td>
+      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-mfield-exec="use" data-midx="${i}"> 수신</label></td>
     </tr>
-  `).join("") : `<tr><td colspan="4" style="padding:20px;color:#9AA7B2">등록된 수신자가 없습니다.</td></tr>`;
+  `).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 수신자가 없습니다.</td></tr>`;
 
-  $all("[data-master-exec]").forEach(cb => cb.addEventListener("change", () => {
-    const r = EXEC_RECIPIENTS[+cb.dataset.masterExec];
-    r.use = cb.checked;
-    toast(`${r.name}(${r.title})님을 경영진 메일링 수신 대상에서 ${cb.checked ? "추가" : "제외"}했습니다.`, cb.checked ? "green" : "navy");
-    renderExecMailBar();
+  $all("[data-mfield-exec]").forEach(el => el.addEventListener("change", () => {
+    const r = EXEC_RECIPIENTS[+el.dataset.midx];
+    const field = el.dataset.mfieldExec;
+    r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+    if (field === "use") renderExecMailBar();
   }));
+}
 
-  /* ---- 5. 중요과제/일상과제 분류기준 ---- */
-  $("#critThresholdText").textContent = IMPORTANCE_THRESHOLD;
-  $("#masterCriteriaBody").innerHTML = IMPORTANCE_CRITERIA.map(c => `
+function renderMasterCriteria(){
+  $("#critThresholdInput").value = IMPORTANCE_THRESHOLD;
+  $("#masterCriteriaBody").innerHTML = IMPORTANCE_CRITERIA.map((c, i) => `
     <tr>
+      <td><input type="checkbox" data-msel-criteria="${i}"></td>
       <td style="text-align:left;font-weight:600">${c.label}</td>
       <td style="text-align:left;font-size:12px;color:var(--ink-soft)">${c.desc}</td>
-      <td>+${c.weight}</td>
+      <td><input class="master-inline-input" type="number" min="1" max="5" style="width:50px;text-align:center" value="${c.weight}" data-mfield-criteria="weight" data-midx="${i}"></td>
     </tr>
   `).join("");
+
+  $all("[data-mfield-criteria]").forEach(el => el.addEventListener("change", () => {
+    IMPORTANCE_CRITERIA[+el.dataset.midx].weight = Math.max(1, +el.value || 1);
+  }));
+  $("#critThresholdInput").addEventListener("change", (e) => {
+    IMPORTANCE_THRESHOLD = Math.max(1, +e.target.value || 1);
+  });
 
   const results = TASKS.map(t => classifyImportance(t, TASKS));
   const importantN = results.filter(r => r.category === "important").length;
@@ -2693,6 +2745,88 @@ function renderMasterDataScreen(){
     <div class="stat-card"><span class="stat-label">일상과제 판정 건수</span><span class="stat-value">${normalN}</span></div>
     <div class="stat-card accent-navy"><span class="stat-label">전체 문제해결과제</span><span class="stat-value">${TASKS.length}</span></div>
   `;
+}
+
+function renderMasterDataScreen(){
+  initMasterDataOnce();
+  renderMasterDept();
+  renderMasterWorkplace();
+  renderMasterUser();
+  renderMasterExec();
+  renderMasterCriteria();
+}
+
+/* ---- 통합기준정보 서브탭 전환 ---- */
+function bindMasterTabs(){
+  $all(".master-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $all(".master-tab").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $all(".master-panel").forEach(p => p.classList.remove("active"));
+      $("#masterPanel" + btn.dataset.mtab.charAt(0).toUpperCase() + btn.dataset.mtab.slice(1)).classList.add("active");
+    });
+  });
+}
+
+/* ---- 통합기준정보 신규/삭제/저장/초기화 공통 툴바 ---- */
+function bindMasterToolbar(){
+  $all("[data-master-new]").forEach(btn => btn.addEventListener("click", () => {
+    const type = btn.dataset.masterNew;
+    initMasterDataOnce();
+    if (type === "dept"){ DEPT_TEAM_MASTER.push({ dept: "신규부서", team: "신규팀", use: true }); renderMasterDept(); }
+    else if (type === "workplace"){ WORKPLACE_MASTER.push({ workplace: "신규작업장", use: true }); renderMasterWorkplace(); }
+    else if (type === "user"){ USER_MASTER.push({ user: "신규담당자", team: "미배정", evalAuth: false }); renderMasterUser(); }
+    else if (type === "exec"){ EXEC_RECIPIENTS.push({ name: "신규수신자", title: "직책 입력", email: "email@hd-ce.com", use: true }); renderMasterExec(); renderExecMailBar(); }
+    else if (type === "criteria"){
+      const label = "④ 커스텀 기준 " + (IMPORTANCE_CRITERIA.length + 1);
+      IMPORTANCE_CRITERIA.push(makeKeywordCriterion(label, "안전", 1));
+      renderMasterCriteria();
+    }
+    toast("신규 행이 추가되었습니다. 값을 입력한 뒤 저장해 주세요.", "navy");
+  }));
+
+  $all("[data-master-del]").forEach(btn => btn.addEventListener("click", () => {
+    const type = btn.dataset.masterDel;
+    const selector = "[data-msel-" + type + "]:checked";
+    const idxs = [...document.querySelectorAll(selector)].map(cb => +cb.dataset["msel" + type.charAt(0).toUpperCase() + type.slice(1)]).sort((a, b) => b - a);
+    if (!idxs.length){ toast("삭제할 행을 먼저 선택해 주세요.", "red"); return; }
+    const arrMap = { dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, criteria: IMPORTANCE_CRITERIA };
+    const arr = arrMap[type];
+    idxs.forEach(i => arr.splice(i, 1));
+    const renderMap = { dept: renderMasterDept, workplace: renderMasterWorkplace, user: renderMasterUser, exec: renderMasterExec, criteria: renderMasterCriteria };
+    renderMap[type]();
+    if (type === "exec") renderExecMailBar();
+    toast(`${idxs.length}건 삭제되었습니다.`, "red");
+  }));
+
+  $all("[data-master-save]").forEach(btn => btn.addEventListener("click", () => {
+    toast("변경사항이 저장되었습니다.", "green");
+  }));
+
+  $all("[data-master-reset]").forEach(btn => btn.addEventListener("click", () => {
+    const type = btn.dataset.masterReset;
+    initMasterDataOnce();
+    const snap = DEFAULT_MASTER_SNAPSHOT;
+    if (type === "dept"){ DEPT_TEAM_MASTER = JSON.parse(JSON.stringify(snap.dept)); renderMasterDept(); }
+    else if (type === "workplace"){ WORKPLACE_MASTER = JSON.parse(JSON.stringify(snap.workplace)); renderMasterWorkplace(); }
+    else if (type === "user"){ USER_MASTER = JSON.parse(JSON.stringify(snap.user)); renderMasterUser(); }
+    else if (type === "exec"){ EXEC_RECIPIENTS = JSON.parse(JSON.stringify(snap.exec)); renderMasterExec(); renderExecMailBar(); }
+    else if (type === "criteria"){
+      IMPORTANCE_THRESHOLD = snap.threshold;
+      IMPORTANCE_CRITERIA = snap.criteria.map(c => {
+        if (c.keyword) return makeKeywordCriterion(c.label, c.keyword, c.weight);
+        // 기본 3대 기준 복원 (id로 원래 check 로직 매핑)
+        const base = {
+          downtime: (t) => t.resource === "생산비가동이슈",
+          sqdc: (t) => t.sqdc === "S" || t.sqdc === "D",
+          chronic: (t, all) => !!t.regenOf || all.some(x => x.id !== t.id && x.team === t.team && x.sqdc === t.sqdc && x.stageStatus !== "done_all")
+        };
+        return { id: c.id, weight: c.weight, keyword: null, label: c.label, desc: c.desc, check: base[c.id] };
+      });
+      renderMasterCriteria();
+    }
+    toast("초기 등록정보로 초기화되었습니다.", "navy");
+  }));
 }
 
 /* ================= 소그룹활동 등록/평가 모달 ================= */
@@ -2928,6 +3062,8 @@ function bindEvents(){
   bindListScreen();
   bindDashScreen();
   bindRegenTrendScreen();
+  bindMasterTabs();
+  bindMasterToolbar();
   bindPdcaMonitorScreen();
   bindAdmin();
   bindTypeSelect();
