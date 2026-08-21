@@ -1468,6 +1468,7 @@ function nextExecSendDate(freq){
 function renderExecMailBar(){
   const el = $("#kpiMailBar");
   if (!el) return;
+  const activeRecipients = EXEC_RECIPIENTS.filter(r => r.use);
   el.innerHTML = `
     <label class="chk"><input type="checkbox" id="execMailToggle" ${EXEC_MAIL_ENABLED ? "checked" : ""}> 📧 경영진 정기 메일링</label>
     <select id="execMailFreq">
@@ -1476,7 +1477,8 @@ function renderExecMailBar(){
       <option value="매월" ${EXEC_MAIL_FREQ === "매월" ? "selected" : ""}>매월 (1일)</option>
     </select>
     <span class="exec-mail-next">${EXEC_MAIL_ENABLED ? "다음 자동발송: " + nextExecSendDate(EXEC_MAIL_FREQ) : "자동발송 꺼짐 — 체크박스로 활성화"}</span>
-    <button class="exec-mail-send" id="btnExecMailNow">지금 발송</button>
+    <span class="exec-mail-recipients" title="${activeRecipients.map(r => r.name + "(" + r.title + ")").join(", ")}">👤 수신자 ${activeRecipients.length}명 (통합기준정보에서 관리)</span>
+    <button class="exec-mail-send" id="btnExecMailNow" ${activeRecipients.length === 0 ? "disabled" : ""}>지금 발송</button>
   `;
   $("#execMailToggle").addEventListener("change", (e) => {
     EXEC_MAIL_ENABLED = e.target.checked;
@@ -1491,19 +1493,26 @@ function renderExecMailBar(){
 }
 
 function handleExecMailSend(){
+  const activeRecipients = EXEC_RECIPIENTS.filter(r => r.use);
+  if (!activeRecipients.length){
+    toast("수신여부가 켜진 경영진 수신자가 없습니다. 통합기준정보에서 먼저 설정해 주세요.", "red");
+    return;
+  }
   const heroVal = document.querySelector(".kpi-hero-value");
   const alerts = document.querySelectorAll(".kpi-insight-card .kpi-alert");
   const snapshot = `접수 대비 진행 ${heroVal ? heroVal.textContent : "-"}` +
     (alerts[0] ? " · " + alerts[0].textContent.trim() : "") +
     (alerts[1] ? " · " + alerts[1].textContent.trim() : "");
+  const recipientNames = activeRecipients.map(r => r.name + "(" + r.title + ")").join(", ");
 
   EXEC_MAIL_LOG.push({
     date: todayStr(),
     time: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
     freq: EXEC_MAIL_ENABLED ? EXEC_MAIL_FREQ + " 자동" : "수동",
+    recipients: recipientNames,
     snapshot
   });
-  toast(`경영진 그룹에 종합현황 리포트를 발송했습니다. (누적 ${EXEC_MAIL_LOG.length}건)`, "green");
+  toast(`${recipientNames} 등 ${activeRecipients.length}명에게 종합현황 리포트를 발송했습니다. (누적 ${EXEC_MAIL_LOG.length}건)`, "green");
   renderExecMailLog();
 }
 
@@ -1511,7 +1520,7 @@ function renderExecMailLog(){
   const el = $("#execMailLog");
   if (!el) return;
   el.innerHTML = EXEC_MAIL_LOG.length ? EXEC_MAIL_LOG.slice().reverse().slice(0, 3).map(m => `
-    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.freq} · ${m.snapshot}</div>
+    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.freq} · 수신 ${m.recipients ? m.recipients : "-"} · ${m.snapshot}</div>
   `).join("") : "";
 }
 
@@ -1645,6 +1654,35 @@ function renderKpiStrip(){
   `;
 }
 
+/* ---- 중요과제/일상과제 분류기준 (통합기준정보에 명문화된 규칙) ---- */
+const IMPORTANCE_CRITERIA = [
+  {
+    id: "downtime", weight: 1,
+    label: "① 라인 비가동 손실 영향도",
+    desc: "과제리소스가 '생산비가동이슈'로 접수된 경우 — 라인 정지로 직결되는 이슈",
+    check: (t) => t.resource === "생산비가동이슈"
+  },
+  {
+    id: "sqdc", weight: 1,
+    label: "② SQDC 정량적 지표 영향도",
+    desc: "개선위치가 안전(S) 또는 납기(D)인 경우 — 공정 전체에 파급되는 지표",
+    check: (t) => t.sqdc === "S" || t.sqdc === "D"
+  },
+  {
+    id: "chronic", weight: 1,
+    label: "③ 공장 고질적 최우선순위 문제",
+    desc: "M+3 미달로 재이관(regenOf)된 과제이거나, 동일 팀·동일 SQDC로 진행 중인 과제가 이미 있는 경우 — 반복/고질 이슈",
+    check: (t, all) => !!t.regenOf || all.some(x => x.id !== t.id && x.team === t.team && x.sqdc === t.sqdc && x.stageStatus !== "done_all")
+  }
+];
+const IMPORTANCE_THRESHOLD = 2; // 3개 기준 중 이 점수 이상이면 중요과제
+
+function classifyImportance(t, allTasksList){
+  const matched = IMPORTANCE_CRITERIA.filter(c => c.check(t, allTasksList));
+  const score = matched.reduce((s, c) => s + c.weight, 0);
+  return { category: score >= IMPORTANCE_THRESHOLD ? "important" : "normal", score, matched };
+}
+
 /* ---- 등록 확정 (Part 잠금 전환) ---- */
 function confirmRegistration(){
   const t = getTask(activeTaskId);
@@ -1664,12 +1702,13 @@ function confirmRegistration(){
   t.actTo = $("#fActTo").value;
   t.isNew = false;
 
-  // 지능형 라우팅: 백엔드 중요도 판정 시뮬레이션
-  const importantRoll = (title.length + sqdc.length) % 3 === 0;
-  t.category = importantRoll ? "important" : "normal";
+  // 지능형 라우팅: 통합기준정보에 정의된 3대 기준으로 자동 판정 (임의 지정 불가)
+  const result = classifyImportance(t, TASKS);
+  t.category = result.category;
   t.registered = true;
 
-  toast(`등록 확정 완료 → 지능형 라우팅: ${t.category === "important" ? "중요과제 (팀장→모듈리더→임원진)" : "일상과제 (팀장 단독 승인)"}`, "navy");
+  const reasonText = result.matched.length ? result.matched.map(c => c.label).join(", ") : "해당 기준 없음";
+  toast(`지능형 라우팅 판정: ${result.score}/3점 → ${t.category === "important" ? "중요과제 (팀장→모듈리더→임원진)" : "일상과제 (팀장 단독 승인)"} · 충족기준: ${reasonText}`, "navy");
   openTaskModal(t.id);
   refreshAllScreens();
 }
@@ -2569,6 +2608,16 @@ function buildUserMaster(){
   return Object.values(map).sort((a, b) => a.user.localeCompare(b.user));
 }
 
+/* ---- 경영진 메일링 수신자 마스터 ---- */
+let EXEC_RECIPIENTS = [
+  { name: "박승현", title: "대표이사(CEO)", email: "sh.park@hd-ce.com", use: true },
+  { name: "이강수", title: "생산본부장", email: "ks.lee@hd-ce.com", use: true },
+  { name: "최윤정", title: "품질본부장", email: "yj.choi@hd-ce.com", use: true },
+  { name: "서인국", title: "울산공장장", email: "ik.seo@hd-ce.com", use: true },
+  { name: "한동희", title: "생산혁신팀장", email: "dh.han@hd-ce.com", use: true },
+  { name: "조은비", title: "경영기획팀장", email: "eb.jo@hd-ce.com", use: false }
+];
+
 function renderMasterDataScreen(){
   const deptRows = buildDeptTeamMaster();
   $("#masterDeptBody").innerHTML = deptRows.length ? deptRows.map(r => {
@@ -2609,6 +2658,41 @@ function renderMasterDataScreen(){
     MASTER_USER_EVAL_AUTH[cb.dataset.masterEvalAuth] = cb.checked;
     toast(`${cb.dataset.masterEvalAuth}님의 소그룹 평가권한이 ${cb.checked ? "부여" : "회수"}되었습니다.`, cb.checked ? "green" : "red");
   }));
+
+  $("#masterExecBody").innerHTML = EXEC_RECIPIENTS.length ? EXEC_RECIPIENTS.map((r, i) => `
+    <tr>
+      <td style="text-align:left;font-weight:600">${r.name}</td>
+      <td>${r.title}</td>
+      <td style="text-align:left;font-size:11.5px;color:var(--ink-soft)">${r.email}</td>
+      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-master-exec="${i}"> 수신</label></td>
+    </tr>
+  `).join("") : `<tr><td colspan="4" style="padding:20px;color:#9AA7B2">등록된 수신자가 없습니다.</td></tr>`;
+
+  $all("[data-master-exec]").forEach(cb => cb.addEventListener("change", () => {
+    const r = EXEC_RECIPIENTS[+cb.dataset.masterExec];
+    r.use = cb.checked;
+    toast(`${r.name}(${r.title})님을 경영진 메일링 수신 대상에서 ${cb.checked ? "추가" : "제외"}했습니다.`, cb.checked ? "green" : "navy");
+    renderExecMailBar();
+  }));
+
+  /* ---- 5. 중요과제/일상과제 분류기준 ---- */
+  $("#critThresholdText").textContent = IMPORTANCE_THRESHOLD;
+  $("#masterCriteriaBody").innerHTML = IMPORTANCE_CRITERIA.map(c => `
+    <tr>
+      <td style="text-align:left;font-weight:600">${c.label}</td>
+      <td style="text-align:left;font-size:12px;color:var(--ink-soft)">${c.desc}</td>
+      <td>+${c.weight}</td>
+    </tr>
+  `).join("");
+
+  const results = TASKS.map(t => classifyImportance(t, TASKS));
+  const importantN = results.filter(r => r.category === "important").length;
+  const normalN = results.length - importantN;
+  $("#masterCriteriaStat").innerHTML = `
+    <div class="stat-card accent-red"><span class="stat-label">중요과제 판정 건수</span><span class="stat-value">${importantN}</span></div>
+    <div class="stat-card"><span class="stat-label">일상과제 판정 건수</span><span class="stat-value">${normalN}</span></div>
+    <div class="stat-card accent-navy"><span class="stat-label">전체 문제해결과제</span><span class="stat-value">${TASKS.length}</span></div>
+  `;
 }
 
 /* ================= 소그룹활동 등록/평가 모달 ================= */
@@ -2855,6 +2939,10 @@ function bindEvents(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // 기존(시드) 문제해결과제도 통합기준정보의 중요/일상 분류기준으로 재판정하여
+  // 전체 화면(대시보드/조회/KPI)이 하나의 기준으로 일관되게 표시되도록 함
+  TASKS.forEach(t => { t.category = classifyImportance(t, TASKS).category; });
+
   bindEvents();
   renderMainScreen();
   renderKpiStrip();
