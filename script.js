@@ -1657,25 +1657,31 @@ function renderKpiStrip(){
 /* ---- 중요과제/일상과제 분류기준 (통합기준정보에 명문화된 규칙) ---- */
 let IMPORTANCE_CRITERIA = [
   {
-    id: "downtime", weight: 1, keyword: null,
+    id: "downtime", weight: 3, keyword: null,
     label: "① 라인 비가동 손실 영향도",
-    desc: "과제리소스가 '생산비가동이슈'로 접수된 경우 — 라인 정지로 직결되는 이슈",
+    desc: "과제리소스가 '생산비가동이슈'로 접수된 경우 — 라인 정지로 직결되는 최고 심각도 이슈",
     check: (t) => t.resource === "생산비가동이슈"
   },
   {
-    id: "sqdc", weight: 1, keyword: null,
-    label: "② SQDC 정량적 지표 영향도",
-    desc: "개선위치가 안전(S) 또는 납기(D)인 경우 — 공정 전체에 파급되는 지표",
-    check: (t) => t.sqdc === "S" || t.sqdc === "D"
+    id: "safety", weight: 3, keyword: null,
+    label: "② 안전(S) 지표 영향도",
+    desc: "개선위치가 안전(S)인 경우 — 인명·설비 사고와 직결되어 항상 최우선 취급",
+    check: (t) => t.sqdc === "S"
+  },
+  {
+    id: "delivery", weight: 2, keyword: null,
+    label: "③ 납기(D) 지표 영향도",
+    desc: "개선위치가 납기(D)인 경우 — 출하 지연 등 대외 신뢰도에 영향",
+    check: (t) => t.sqdc === "D"
   },
   {
     id: "chronic", weight: 1, keyword: null,
-    label: "③ 공장 고질적 최우선순위 문제",
-    desc: "M+3 미달로 재이관(regenOf)된 과제이거나, 동일 팀·동일 SQDC로 진행 중인 과제가 이미 있는 경우 — 반복/고질 이슈",
+    label: "④ 공장 고질적 최우선순위 문제",
+    desc: "M+3 미달로 재이관(regenOf)된 과제이거나, 동일 팀·동일 SQDC로 진행 중인 과제가 이미 있는 경우 — 반복/고질 이슈(단독으로는 결정적이지 않음)",
     check: (t, all) => !!t.regenOf || all.some(x => x.id !== t.id && x.team === t.team && x.sqdc === t.sqdc && x.stageStatus !== "done_all")
   }
 ];
-let IMPORTANCE_THRESHOLD = 2; // 기준 중 이 점수 이상이면 중요과제
+let IMPORTANCE_THRESHOLD = 4; // 단일 기준만으로는 도달 불가 — 최소 2개 요인이 겹쳐야 중요과제로 판정 (예: 비가동+고질, 안전+고질 등)
 
 /* 신규(커스텀) 기준 생성 헬퍼 — "제목에 키워드 포함 시" 조건으로 동적 생성 */
 function makeKeywordCriterion(label, keyword, weight){
@@ -2815,10 +2821,11 @@ function bindMasterToolbar(){
       IMPORTANCE_THRESHOLD = snap.threshold;
       IMPORTANCE_CRITERIA = snap.criteria.map(c => {
         if (c.keyword) return makeKeywordCriterion(c.label, c.keyword, c.weight);
-        // 기본 3대 기준 복원 (id로 원래 check 로직 매핑)
+        // 기본 4대 기준 복원 (id로 원래 check 로직 매핑)
         const base = {
           downtime: (t) => t.resource === "생산비가동이슈",
-          sqdc: (t) => t.sqdc === "S" || t.sqdc === "D",
+          safety: (t) => t.sqdc === "S",
+          delivery: (t) => t.sqdc === "D",
           chronic: (t, all) => !!t.regenOf || all.some(x => x.id !== t.id && x.team === t.team && x.sqdc === t.sqdc && x.stageStatus !== "done_all")
         };
         return { id: c.id, weight: c.weight, keyword: null, label: c.label, desc: c.desc, check: base[c.id] };
