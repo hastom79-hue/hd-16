@@ -117,10 +117,29 @@ table{ border-collapse: collapse; }
   margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px dashed var(--line);
 }
 
-/* ===================== SCREEN TABS ===================== */
+/* ===================== CATEGORY TABS (상위 그룹) ===================== */
+.category-tabs{
+  background: var(--navy);
+  position: sticky; top:64px; z-index: 17;
+}
+.category-tabs-inner{
+  max-width: 1280px; margin:0 auto; display:flex; gap: 8px; padding: 10px 24px;
+  overflow-x:auto; scrollbar-width: thin;
+}
+.category-btn{
+  position: relative;
+  background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16);
+  color: #DCE7F0; font-size: 13px; font-weight: 800; letter-spacing:.2px;
+  padding: 8px 18px; border-radius: 999px; white-space:nowrap; flex-shrink:0;
+  transition: all .15s ease;
+}
+.category-btn:hover{ background: rgba(255,255,255,.15); }
+.category-btn.active{ background:#fff; color: var(--navy); border-color:#fff; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
+
+/* ===================== SCREEN TABS (하위 화면) ===================== */
 .screen-tabs{
   background: var(--surface); border-bottom: 1px solid var(--line);
-  position: sticky; top:64px; z-index: 15;
+  position: sticky; top:118px; z-index: 15;
 }
 .tabs-inner{
   max-width: 1280px; margin:0 auto; display:flex; gap: 2px; padding: 0 24px;
@@ -135,8 +154,8 @@ table{ border-collapse: collapse; }
 .tab-btn:hover{ color: var(--navy); }
 .tab-btn.active{ color: var(--navy); border-bottom-color: var(--steel); }
 
-/* 탭 커스텀 팝업 툴팁 */
-.tab-btn::after{
+/* 탭 커스텀 팝업 툴팁 (카테고리 탭 + 서브 탭 공용) */
+.tab-btn::after, .category-btn::after{
   content: attr(data-tip);
   position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(2px);
   width: 200px; max-width: 60vw;
@@ -147,13 +166,16 @@ table{ border-collapse: collapse; }
   transition: opacity .15s ease, transform .15s ease;
   z-index: 200; margin-top: 8px;
 }
-.tab-btn:hover::after{
+.tab-btn:hover::after, .category-btn:hover::after{
   opacity: 1; visibility: visible; transform: translateX(-50%) translateY(6px);
 }
+.category-btn::after{ background: #0D2338; }
 .tab-btn:first-child::after{ left: 0; transform: translateX(0) translateY(2px); }
 .tab-btn:first-child:hover::after{ transform: translateX(0) translateY(6px); }
 .tab-btn:last-child::after{ left: auto; right: 0; transform: translateX(0) translateY(2px); }
 .tab-btn:last-child:hover::after{ transform: translateX(0) translateY(6px); }
+.category-btn:first-child::after{ left: 0; transform: translateX(0) translateY(2px); }
+.category-btn:first-child:hover::after{ transform: translateX(0) translateY(6px); }
 
 .screen{ display:none; }
 .screen.active{ display:block; }

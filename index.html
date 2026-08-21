@@ -45,13 +45,25 @@
 </section>
 
 <!-- ============ SCREEN TABS ============ -->
-<nav class="screen-tabs">
+<nav class="category-tabs">
+  <div class="category-tabs-inner">
+    <button class="category-btn" data-category="master" data-tip="부서/팀, 작업장·라인, 담당자 통합 기준정보 및 권한 관리">📋 통합기준정보</button>
+    <button class="category-btn active" data-category="problem" data-tip="문제해결과제 등록·조회·중요과제·유효성검증 4개 화면">🛠 문제해결과제</button>
+    <button class="category-btn" data-category="sg" data-tip="현장 소그룹활동 등록·조회·평가·성과·수평전개 5개 화면">👷 현장 소그룹활동</button>
+  </div>
+</nav>
+
+<nav class="screen-tabs" id="subTabsProblem">
   <div class="tabs-inner">
-    <button class="tab-btn" data-screen="masterDataScreen" data-tip="부서/팀, 작업장·라인, 담당자 통합 기준정보 및 권한 관리">통합기준정보</button>
     <button class="tab-btn active" data-screen="mainScreen" data-tip="문제해결과제를 부서·팀 단위 트리로 훑어보는 기본 화면">부서별 현황 (메인)</button>
     <button class="tab-btn" data-screen="listScreen" data-tip="등록일·등록자 등 세부 조건으로 문제해결과제를 검색">조회 (List)</button>
     <button class="tab-btn" data-screen="dashScreen" data-tip="SQDC 분류, 부서별 진행현황, Follow-up 리스트, 목표 달성/미달성 과제 제공">중요과제 대시보드</button>
     <button class="tab-btn" data-screen="regenTrendScreen" data-tip="M+1/M+2/M+3 유효성 검증 현황과 목표 미달로 재이관된 과제의 추이 추적">유효성 검증·재이관 추이</button>
+  </div>
+</nav>
+
+<nav class="screen-tabs" id="subTabsSg" style="display:none">
+  <div class="tabs-inner">
     <button class="tab-btn" data-screen="sgMainScreen" data-tip="소그룹활동 과제를 부서·팀 단위 트리로 훑어보는 화면">소그룹활동 (메인)</button>
     <button class="tab-btn" data-screen="sgListScreen" data-tip="소그룹활동 과제를 세부 조건으로 검색·열람">소그룹활동 조회</button>
     <button class="tab-btn" data-screen="sgEvalHistoryScreen" data-tip="1·2차 평가 이력 조회 및 고등급 사례 메일 발송">소그룹 평가이력 조회</button>

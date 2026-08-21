@@ -639,23 +639,45 @@ function notiStatusText(t){
 }
 
 /* ================= SCREEN TAB SWITCHING ================= */
+function renderScreenById(screenId){
+  if (screenId === "listScreen") renderListScreen();
+  if (screenId === "dashScreen") renderDashScreen();
+  if (screenId === "regenTrendScreen") renderRegenTrendScreen();
+  if (screenId === "sgMainScreen") renderSgMainScreen();
+  if (screenId === "sgListScreen") renderSgListScreen();
+  if (screenId === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
+  if (screenId === "sgPerfScreen") renderSgPerfScreen();
+  if (screenId === "hdStatusScreen") renderHdStatusScreen();
+  if (screenId === "masterDataScreen") renderMasterDataScreen();
+}
+
+function switchToScreen(screenId){
+  $all(".screen").forEach(s => s.classList.remove("active"));
+  $("#" + screenId).classList.add("active");
+  $all(".tab-btn").forEach(b => b.classList.remove("active"));
+  const btn = document.querySelector('.tab-btn[data-screen="' + screenId + '"]');
+  if (btn) btn.classList.add("active");
+  renderScreenById(screenId);
+}
+
+const CATEGORY_DEFAULT_SCREEN = { master: "masterDataScreen", problem: "mainScreen", sg: "sgMainScreen" };
+
+function switchCategory(category){
+  $all(".category-btn").forEach(b => b.classList.remove("active"));
+  document.querySelector('.category-btn[data-category="' + category + '"]').classList.add("active");
+
+  $("#subTabsProblem").style.display = category === "problem" ? "" : "none";
+  $("#subTabsSg").style.display = category === "sg" ? "" : "none";
+
+  switchToScreen(CATEGORY_DEFAULT_SCREEN[category]);
+}
+
 function bindTabs(){
+  $all(".category-btn").forEach(btn => {
+    btn.addEventListener("click", () => switchCategory(btn.dataset.category));
+  });
   $all(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      $all(".tab-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      $all(".screen").forEach(s => s.classList.remove("active"));
-      $("#" + btn.dataset.screen).classList.add("active");
-      if (btn.dataset.screen === "listScreen") renderListScreen();
-      if (btn.dataset.screen === "dashScreen") renderDashScreen();
-      if (btn.dataset.screen === "regenTrendScreen") renderRegenTrendScreen();
-      if (btn.dataset.screen === "sgMainScreen") renderSgMainScreen();
-      if (btn.dataset.screen === "sgListScreen") renderSgListScreen();
-      if (btn.dataset.screen === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
-      if (btn.dataset.screen === "sgPerfScreen") renderSgPerfScreen();
-      if (btn.dataset.screen === "hdStatusScreen") renderHdStatusScreen();
-      if (btn.dataset.screen === "masterDataScreen") renderMasterDataScreen();
-    });
+    btn.addEventListener("click", () => switchToScreen(btn.dataset.screen));
   });
 }
 
