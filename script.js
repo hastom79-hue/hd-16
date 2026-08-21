@@ -382,221 +382,414 @@ let TASKS = [
 ];
 
 /* ---------------- 소그룹활동 데이터 ---------------- */
-let sgCounter = 17;
+let sgCounter = 30;
 let SG_TASKS = [
   {
-    id: "SG-2026-0007", dept: "중형생산부", team: "중형상부1팀", user: "정민아",
-    improve: "품질 개선", sqdc: "Q",
-    title: "라인 안돈 반복 발생 원인분석 및 개선활동 (2026 1분기)",
-    phenomenon: "동일 설비에서 안돈(Andon) 반복 발생", current: "안돈 발생건수 12건(분기)", target: "안돈 발생건수 3건 이하",
-    files: [{ name: "안돈원인분석_보고서.xlsx", date: "2026-02-10" }],
-    resultLevel: "88", doneYN: true, doneDate: "2026-03-20",
-    eval1: { grade: "S", date: "2026-03-22", checked: 6 },
-    eval2: { grade: "S+", date: "2026-03-28", checked: 5 },
-    verifyDesc: "안돈 발생건수 9건 감소, 라인 정지시간 단축 확인", verifyMh: "8M/H, 320,000원",
-    stdTimeApplied: true, stdTimeDate: "2026-03-29",
-    horizontalDeployments: [
-      { workplace: "중형상부2팀", appliedDate: "2026-04-10" },
-      { workplace: "중형하부팀", appliedDate: "2026-05-02" }
-    ],
-    favorite: false, regDate: "2026-02-08"
+    id: "SG-2026-0001", dept: "대형생산부", team: "대형Att.팀", user: "박기태",
+    improve: "납기 개선", sqdc: "D",
+    title: "대량의 작업표준서를 공정별로 스마트하고 빠르게 누구나 쉽게!!!",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-03",
+    eval1: { grade: "C", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-06"
   },
   {
-    id: "SG-2026-0011", dept: "생산운영부", team: "울산정비팀", user: "구본무",
+    id: "SG-2026-0002", dept: "대형생산부", team: "대형메인팀", user: "공지선",
+    improve: "납기 개선", sqdc: "D",
+    title: "스윙베어링 권상 지그 개선 및 가이드핀 제작",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-05",
+    eval1: { grade: "C", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-08"
+  },
+  {
+    id: "SG-2026-0003", dept: "대형생산부", team: "대형메인팀", user: "최현",
+    improve: "납기 개선", sqdc: "D",
+    title: "RGV 이동버튼 모니터 연동 설정기능 활성화",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-08",
+    eval1: { grade: "C", date: "2026-07-12", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-11"
+  },
+  {
+    id: "SG-2026-0004", dept: "대형생산부", team: "대형상부팀", user: "우성일",
+    improve: "납기 개선", sqdc: "D",
+    title: "통합 신모델 엔진 석션 파이프 조립 방법 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-10",
+    eval1: { grade: "C", date: "2026-07-13", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-13"
+  },
+  {
+    id: "SG-2026-0005", dept: "대형생산부", team: "대형상부팀", user: "경병철",
+    improve: "납기 개선", sqdc: "D",
+    title: "u07,u08 공정변경 대차 투입 위치변경으로 작업에 이동시간 최소화",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-13",
+    eval1: { grade: "B", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-16"
+  },
+  {
+    id: "SG-2026-0006", dept: "생산기술부", team: "프레임제작팀", user: "이정호",
+    improve: "납기 개선", sqdc: "D",
+    title: "상부가접 Fool proof로 평면도 수치 안정화",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-15",
+    eval1: { grade: "A", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "A", date: "2026-07-15", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-18"
+  },
+  {
+    id: "SG-2026-0007", dept: "생산기술부", team: "프레임제작팀", user: "권종화",
+    improve: "납기 개선", sqdc: "D",
+    title: "하부 로봇 소모품 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-18",
+    eval1: { grade: "B", date: "2026-07-12", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-21"
+  },
+  {
+    id: "SG-2026-0008", dept: "생산기술부", team: "Boom제작팀", user: "김길천",
+    improve: "납기 개선", sqdc: "D",
+    title: "로봇 용접조건 개선으로 생산성 향상",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-20",
+    eval1: { grade: "S", date: "2026-07-13", checked: 0 },
+    eval2: { grade: "S", date: "2026-07-17", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: true, regDate: "2026-04-23"
+  },
+  {
+    id: "SG-2026-0009", dept: "중형생산부", team: "중형상부1팀", user: "최진호",
+    improve: "품질 개선", sqdc: "Q",
+    title: "모델별 프레임 끝단 마킹으로 오투입 예방 및 AGV CALL BUTTON 설치로 작업 대기시간 단축",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-23",
+    eval1: { grade: "B", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-26"
+  },
+  {
+    id: "SG-2026-0010", dept: "중형생산부", team: "중형상부2팀", user: "김민우",
+    improve: "납기 개선", sqdc: "D",
+    title: "엔진후드 권상 지그 개선으로 생산성 향상",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-05-25",
+    eval1: { grade: "B", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-04-28"
+  },
+  {
+    id: "SG-2026-0011", dept: "중형생산부", team: "중형상부2팀", user: "남건우",
     improve: "안전성 개선", sqdc: "S",
-    title: "크레인 주변 안전펜스 정비 소그룹활동",
-    phenomenon: "안전펜스 노후로 인한 끼임 위험", current: "안전점검 미흡 3건", target: "안전점검 미흡 0건",
+    title: "통합모델 엔진권상지그 및 방진고무 지그 제작을 통한 안전 및 작업성개선",
+    phenomenon: "", current: "", target: "",
     files: [],
-    resultLevel: "", doneYN: false, doneDate: null,
-    eval1: { grade: "", date: "", checked: 0 },
+    resultLevel: "", doneYN: true, doneDate: "2026-05-28",
+    eval1: { grade: "B", date: "2026-07-12", checked: 0 },
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
-    favorite: false, regDate: "2026-03-15"
+    favorite: false, regDate: "2026-05-01"
   },
   {
-    id: "SG-2026-0004", dept: "자재운영부", team: "자재물류팀", user: "이향기",
-    improve: "원가 개선", sqdc: "C",
-    title: "제작공정 부자재 재고 절감 활동",
-    phenomenon: "부자재 과다 발주로 재고 비용 증가", current: "재고금액 1,200만원", target: "재고금액 800만원 이하",
-    files: [{ name: "재고분석_전후.xlsx", date: "2026-01-12" }],
-    resultLevel: "62", doneYN: true, doneDate: "2026-01-30",
-    eval1: { grade: "B", date: "2026-02-02", checked: 4 },
-    eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
-    horizontalDeployments: [],
-    favorite: false, regDate: "2026-01-05"
-  },
-  {
-    id: "SG-2026-0009", dept: "자재운영부", team: "출하팀", user: "최다인",
+    id: "SG-2026-0012", dept: "중형생산부", team: "중형하부팀", user: "박창진",
     improve: "납기 개선", sqdc: "D",
-    title: "자재 입고 검수 체크리스트 표준화 활동",
-    phenomenon: "검수 누락으로 인한 재작업 발생", current: "검수 누락률 6%", target: "검수 누락률 1% 이하",
-    files: [{ name: "체크리스트_v1.pdf", date: "2025-12-20" }],
-    resultLevel: "91", doneYN: true, doneDate: "2026-01-15",
-    eval1: { grade: "A", date: "2026-01-18", checked: 5 },
-    eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "검수 누락률 5%p 개선, 재작업 공수 절감", verifyMh: "5M/H, 210,000원",
-    stdTimeApplied: false, stdTimeDate: null,
-    horizontalDeployments: [
-      { workplace: "자재물류팀", appliedDate: "2026-02-20" }
-    ],
-    favorite: false, regDate: "2025-12-18"
-  },
-  {
-    id: "SG-2026-0002", dept: "대형생산부", team: "대형상부팀", user: "장서윤",
-    improve: "품질 개선", sqdc: "Q",
-    title: "설비 가동일지 기록 오류 감소 활동",
-    phenomenon: "수기 기록 방식으로 인한 가동일지 오류 반복", current: "기록 오류 월 9건", target: "기록 오류 월 2건 이하",
-    files: [{ name: "기록오류_유형표.xlsx", date: "2025-07-20" }],
-    resultLevel: "70", doneYN: true, doneDate: "2025-08-25",
-    eval1: { grade: "B", date: "2025-08-28", checked: 4 },
-    eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
-    horizontalDeployments: [],
-    favorite: false, regDate: "2025-08-01"
-  },
-  {
-    id: "SG-2026-0003", dept: "휠로더생산부", team: "휠로더프론트팀", user: "김도현",
-    improve: "납기 개선", sqdc: "D",
-    title: "품질 클레임 현장 대응시간 단축 소그룹",
-    phenomenon: "클레임 접수 후 현장 담당자 배정 지연", current: "평균 대응시간 14시간", target: "평균 대응시간 4시간 이내",
-    files: [{ name: "클레임대응_프로세스.pptx", date: "2025-09-08" }],
-    resultLevel: "95", doneYN: true, doneDate: "2025-09-28",
-    eval1: { grade: "A", date: "2025-09-30", checked: 6 },
-    eval2: { grade: "S", date: "2025-10-06", checked: 5 },
-    verifyDesc: "클레임 대응시간 10시간 단축, 현장 만족도 상승", verifyMh: "6M/H, 260,000원",
-    stdTimeApplied: true, stdTimeDate: "2025-10-08",
-    horizontalDeployments: [
-      { workplace: "성능팀", appliedDate: "2025-11-10" }
-    ],
-    favorite: true, regDate: "2025-09-05"
-  },
-  {
-    id: "SG-2026-0005", dept: "조립생산부", team: "옵션조립팀", user: "한지수",
-    improve: "품질 개선", sqdc: "Q",
-    title: "자재 불출 오류 저감 소그룹",
-    phenomenon: "동일 규격 자재 혼재로 오불출 발생", current: "오불출 건수 월 7건", target: "오불출 건수 월 1건 이하",
+    title: "중형 하부 라인 CAPA 증대를 위한 재공축소 및 라인 운영 변경",
+    phenomenon: "", current: "", target: "",
     files: [],
-    resultLevel: "55", doneYN: true, doneDate: "2025-11-05",
-    eval1: { grade: "C", date: "2025-11-08", checked: 3 },
+    resultLevel: "", doneYN: true, doneDate: "2026-05-30",
+    eval1: { grade: "B", date: "2026-07-13", checked: 0 },
     eval2: { grade: "", date: "", checked: 0 },
     verifyDesc: "", verifyMh: "",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
-    favorite: false, regDate: "2025-10-10"
+    favorite: false, regDate: "2026-05-03"
   },
   {
-    id: "SG-2026-0006", dept: "생산기술부", team: "프론트 제작팀", user: "윤성민",
-    improve: "원가 개선", sqdc: "C",
-    title: "포장 자재 재사용률 향상 활동",
-    phenomenon: "1회성 포장재 폐기 비용 증가", current: "재사용률 22%", target: "재사용률 60% 이상",
-    files: [{ name: "재사용포장_설계안.pdf", date: "2025-11-25" }],
-    resultLevel: "93", doneYN: true, doneDate: "2025-12-10",
-    eval1: { grade: "S+", date: "2025-12-12", checked: 6 },
-    eval2: { grade: "S", date: "2025-12-18", checked: 6 },
-    verifyDesc: "포장재 비용 32% 절감, 재사용률 68% 달성", verifyMh: "10M/H, 410,000원",
-    stdTimeApplied: true, stdTimeDate: "2025-12-19",
-    horizontalDeployments: [
-      { workplace: "중형어태치팀", appliedDate: "2026-01-15" },
-      { workplace: "대형메인팀", appliedDate: "2026-02-10" }
-    ],
-    favorite: true, regDate: "2025-11-01"
-  },
-  {
-    id: "SG-2026-0008", dept: "생산기술부", team: "붐 제작팀", user: "서준혁",
-    improve: "품질 개선", sqdc: "Q",
-    title: "가공설비 예방보전 체크리스트 개선",
-    phenomenon: "점검항목 누락으로 돌발고장 발생", current: "돌발고장 월 5건", target: "돌발고장 월 1건 이하",
-    files: [{ name: "예방보전_체크리스트_v2.xlsx", date: "2026-01-05" }],
-    resultLevel: "88", doneYN: true, doneDate: "2026-01-25",
-    eval1: { grade: "A", date: "2026-01-28", checked: 5 },
-    eval2: { grade: "A", date: "2026-02-03", checked: 5 },
-    verifyDesc: "돌발고장 4건 감소, 설비 가동률 향상", verifyMh: "7M/H, 290,000원",
-    stdTimeApplied: true, stdTimeDate: "2026-02-04",
-    horizontalDeployments: [
-      { workplace: "대형어태치팀", appliedDate: "2026-03-01" }
-    ],
-    favorite: false, regDate: "2025-12-20"
-  },
-  {
-    id: "SG-2026-0010", dept: "조립생산부", team: "초대형조립팀", user: "이하늘",
-    improve: "납기 개선", sqdc: "D",
-    title: "조립 지그 표준화 소그룹",
-    phenomenon: "지그 규격 상이로 작업 준비시간 증가", current: "준비시간 22분", target: "준비시간 8분 이하",
-    files: [],
-    resultLevel: "60", doneYN: true, doneDate: "2026-02-10",
-    eval1: { grade: "B", date: "2026-02-13", checked: 4 },
-    eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
-    horizontalDeployments: [],
-    favorite: false, regDate: "2026-01-15"
-  },
-  {
-    id: "SG-2026-0013", dept: "생산품질부", team: "성능팀", user: "오세훈",
-    improve: "품질 개선", sqdc: "Q",
-    title: "수입검사 판정기준 명확화",
-    phenomenon: "검사자별 판정기준 상이로 재검사 발생", current: "재검사율 9%", target: "재검사율 2% 이하",
-    files: [{ name: "판정기준_표준서.pdf", date: "2026-02-20" }],
-    resultLevel: "97", doneYN: true, doneDate: "2026-03-08",
-    eval1: { grade: "S", date: "2026-03-10", checked: 6 },
-    eval2: { grade: "A", date: "2026-03-16", checked: 5 },
-    verifyDesc: "재검사율 7%p 개선, 검사 리드타임 단축", verifyMh: "5M/H, 180,000원",
-    stdTimeApplied: true, stdTimeDate: "2026-03-17",
-    horizontalDeployments: [
-      { workplace: "휠로더리어팀", appliedDate: "2026-04-05" }
-    ],
-    favorite: false, regDate: "2026-02-01"
-  },
-  {
-    id: "SG-2026-0014", dept: "생산품질부", team: "트러블슈팅팀", user: "정하윤",
-    improve: "납기 개선", sqdc: "D",
-    title: "돌발 트러블 초동대응 매뉴얼화",
-    phenomenon: "초동대응 표준 부재로 복구 지연", current: "초동대응 소요 25분", target: "초동대응 소요 10분 이하",
-    files: [{ name: "초동대응_매뉴얼_초안.docx", date: "2026-03-10" }],
-    resultLevel: "82", doneYN: true, doneDate: "2026-03-25",
-    eval1: { grade: "A", date: "2026-03-27", checked: 5 },
-    eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
-    horizontalDeployments: [],
-    favorite: false, regDate: "2026-03-05"
-  },
-  {
-    id: "SG-2026-0015", dept: "중형생산부", team: "중형메인팀", user: "최다인",
-    improve: "품질 개선", sqdc: "Q",
-    title: "설비 가동 일정 변경 알림체계 개선",
-    phenomenon: "설비 가동 일정 변경 알림 누락으로 현장 혼선 발생", current: "알림 누락률 15%", target: "알림 누락률 2% 이하",
-    files: [],
-    resultLevel: "50", doneYN: false, doneDate: null,
-    eval1: { grade: "C", date: "2026-04-20", checked: 3 },
-    eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
-    horizontalDeployments: [],
-    favorite: false, regDate: "2026-04-01"
-  },
-  {
-    id: "SG-2026-0016", dept: "휠로더생산부", team: "휠로더메인팀", user: "구본무",
+    id: "SG-2026-0013", dept: "중형생산부", team: "중형하부팀", user: "윤민석",
     improve: "안전성 개선", sqdc: "S",
-    title: "설비 청소 표준시간 재산정 소그룹",
-    phenomenon: "청소시간 과다산정으로 비가동 손실 발생", current: "청소 소요 65분", target: "청소 소요 30분 이하",
-    files: [{ name: "청소표준_재산정안.xlsx", date: "2026-05-15" }],
-    resultLevel: "96", doneYN: true, doneDate: "2026-06-05",
-    eval1: { grade: "S+", date: "2026-06-07", checked: 6 },
-    eval2: { grade: "S+", date: "2026-06-13", checked: 6 },
-    verifyDesc: "청소시간 35분 단축, 설비 가동률 4%p 향상", verifyMh: "9M/H, 380,000원",
-    stdTimeApplied: true, stdTimeDate: "2026-06-14",
-    horizontalDeployments: [
-      { workplace: "중형상부2팀", appliedDate: "2026-07-01" },
-      { workplace: "휠로더리어팀", appliedDate: "2026-07-20" }
-    ],
-    favorite: true, regDate: "2026-05-10"
-  }
+    title: "트랙 고정물 제거시 안전사고예방 작업성 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-02",
+    eval1: { grade: "C", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-06"
+  },
+  {
+    id: "SG-2026-0014", dept: "중형생산부", team: "중형하부팀", user: "윤민석",
+    improve: "납기 개선", sqdc: "D",
+    title: "RGV3번 엔코더 값위치 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-04",
+    eval1: { grade: "C", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-08"
+  },
+  {
+    id: "SG-2026-0015", dept: "중형생산부", team: "중형Att팀", user: "김성균",
+    improve: "안전성 개선", sqdc: "S",
+    title: "ARM SUB1공정 안전&품질 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-07",
+    eval1: { grade: "C", date: "2026-07-12", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-11"
+  },
+  {
+    id: "SG-2026-0016", dept: "중형생산부", team: "중형Att팀", user: "권창혁",
+    improve: "품질 개선", sqdc: "Q",
+    title: "BOOM PIPE 조립시 작업데미지/작업방법 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-09",
+    eval1: { grade: "B", date: "2026-07-13", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-13"
+  },
+  {
+    id: "SG-2026-0017", dept: "중형생산부", team: "중형Att팀", user: "문준경",
+    improve: "안전성 개선", sqdc: "S",
+    title: "치공구 개선을 통한 붐 사이드 데미지 방지 및 작업자 근골격계 질환 예방",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-12",
+    eval1: { grade: "B", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-16"
+  },
+  {
+    id: "SG-2026-0018", dept: "중형생산부", team: "중형메인팀", user: "이인홍",
+    improve: "납기 개선", sqdc: "D",
+    title: "터닝 조인트 공정분개로 과부하 공정 개선 및 마샤링 자재 이동으로 작업자 이동 동선 축소",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-14",
+    eval1: { grade: "C", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-18"
+  },
+  {
+    id: "SG-2026-0019", dept: "중형생산부", team: "중형메인팀", user: "한희준",
+    improve: "납기 개선", sqdc: "D",
+    title: "도킹 대기 리프트 하강 축소로 작업대기 LOSS 축소",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-17",
+    eval1: { grade: "B", date: "2026-07-12", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-21"
+  },
+  {
+    id: "SG-2026-0020", dept: "중형생산부", team: "중형메인팀", user: "박진철",
+    improve: "납기 개선", sqdc: "D",
+    title: "MCV 고압호스 조립공정 이동동선 최적화를 통해 생산성 향상",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-19",
+    eval1: { grade: "B", date: "2026-07-13", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-23"
+  },
+  {
+    id: "SG-2026-0021", dept: "휠로더생산부", team: "휠로더Front팀", user: "김종훈",
+    improve: "납기 개선", sqdc: "D",
+    title: "MCV서브라인 Q-keeper 활동 / 리스트 정립",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-22",
+    eval1: { grade: "B", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-26"
+  },
+  {
+    id: "SG-2026-0022", dept: "휠로더생산부", team: "휠로더Front팀", user: "방태곤",
+    improve: "납기 개선", sqdc: "D",
+    title: "대형모델(HL980A, HL985A) 프론트 드라이브샤프트 권상지그 제작",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-24",
+    eval1: { grade: "B", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-05-28"
+  },
+  {
+    id: "SG-2026-0023", dept: "휠로더생산부", team: "휠로더리어팀", user: "손준호",
+    improve: "안전성 개선", sqdc: "S",
+    title: "휠로더 리어팀 엑슬 보호커버 회수전용 소형 AGV 제작(1분기 과제 연속 진행)",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-27",
+    eval1: { grade: "S", date: "2026-07-12", checked: 0 },
+    eval2: { grade: "S", date: "2026-07-16", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: true, regDate: "2026-05-31"
+  },
+  {
+    id: "SG-2026-0024", dept: "휠로더생산부", team: "휠로더메인팀", user: "손상영",
+    improve: "납기 개선", sqdc: "D",
+    title: "CWT 램프 갭 조정 지그 제작",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-06-29",
+    eval1: { grade: "B", date: "2026-07-13", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-06-02"
+  },
+  {
+    id: "SG-2026-0025", dept: "휠로더생산부", team: "휠로더메인팀", user: "노경민",
+    improve: "품질 개선", sqdc: "Q",
+    title: "주유공정 작동유 주입 정합성",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-07-02",
+    eval1: { grade: "B", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-06-05"
+  },
+  {
+    id: "SG-2026-0026", dept: "조립생산부", team: "초대형조립팀", user: "김연승",
+    improve: "품질 개선", sqdc: "Q",
+    title: "병행생산장비(80,100톤) CWT작업 시, 데미지감소",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-07-04",
+    eval1: { grade: "B", date: "2026-07-11", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-06-07"
+  },
+  {
+    id: "SG-2026-0027", dept: "조립생산부", team: "초대형조립팀", user: "라양빈",
+    improve: "납기 개선", sqdc: "D",
+    title: "300LCE-BP(전기차) 판넬 서브 작업대 개선및 제작",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-07-07",
+    eval1: { grade: "C", date: "2026-07-12", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-06-10"
+  },
+  {
+    id: "SG-2026-0028", dept: "생산품질부", team: "성능팀", user: "정일우",
+    improve: "품질 개선", sqdc: "Q",
+    title: "주행 측정설비 우천시 작동불량",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-07-09",
+    eval1: { grade: "B", date: "2026-07-13", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-06-12"
+  },
+  {
+    id: "SG-2026-0029", dept: "생산품질부", team: "트러블슈팅팀", user: "김이수",
+    improve: "납기 개선", sqdc: "D",
+    title: "작동유 드레인 지그 개선",
+    phenomenon: "", current: "", target: "",
+    files: [],
+    resultLevel: "", doneYN: true, doneDate: "2026-07-12",
+    eval1: { grade: "C", date: "2026-07-10", checked: 0 },
+    eval2: { grade: "", date: "", checked: 0 },
+    verifyDesc: "", verifyMh: "",
+    stdTimeApplied: false, stdTimeDate: null,
+    horizontalDeployments: [],
+    favorite: false, regDate: "2026-06-15"
+  },
 ];
 
 /* ---------------- 5S 점검항목 (평가 기준정보) ---------------- */
@@ -643,6 +836,7 @@ function renderScreenById(screenId){
   if (screenId === "listScreen") renderListScreen();
   if (screenId === "dashScreen") renderDashScreen();
   if (screenId === "regenTrendScreen") renderRegenTrendScreen();
+  if (screenId === "pdcaMonitorScreen") renderPdcaMonitorScreen();
   if (screenId === "sgMainScreen") renderSgMainScreen();
   if (screenId === "sgListScreen") renderSgListScreen();
   if (screenId === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
@@ -1039,6 +1233,143 @@ function bindRegenTrendScreen(){
   // 정적 필터 없음 — 탭 진입 시 자동 렌더 (bindTabs에서 처리)
 }
 
+/* ================= PDCA 진척도 종합 모니터링 ================= */
+let pdcaPeriod = "month";
+
+function isoWeekLabel(dateStr){
+  const d = new Date(dateStr + "T00:00:00");
+  const target = new Date(d.valueOf());
+  const dayNr = (d.getDay() + 6) % 7;
+  target.setDate(target.getDate() - dayNr + 3);
+  const firstThursday = target.valueOf();
+  target.setMonth(0, 1);
+  if (target.getDay() !== 4) target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+  const week = 1 + Math.round((firstThursday - target.valueOf()) / 604800000);
+  return `${d.getFullYear()}-W${String(week).padStart(2, "0")}`;
+}
+function pdcaMonthLabel(dateStr){ return dateStr ? dateStr.slice(0, 7) : null; }
+function pdcaHalfLabel(dateStr){
+  if (!dateStr) return null;
+  const d = new Date(dateStr + "T00:00:00");
+  return `${d.getFullYear()} H${d.getMonth() < 6 ? 1 : 2}`;
+}
+
+const PDCA_PERIOD_FN = { week: isoWeekLabel, month: pdcaMonthLabel, quarter: dateToQuarterLabel, half: pdcaHalfLabel, year: dateToYear };
+const PDCA_PERIOD_LABEL = { week: "주간", month: "월간", quarter: "분기", half: "반기", year: "년간" };
+const STAGE_FUNNEL_COLORS = { P: "#2C5F8A", D: "#3E7CB1", C: "#E8A23D", A: "#8E44AD" };
+
+function renderCountBarChartGeneric(chartEl, tableEl, map, colLabel, seriesLabel){
+  const labels = Object.keys(map).filter(Boolean).sort();
+  chartEl.innerHTML = "";
+  const maxV = Math.max(1, ...labels.map(l => map[l]));
+  labels.forEach(l => {
+    const v = map[l];
+    const h = Math.round((v / maxV) * 140);
+    const col = document.createElement("div");
+    col.className = "bar-col";
+    col.innerHTML = `
+      <div class="bar-rate">${v}건</div>
+      <div class="bar-stack" style="height:${Math.max(h, 2)}px"><div class="bar-seg-done" style="height:${h}px" title="${v}건"></div></div>
+      <div class="bar-label">${l}</div>
+    `;
+    chartEl.appendChild(col);
+  });
+  if (!labels.length) chartEl.innerHTML = `<div class="case-empty" style="padding:20px">데이터가 아직 없습니다.</div>`;
+  tableEl.innerHTML = `<tr><th>${colLabel}</th><th>${seriesLabel}</th></tr>` +
+    labels.map(l => `<tr><th>${l}</th><td>${map[l]}</td></tr>`).join("");
+}
+
+function renderPdcaRateChart(chartEl, tableEl, allMap, doneMap, colLabel){
+  const labels = Object.keys(allMap).filter(Boolean).sort();
+  chartEl.innerHTML = "";
+  labels.forEach(l => {
+    const total = allMap[l] || 0, done = doneMap[l] || 0;
+    const rate = total ? Math.round((done / total) * 100) : 0;
+    const h = Math.round((rate / 100) * 140);
+    const col = document.createElement("div");
+    col.className = "bar-col";
+    col.innerHTML = `
+      <div class="bar-rate">${rate}%</div>
+      <div class="bar-stack" style="height:${Math.max(h, 2)}px"><div class="bar-seg-done" style="height:${h}px"></div></div>
+      <div class="bar-label">${l}<br><b>${done}/${total}</b></div>
+    `;
+    chartEl.appendChild(col);
+  });
+  if (!labels.length) chartEl.innerHTML = `<div class="case-empty" style="padding:20px">데이터가 아직 없습니다.</div>`;
+  tableEl.innerHTML = `<tr><th>${colLabel}</th><th>접수건수</th><th>완료건수</th><th>진척률</th></tr>` +
+    labels.map(l => {
+      const total = allMap[l] || 0, done = doneMap[l] || 0;
+      const rate = total ? Math.round((done / total) * 100) : 0;
+      return `<tr><th>${l}</th><td>${total}</td><td>${done}</td><td class="${rate >= 50 ? "rate-high" : ""}">${rate}%</td></tr>`;
+    }).join("");
+}
+
+function renderPdcaMonitorScreen(){
+  const keyFn = PDCA_PERIOD_FN[pdcaPeriod];
+  const periodLabel = PDCA_PERIOD_LABEL[pdcaPeriod];
+
+  // --- 요약 통계 ---
+  const totalCount = TASKS.length;
+  const totalDone = TASKS.filter(t => t.stageStatus === "done_all").length;
+  const inProgressCount = totalCount - totalDone;
+  const overallRate = totalCount ? Math.round((totalDone / totalCount) * 100) : 0;
+
+  // --- 기간별 접수·등록 추이 ---
+  const regMap = {};
+  TASKS.forEach(t => { const k = keyFn(t.regDate); if (k) regMap[k] = (regMap[k] || 0) + 1; });
+  const regKeys = Object.keys(regMap).sort();
+  const latestBucketCount = regKeys.length ? regMap[regKeys[regKeys.length - 1]] : 0;
+
+  $("#pdcaMonitorStrip").innerHTML = `
+    <div class="stat-card"><span class="stat-label">총 접수 건수</span><span class="stat-value">${totalCount}</span></div>
+    <div class="stat-card accent-navy"><span class="stat-label">진행중 (P·D·C·A)</span><span class="stat-value">${inProgressCount}</span></div>
+    <div class="stat-card accent-green"><span class="stat-label">전체 진척률(완료)</span><span class="stat-value">${overallRate}%</span></div>
+    <div class="stat-card accent-amber"><span class="stat-label">최근 ${periodLabel} 신규접수</span><span class="stat-value">${latestBucketCount}</span></div>
+  `;
+
+  $("#pdcaRegChartTitle").textContent = `${periodLabel}별 접수·등록 추이`;
+  renderCountBarChartGeneric($("#pdcaRegChart"), $("#pdcaRegTable"), regMap, periodLabel, "접수건수");
+
+  // --- PDCA 단계별 현재 분포 ---
+  const active = TASKS.filter(t => t.stageStatus !== "done_all");
+  const stageCounts = { P: 0, D: 0, C: 0, A: 0 };
+  active.forEach(t => { stageCounts[STAGES[t.stageIndex]]++; });
+  const funnelSteps = [...STAGES, "완료"];
+  $("#pdcaStageFunnel").innerHTML = funnelSteps.map(s => {
+    const count = s === "완료" ? totalDone : stageCounts[s];
+    const pct = totalCount ? Math.round((count / totalCount) * 100) : 0;
+    const color = s === "완료" ? "#3F8F5F" : STAGE_FUNNEL_COLORS[s];
+    return `
+      <div class="funnel-step">
+        <div class="funnel-label">${s === "완료" ? "완료" : s + "단계"}</div>
+        <div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:${Math.max(pct, count ? 8 : 0)}%;background:${color}">${count ? count + "건" : ""}</div></div>
+        <div class="funnel-count">${count} / ${totalCount}</div>
+      </div>
+    `;
+  }).join("");
+
+  // --- 기간별 진척률(완료율) 추이 ---
+  const doneMap = {};
+  TASKS.forEach(t => {
+    if (t.stageStatus !== "done_all") return;
+    const k = keyFn(t.regDate);
+    if (k) doneMap[k] = (doneMap[k] || 0) + 1;
+  });
+  $("#pdcaProgressChartTitle").textContent = `${periodLabel}별 진척률(완료율) 추이`;
+  renderPdcaRateChart($("#pdcaProgressChart"), $("#pdcaProgressTable"), regMap, doneMap, periodLabel);
+}
+
+function bindPdcaMonitorScreen(){
+  $all(".period-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      pdcaPeriod = btn.dataset.period;
+      $all(".period-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderPdcaMonitorScreen();
+    });
+  });
+}
+
 /* ================= MODAL: 등록/진행 ================= */
 function openRegisterModal(){
   const id = "T-2026-" + String(taskCounter++).padStart(4, "0");
@@ -1116,10 +1447,74 @@ function refreshAllScreens(){
   if ($("#listScreen").classList.contains("active")) renderListScreen();
   if ($("#dashScreen").classList.contains("active")) renderDashScreen();
   if ($("#regenTrendScreen").classList.contains("active")) renderRegenTrendScreen();
+  if ($("#pdcaMonitorScreen").classList.contains("active")) renderPdcaMonitorScreen();
   renderKpiStrip();
 }
 
 /* ---- 상단 배너 실시간 KPI ---- */
+/* ================= 경영진 정기 메일링 ================= */
+let EXEC_MAIL_ENABLED = false;
+let EXEC_MAIL_FREQ = "매주"; // 매일 | 매주 | 매월
+let EXEC_MAIL_LOG = [];
+
+function nextExecSendDate(freq){
+  const d = new Date();
+  if (freq === "매일") d.setDate(d.getDate() + 1);
+  else if (freq === "매주") d.setDate(d.getDate() + (((1 - d.getDay()) + 7) % 7 || 7));
+  else d.setMonth(d.getMonth() + 1, 1);
+  return d.toISOString().slice(0, 10);
+}
+
+function renderExecMailBar(){
+  const el = $("#kpiMailBar");
+  if (!el) return;
+  el.innerHTML = `
+    <label class="chk"><input type="checkbox" id="execMailToggle" ${EXEC_MAIL_ENABLED ? "checked" : ""}> 📧 경영진 정기 메일링</label>
+    <select id="execMailFreq">
+      <option value="매일" ${EXEC_MAIL_FREQ === "매일" ? "selected" : ""}>매일</option>
+      <option value="매주" ${EXEC_MAIL_FREQ === "매주" ? "selected" : ""}>매주 (월요일)</option>
+      <option value="매월" ${EXEC_MAIL_FREQ === "매월" ? "selected" : ""}>매월 (1일)</option>
+    </select>
+    <span class="exec-mail-next">${EXEC_MAIL_ENABLED ? "다음 자동발송: " + nextExecSendDate(EXEC_MAIL_FREQ) : "자동발송 꺼짐 — 체크박스로 활성화"}</span>
+    <button class="exec-mail-send" id="btnExecMailNow">지금 발송</button>
+  `;
+  $("#execMailToggle").addEventListener("change", (e) => {
+    EXEC_MAIL_ENABLED = e.target.checked;
+    toast(EXEC_MAIL_ENABLED ? `경영진 정기 메일링이 활성화되었습니다 (${EXEC_MAIL_FREQ}).` : "경영진 정기 메일링이 비활성화되었습니다.", EXEC_MAIL_ENABLED ? "green" : "navy");
+    renderExecMailBar();
+  });
+  $("#execMailFreq").addEventListener("change", (e) => {
+    EXEC_MAIL_FREQ = e.target.value;
+    renderExecMailBar();
+  });
+  $("#btnExecMailNow").addEventListener("click", handleExecMailSend);
+}
+
+function handleExecMailSend(){
+  const heroVal = document.querySelector(".kpi-hero-value");
+  const alerts = document.querySelectorAll(".kpi-insight-card .kpi-alert");
+  const snapshot = `접수 대비 진행 ${heroVal ? heroVal.textContent : "-"}` +
+    (alerts[0] ? " · " + alerts[0].textContent.trim() : "") +
+    (alerts[1] ? " · " + alerts[1].textContent.trim() : "");
+
+  EXEC_MAIL_LOG.push({
+    date: todayStr(),
+    time: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+    freq: EXEC_MAIL_ENABLED ? EXEC_MAIL_FREQ + " 자동" : "수동",
+    snapshot
+  });
+  toast(`경영진 그룹에 종합현황 리포트를 발송했습니다. (누적 ${EXEC_MAIL_LOG.length}건)`, "green");
+  renderExecMailLog();
+}
+
+function renderExecMailLog(){
+  const el = $("#execMailLog");
+  if (!el) return;
+  el.innerHTML = EXEC_MAIL_LOG.length ? EXEC_MAIL_LOG.slice().reverse().slice(0, 3).map(m => `
+    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.freq} · ${m.snapshot}</div>
+  `).join("") : "";
+}
+
 function renderKpiStrip(){
   const problemTotal = TASKS.length;
   const problemInProgress = TASKS.filter(t => !(t.stageStatus === "done_all" && t.completeYN === "Y")).length;
@@ -1136,42 +1531,116 @@ function renderKpiStrip(){
   }).length;
   const hd = computeHdStats();
 
-  $("#kpiStrip").innerHTML = `
-    <div class="kpi-chip">
-      <span class="kpi-value">${problemInProgress} <small>/ ${problemTotal}건</small></span>
-      <span class="kpi-label">문제해결과제 진행중</span>
-    </div>
-    <div class="kpi-chip">
-      <span class="kpi-value">${sgInProgress} <small>/ ${sgTotal}건</small></span>
-      <span class="kpi-label">소그룹활동 진행중</span>
-    </div>
-    <div class="kpi-chip">
-      <span class="kpi-value">${totalInProgress} <small>/ ${totalAccepted}건 (${progressRate}%)</small></span>
-      <span class="kpi-label">접수 대비 진행 비율</span>
-    </div>
-    <div class="kpi-chip">
-      <span class="kpi-value">${hd.highCount}</span>
-      <span class="kpi-label">고등급(S+·S·A) 사례 누적</span>
-    </div>
-    <div class="kpi-chip">
-      <span class="kpi-value">${TASKS.filter(t => t.completeYN === "Y").length}</span>
-      <span class="kpi-label">SQDC 목표 달성 누적</span>
-    </div>
-    <div class="kpi-chip">
-      <span class="kpi-value">${TASKS.filter(t => t.completeYN === "N").length}</span>
-      <span class="kpi-label">SQDC 목표 미달성 누적</span>
-    </div>
-    <div class="kpi-chip ${escalateCount > 0 ? "warn" : ""}">
-      <span class="kpi-value">${escalateCount}</span>
-      <span class="kpi-label">지연 가속 독촉 대상</span>
-    </div>
-    <div class="kpi-chip">
-      <span class="kpi-value">${hd.deployCount}</span>
-      <span class="kpi-label">수평전개 적용 누적</span>
-    </div>
-    <div class="kpi-chip ${hd.noDeployCount > 0 ? "warn" : ""}">
-      <span class="kpi-value">${hd.noDeployCount}</span>
-      <span class="kpi-label">미전개 고등급 사례</span>
+  const achievedCount = TASKS.filter(t => t.completeYN === "Y").length;
+  const unachievedCount = TASKS.filter(t => t.completeYN === "N").length;
+  const decidedCount = achievedCount + unachievedCount;
+  const achievedShare = decidedCount ? (achievedCount / decidedCount) * 100 : 0;
+  const unachievedShare = decidedCount ? (unachievedCount / decidedCount) * 100 : 0;
+
+  const deployedCount = hd.highCount - hd.noDeployCount;
+  const deployedShare = hd.highCount ? (deployedCount / hd.highCount) * 100 : 0;
+  const notDeployedShare = hd.highCount ? (hd.noDeployCount / hd.highCount) * 100 : 0;
+
+  /* ---- 추가 지표: SQDC 분포(문제해결과제) ---- */
+  const sqdcCounts = { S: 0, Q: 0, D: 0, C: 0 };
+  TASKS.forEach(t => { if (sqdcCounts[t.sqdc] !== undefined) sqdcCounts[t.sqdc]++; });
+  const sqdcTotal = Object.values(sqdcCounts).reduce((a, b) => a + b, 0) || 1;
+  const importantCount = TASKS.filter(t => t.category === "important").length;
+  const importantShare = problemTotal ? Math.round((importantCount / problemTotal) * 100) : 0;
+  const topSqdc = Object.entries(sqdcCounts).sort((a, b) => b[1] - a[1])[0];
+  const sqdcNameMap = { S: "안전(S)", Q: "품질(Q)", D: "납기(D)", C: "원가(C)" };
+
+  /* ---- 추가 지표: 소그룹 평가등급 분포 ---- */
+  const allEvalRecords = buildEvalRecords();
+  const gradeCounts = { "S+": 0, S: 0, A: 0, B: 0, C: 0 };
+  allEvalRecords.forEach(r => { if (gradeCounts[r.grade] !== undefined) gradeCounts[r.grade]++; });
+  const gradeTotal = allEvalRecords.length || 1;
+  const highGradeShare = allEvalRecords.length ? Math.round((hd.highCount / allEvalRecords.length) * 100) : 0;
+  const thisQuarter = currentQuarterLabel();
+  const thisQuarterHighCount = allEvalRecords.filter(r => isHighGrade(r.grade) && dateToQuarterLabel(r.date) === thisQuarter).length;
+
+  /* ---- 추가 지표: 평균 처리기간(등록~A단계 완료, 완료판정건 기준) ---- */
+  const decidedTasks = TASKS.filter(t => t.completeYN === "Y" || t.completeYN === "N");
+  const leadDays = decidedTasks
+    .filter(t => t.stageDates.A)
+    .map(t => Math.round((new Date(t.stageDates.A) - new Date(t.regDate)) / 86400000));
+  const avgLeadDays = leadDays.length ? Math.round(leadDays.reduce((a, b) => a + b, 0) / leadDays.length) : 0;
+
+  const circumference = 263.9;
+  const ringOffset = Math.round(circumference * (1 - progressRate / 100));
+
+  $("#kpiDashboard").innerHTML = `
+    <div class="kpi-dashboard">
+      <div class="kpi-hero">
+        <svg class="kpi-ring" width="72" height="72" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="11"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round"
+            stroke-dasharray="${circumference}" stroke-dashoffset="${ringOffset}" transform="rotate(-90 50 50)"/>
+        </svg>
+        <div class="kpi-hero-text">
+          <span class="kpi-hero-value">${progressRate}%</span>
+          <span class="kpi-hero-label">접수 대비 진행 비율<br>전체 ${totalInProgress}/${totalAccepted}건 진행중</span>
+        </div>
+        <div class="kpi-hero-sub">
+          <b>${avgLeadDays}일</b>
+          <span>평균 처리기간</span>
+        </div>
+        <div class="kpi-hero-sub">
+          <b>${importantShare}%</b>
+          <span>중요과제 비율<br>(${importantCount}/${problemTotal}건)</span>
+        </div>
+      </div>
+
+      <div class="kpi-insight-cards">
+        <div class="kpi-insight-card">
+          <div class="kpi-insight-head">🛠 문제해결과제 <b>${problemInProgress}</b>건 진행중 <i>(전체 ${problemTotal}건)</i></div>
+          <div class="kpi-mini-bar">
+            <div class="seg done" style="width:${achievedShare}%" title="목표 달성 ${achievedCount}건"></div>
+            <div class="seg fail" style="width:${unachievedShare}%" title="목표 미달성 ${unachievedCount}건"></div>
+          </div>
+          <div class="kpi-mini-bar-label"><span>✅ 목표 달성 ${achievedCount}건</span><span>⚠ 미달성 ${unachievedCount}건</span></div>
+          <div class="kpi-alert ${escalateCount > 0 ? "warn" : "ok"}">
+            ${escalateCount > 0 ? `⏰ 지연 가속 독촉 대상 ${escalateCount}건 — 확인 필요` : "✅ 지연 가속 독촉 대상 없음"}
+          </div>
+        </div>
+
+        <div class="kpi-insight-card">
+          <div class="kpi-insight-head">👷 현장 소그룹활동 <b>${sgInProgress}</b>건 진행중 <i>(전체 ${sgTotal}건)</i></div>
+          <div class="kpi-mini-bar">
+            <div class="seg applied" style="width:${deployedShare}%" title="수평전개 완료 ${deployedCount}건"></div>
+            <div class="seg notapplied" style="width:${notDeployedShare}%" title="미전개 ${hd.noDeployCount}건"></div>
+          </div>
+          <div class="kpi-mini-bar-label"><span>🔁 수평전개 완료 ${deployedCount}건</span><span>⏳ 미전개 ${hd.noDeployCount}건</span></div>
+          <div class="kpi-alert ${hd.noDeployCount > 0 ? "warn" : "ok"}">
+            ${hd.noDeployCount > 0 ? `🏆 고등급 ${hd.highCount}건 중 ${hd.noDeployCount}건 미전개 — 확산 필요` : `✅ 고등급 ${hd.highCount}건 전량 수평전개 완료`}
+          </div>
+        </div>
+
+        <div class="kpi-insight-card">
+          <div class="kpi-insight-head">📊 SQDC 분포 <i>(문제해결과제 ${problemTotal}건)</i></div>
+          <div class="kpi-mini-bar">
+            <div class="seg sqdc-s" style="width:${sqdcCounts.S / sqdcTotal * 100}%" title="안전(S) ${sqdcCounts.S}건"></div>
+            <div class="seg sqdc-q" style="width:${sqdcCounts.Q / sqdcTotal * 100}%" title="품질(Q) ${sqdcCounts.Q}건"></div>
+            <div class="seg sqdc-d" style="width:${sqdcCounts.D / sqdcTotal * 100}%" title="납기(D) ${sqdcCounts.D}건"></div>
+            <div class="seg sqdc-c" style="width:${sqdcCounts.C / sqdcTotal * 100}%" title="원가(C) ${sqdcCounts.C}건"></div>
+          </div>
+          <div class="kpi-mini-bar-label"><span>S ${sqdcCounts.S} · Q ${sqdcCounts.Q} · D ${sqdcCounts.D} · C ${sqdcCounts.C}</span></div>
+          <div class="kpi-alert info">📌 ${topSqdc ? sqdcNameMap[topSqdc[0]] + " 이슈 최다 " + topSqdc[1] + "건" : "데이터 없음"}</div>
+        </div>
+
+        <div class="kpi-insight-card">
+          <div class="kpi-insight-head">🏅 평가등급 분포 <i>(소그룹 평가 ${allEvalRecords.length}건)</i></div>
+          <div class="kpi-mini-bar">
+            <div class="seg grade-splus" style="width:${gradeCounts["S+"] / gradeTotal * 100}%" title="S+ ${gradeCounts["S+"]}건"></div>
+            <div class="seg grade-s" style="width:${gradeCounts.S / gradeTotal * 100}%" title="S ${gradeCounts.S}건"></div>
+            <div class="seg grade-a" style="width:${gradeCounts.A / gradeTotal * 100}%" title="A ${gradeCounts.A}건"></div>
+            <div class="seg grade-b" style="width:${gradeCounts.B / gradeTotal * 100}%" title="B ${gradeCounts.B}건"></div>
+            <div class="seg grade-c" style="width:${gradeCounts.C / gradeTotal * 100}%" title="C ${gradeCounts.C}건"></div>
+          </div>
+          <div class="kpi-mini-bar-label"><span>고등급 비율 ${highGradeShare}%</span></div>
+          <div class="kpi-alert info">📅 ${thisQuarter} 신규 고등급 발굴 ${thisQuarterHighCount}건</div>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -2341,6 +2810,7 @@ function bindEvents(){
   bindListScreen();
   bindDashScreen();
   bindRegenTrendScreen();
+  bindPdcaMonitorScreen();
   bindAdmin();
   bindTypeSelect();
   bindSgListScreen();
@@ -2354,4 +2824,6 @@ document.addEventListener("DOMContentLoaded", () => {
   bindEvents();
   renderMainScreen();
   renderKpiStrip();
+  renderExecMailBar();
+  renderExecMailLog();
 });
