@@ -20,6 +20,25 @@
 
 *{ box-sizing: border-box; }
 html,body{ margin:0; padding:0; }
+
+/* ===================== 커스텀 스크롤바 (기본 OS 스크롤바 대체) ===================== */
+html{
+  scrollbar-width: thin;
+  scrollbar-color: #C3CDD6 #F0F3F5;
+}
+::-webkit-scrollbar{ width: 10px; height: 8px; }
+::-webkit-scrollbar-track{ background: #F0F3F5; }
+::-webkit-scrollbar-thumb{
+  background: #C3CDD6; border-radius: 999px; border: 2px solid #F0F3F5;
+}
+::-webkit-scrollbar-thumb:hover{ background: #A7B4BF; }
+::-webkit-scrollbar-corner{ background: transparent; }
+
+/* 어두운 배너(탭 바) 안의 가로 스크롤은 밝은색 트랙으로 */
+.tabs-inner::-webkit-scrollbar-track,
+.category-tabs-inner::-webkit-scrollbar-track{ background: transparent; }
+.category-tabs-inner::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.35); border-color: transparent; }
+.category-tabs-inner::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,.5); }
 body{
   font-family: var(--font);
   background: var(--bg);
