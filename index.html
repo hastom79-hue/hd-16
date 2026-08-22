@@ -28,6 +28,9 @@
       <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M19.14 12.94a7.07 7.07 0 000-1.88l2.03-1.58a.5.5 0 00.12-.64l-1.92-3.32a.5.5 0 00-.6-.22l-2.39.96a7.3 7.3 0 00-1.63-.94l-.36-2.54a.5.5 0 00-.5-.42h-3.84a.5.5 0 00-.5.42l-.36 2.54c-.59.23-1.14.55-1.63.94l-2.39-.96a.5.5 0 00-.6.22L2.7 8.84a.5.5 0 00.12.64l2.03 1.58a7.07 7.07 0 000 1.88l-2.03 1.58a.5.5 0 00-.12.64l1.92 3.32c.14.24.42.32.6.22l2.39-.96c.5.39 1.04.71 1.63.94l.36 2.54c.05.24.26.42.5.42h3.84c.24 0 .45-.18.5-.42l.36-2.54c.59-.23 1.14-.55 1.63-.94l2.39.96c.24.1.47 0 .6-.22l1.92-3.32a.5.5 0 00-.12-.64l-2.03-1.58zM12 15.5a3.5 3.5 0 110-7 3.5 3.5 0 010 7z"/></svg>
       Admin 설정
     </button>
+    <button class="btn btn-admin" id="btnExportExcel" title="문제해결과제 + 소그룹활동 전체 데이터를 엑셀 파일로 내려받습니다">
+      📥 데이터 추출
+    </button>
     <button class="btn btn-primary" id="openRegisterBtn">+ 신규 과제 등록</button>
   </div>
 </header>
@@ -72,6 +75,7 @@
     <button class="tab-btn" data-screen="sgEvalHistoryScreen" data-tip="1·2차 평가 이력 조회 및 고등급 사례 메일 발송">소그룹 평가이력 조회</button>
     <button class="tab-btn" data-screen="sgPerfScreen" data-tip="분기·연간 단위 고등급(S+·S·A) 발굴율 추적">소그룹 성과 대시보드</button>
     <button class="tab-btn" data-screen="hdStatusScreen" data-tip="고등급 사례 발굴팀과 수평전개 적용 작업장 현황을 실시간 추적">수평전개 현황</button>
+    <button class="tab-btn" data-screen="sgEffectScreen" data-tip="분기·반기·연간 단위 유형효과 금액 추이와 누적 실적을 추적">유형효과 성과 모니터링</button>
   </div>
 </nav>
 
@@ -531,12 +535,105 @@
   </section>
 
   <!-- =====================================================
+       SCREEN — 유형효과 성과 모니터링 (분기·반기·연간)
+  ====================================================== -->
+  <section class="screen" id="sgEffectScreen">
+    <div class="board-head">
+      <h2>소그룹활동 유형효과 성과 모니터링</h2>
+      <p class="board-sub">현장 소그룹활동 과제의 유형효과(M/H·금액환산)를 분기·반기·연간 단위로 집계합니다. <b>생산기술팀 검증완료(표준시간 반영) 과제만 공식 실적으로 인정</b>되며, 미검증 금액은 현장 산출액으로 별도 구분 표시됩니다.</p>
+    </div>
+
+    <div class="panel-strip" id="sgEffectStrip"></div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>분기별 유형효과 금액</h3>
+        <div class="bar-chart" id="effectQuarterChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot" style="background:var(--steel)"></i>생산기술 검증완료</span>
+          <span><i class="lg-dot" style="background:var(--amber)"></i>현장 산출(검증대기)</span>
+        </div>
+        <table class="matrix-table perf-table" id="effectQuarterTable"></table>
+      </div>
+      <div class="dash-card">
+        <h3>반기별 유형효과 금액</h3>
+        <div class="bar-chart" id="effectHalfChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot" style="background:var(--steel)"></i>생산기술 검증완료</span>
+          <span><i class="lg-dot" style="background:var(--amber)"></i>현장 산출(검증대기)</span>
+        </div>
+        <table class="matrix-table perf-table" id="effectHalfTable"></table>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="dash-card">
+        <h3>연간 유형효과 금액</h3>
+        <div class="bar-chart" id="effectYearChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot" style="background:var(--steel)"></i>생산기술 검증완료</span>
+          <span><i class="lg-dot" style="background:var(--amber)"></i>현장 산출(검증대기)</span>
+        </div>
+        <table class="matrix-table perf-table" id="effectYearTable"></table>
+      </div>
+      <div class="dash-card">
+        <h3>누적 유형효과 추이 (분기 기준)</h3>
+        <div class="trend-chart-wrap" id="effectCumulativeChart"></div>
+        <div class="chart-legend">
+          <span><i class="lg-dot" style="background:var(--steel)"></i>검증완료 누적</span>
+          <span><i class="lg-dot" style="background:var(--amber)"></i>현장산출 누적(전체)</span>
+        </div>
+        <table class="matrix-table perf-table" id="effectCumulativeTable"></table>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>과제별 유형효과 상세 이력</h3>
+      <div class="table-wrap followup-scroll">
+        <table class="task-table">
+          <thead>
+            <tr><th>완료일</th><th>팀</th><th style="text-align:left">과제명</th><th>현장 산출액</th><th>생산기술 검증액</th><th>검증상태</th></tr>
+          </thead>
+          <tbody id="effectDetailBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>생산기술 검증완료 배포 이력</h3>
+      <p class="board-sub" style="margin-bottom:10px">생산기술팀이 표준시간(M/H)을 반영해 검증완료 처리하면, 확정된 유형효과 내역이 <b>생산기술팀·생산운영팀·생산혁신팀·경영진·전 부서팀장</b>에게 자동 배포됩니다.</p>
+      <div id="stdMhMailLog"></div>
+    </div>
+  </section>
+
+  <!-- =====================================================
        SCREEN — 통합기준정보 (부서/작업장/담당자 마스터)
   ====================================================== -->
   <section class="screen" id="masterDataScreen">
     <div class="board-head">
-      <h2>통합기준정보</h2>
-      <p class="board-sub">문제해결과제·소그룹활동 전체 시스템이 공통으로 참조하는 부서/팀, 작업장·라인, 담당자 기준정보입니다. 사용여부와 평가권한을 여기서 통제합니다.</p>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap">
+        <div>
+          <h2>통합기준정보</h2>
+          <p class="board-sub">문제해결과제·소그룹활동 전체 시스템이 공통으로 참조하는 부서/팀, 작업장·라인, 담당자 기준정보입니다. 사용여부와 평가권한을 여기서 통제합니다.</p>
+        </div>
+        <button class="tbtn ghost" id="btnOpenChangeCode" style="flex-shrink:0">🔐 보안코드 변경</button>
+      </div>
+    </div>
+
+    <div class="change-code-panel" id="changeCodePanel" style="display:none">
+      <div class="dash-card followup-card">
+        <h3>보안코드 변경</h3>
+        <p class="board-sub" style="margin-bottom:10px">마스터 권한자 본인만 변경할 수 있습니다. 현재 코드 확인 후 새 코드를 설정해 주세요.</p>
+        <div class="field-row three">
+          <div class="field"><label>현재 보안코드</label><input type="password" id="ccCurrentCode" autocomplete="off"></div>
+          <div class="field"><label>새 보안코드</label><input type="password" id="ccNewCode" autocomplete="off"></div>
+          <div class="field"><label>새 보안코드 확인</label><input type="password" id="ccNewCodeConfirm" autocomplete="off"></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="tbtn" id="btnSaveChangeCode" style="background:var(--navy);color:#fff;border-color:var(--navy)">변경 저장</button>
+          <button class="tbtn ghost" id="btnCancelChangeCode">취소</button>
+        </div>
+      </div>
     </div>
 
     <div class="master-tabs">
@@ -545,6 +642,7 @@
       <button class="master-tab" data-mtab="user">담당자</button>
       <button class="master-tab" data-mtab="exec">경영진 수신자</button>
       <button class="master-tab" data-mtab="criteria">중요과제 분류기준</button>
+      <button class="master-tab" data-mtab="mhrate">M/H 단가</button>
     </div>
 
     <div class="master-panel active" id="masterPanelDept">
@@ -654,6 +752,27 @@
           </table>
         </div>
         <div class="panel-strip" id="masterCriteriaStat" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <div class="master-panel" id="masterPanelMhrate">
+      <div class="dash-card followup-card">
+        <div class="master-toolbar">
+          <h3>M/H 단가 기준정보</h3>
+          <div class="master-toolbar-btns">
+            <button class="tbtn" data-master-new="mhrate">🆕 신규</button>
+            <button class="tbtn" data-master-del="mhrate">🗑 삭제</button>
+            <button class="tbtn" data-master-save="mhrate">💾 저장</button>
+            <button class="tbtn ghost" data-master-reset="mhrate">♻ 초기화</button>
+          </div>
+        </div>
+        <p class="board-sub" style="margin-bottom:10px">소그룹활동 유형효과 금액은 생산기술팀 검증 시 입력된 <b>M/H(공수)</b>에 아래 단가를 곱해 자동 산출됩니다. 단가가 바뀌면 전체 유형효과 금액이 즉시 재계산됩니다.</p>
+        <div class="table-wrap">
+          <table class="task-table">
+            <thead><tr><th style="width:30px"></th><th>적용연도</th><th>M/H당 단가(원)</th><th style="text-align:left">비고</th><th>사용여부</th></tr></thead>
+            <tbody id="masterMhRateBody"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </section>
@@ -767,10 +886,11 @@
         <div class="postcheck-block">
           <h4>개선효과 검증결과 (생산기술)</h4>
           <div class="field-row two">
-            <div class="field"><label>검증결과 설명</label><input type="text" id="sgVerifyDesc" placeholder="개선효과 요약"></div>
-            <div class="field"><label>M/H · 금액표기</label><input type="text" id="sgVerifyMh" placeholder="예) 12M/H, 850,000원"></div>
+            <div class="field"><label>유형효과 (정량)</label><input type="text" id="sgVerifyDesc" placeholder="예) 작업시간 5분 단축, 불량 3건→0건"></div>
+            <div class="field"><label>M/H · 금액환산</label><input type="text" id="sgVerifyMh" placeholder="예) 12M/H, 850,000원"></div>
           </div>
-          <label class="chk"><input type="checkbox" id="sgStdTime"> 표준시간 반영 여부(생산기술)</label>
+          <div class="field"><label>무형효과 (정성)</label><input type="text" id="sgIntangible" placeholder="예) 작업자 안전사고 리스크 감소, 현장 만족도 향상"></div>
+          <label class="chk"><input type="checkbox" id="sgStdTime"> ✅ 생산기술팀 검증완료 (표준시간 반영) — 체크 시에만 유형효과 금액이 공식 실적으로 집계됩니다</label>
           <span class="hint" id="sgStdTimeDate">완료 저장일 —</span>
         </div>
       </div>
@@ -1080,6 +1200,22 @@
 <input type="file" id="hiddenFileInput" style="display:none">
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="script.js"></script>
+<!-- ============ 통합기준정보 보안코드 잠금 오버레이 ============ -->
+<div class="lock-overlay" id="masterLockOverlay">
+  <div class="lock-box">
+    <div class="lock-icon">🔒</div>
+    <h3>통합기준정보 접근</h3>
+    <p>마스터 권한자 보안코드를 입력해 주세요.</p>
+    <input type="password" id="masterLockInput" inputmode="numeric" maxlength="12" placeholder="보안코드 입력" autocomplete="off">
+    <div class="lock-error" id="masterLockError"></div>
+    <div class="lock-btns">
+      <button class="tbtn ghost" id="masterLockCancelBtn">취소</button>
+      <button class="tbtn" id="masterLockConfirmBtn" style="background:var(--navy);color:#fff;border-color:var(--navy)">확인</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

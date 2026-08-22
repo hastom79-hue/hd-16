@@ -58,7 +58,7 @@ let TASKS = [
   },
   {
     id: "T-2026-0018", dept: "생산품질부", team: "최종검사팀",
-    title: "OEM 검사팀 자전거 사전점검 지연 개선",
+    title: "OEM 검사팀 완성차량 사전점검 지연 개선",
     user: "박태준", resource: "모듈 미해결과제", improve: "납기 개선",
     category: "normal", sqdc: "D",
     phenomenon: "사전점검 지연으로 재공장비 누적", current: "발생 0건 목표 대비 미달", target: "재공장비 27건 이상 → 0건", effect: "출고 리드타임 단축",
@@ -393,7 +393,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-03",
     eval1: { grade: "C", date: "2026-07-10", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "표준서 검색시간 12분 → 표준서 검색시간 3분 이내 수준 달성 확인", verifyMh: "2M/H, 60,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-06"
@@ -407,7 +408,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-05",
     eval1: { grade: "C", date: "2026-07-11", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "작업시간 18분 → 작업시간 9분 수준 달성 확인", verifyMh: "3M/H, 70,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-08"
@@ -421,7 +423,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-08",
     eval1: { grade: "C", date: "2026-07-12", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'RGV 이동버튼 모니터 연동 설정기능 활성화' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "1M/H, 80,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-11"
@@ -435,7 +438,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-10",
     eval1: { grade: "C", date: "2026-07-13", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "조립불량 월 6건 → 조립불량 월 1건 이하 수준 달성 확인", verifyMh: "2M/H, 50,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-13"
@@ -449,7 +453,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-13",
     eval1: { grade: "B", date: "2026-07-10", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "이동시간 8분 → 이동시간 3분 수준 달성 확인", verifyMh: "5M/H, 130,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-16"
@@ -463,8 +468,9 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-15",
     eval1: { grade: "A", date: "2026-07-11", checked: 5 },
     eval2: { grade: "A", date: "2026-07-15", checked: 5 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "평면도 편차 ±3.5mm → 평면도 편차 ±1.0mm 이내 수준 달성 확인", verifyMh: "5M/H, 270,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
+    stdTimeApplied: true, stdTimeDate: "2026-05-25",
     horizontalDeployments: [
       { workplace: "중형상부1팀", appliedDate: "2026-07-22" },
       { workplace: "중형상부2팀", appliedDate: "2026-08-05" }
@@ -480,7 +486,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-18",
     eval1: { grade: "B", date: "2026-07-12", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'하부 로봇 소모품 개선' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "4M/H, 150,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-21"
@@ -494,8 +501,9 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-20",
     eval1: { grade: "S", date: "2026-07-13", checked: 6 },
     eval2: { grade: "S", date: "2026-07-17", checked: 6 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "용접 사이클타임 42초 → 용접 사이클타임 30초 수준 달성 확인", verifyMh: "9M/H, 350,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
+    stdTimeApplied: true, stdTimeDate: "2026-05-30",
     horizontalDeployments: [
       { workplace: "프레임제작팀", appliedDate: "2026-07-25" },
       { workplace: "중형메인팀", appliedDate: "2026-08-02" },
@@ -512,8 +520,9 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-23",
     eval1: { grade: "B", date: "2026-07-10", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "오투입 월 5건 → 오투입 월 0건 수준 달성 확인", verifyMh: "3M/H, 130,000원",
+    intangible: "품질 산포 감소로 후공정 신뢰성 및 고객 만족도 향상, 현장 개선 참여문화 확산",
+    stdTimeApplied: true, stdTimeDate: "2026-06-02",
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-26"
   },
@@ -526,7 +535,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-25",
     eval1: { grade: "B", date: "2026-07-11", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "작업시간 10분 → 작업시간 5분 수준 달성 확인", verifyMh: "4M/H, 140,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-04-28"
@@ -540,7 +550,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-28",
     eval1: { grade: "B", date: "2026-07-12", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'통합모델 엔진권상지그 및 방진고무 지그 제작' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "5M/H, 150,000원",
+    intangible: "작업자 안전사고 리스크 감소 및 현장 안전 신뢰도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-01"
@@ -554,8 +565,9 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-05-30",
     eval1: { grade: "B", date: "2026-07-13", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "재공 18대 → 재공 10대 이하 수준 달성 확인", verifyMh: "3M/H, 120,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
+    stdTimeApplied: true, stdTimeDate: "2026-06-09",
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-03"
   },
@@ -568,7 +580,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-02",
     eval1: { grade: "C", date: "2026-07-10", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'트랙 고정물 제거시 안전사고예방 작업성 개선' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "2M/H, 60,000원",
+    intangible: "작업자 안전사고 리스크 감소 및 현장 안전 신뢰도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-06"
@@ -582,7 +595,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-04",
     eval1: { grade: "C", date: "2026-07-11", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'RGV3번 엔코더 값위치 개선' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "3M/H, 70,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-08"
@@ -596,7 +610,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-07",
     eval1: { grade: "C", date: "2026-07-12", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'ARM SUB1공정 안전&품질 개선' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "1M/H, 80,000원",
+    intangible: "작업자 안전사고 리스크 감소 및 현장 안전 신뢰도 향상, 현장 개선 참여문화 확산",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-11"
@@ -610,7 +625,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-09",
     eval1: { grade: "B", date: "2026-07-13", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "데미지 발생 월 4건 → 데미지 발생 월 0건 수준 달성 확인", verifyMh: "4M/H, 120,000원",
+    intangible: "품질 산포 감소로 후공정 신뢰성 및 고객 만족도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-13"
@@ -624,7 +640,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-12",
     eval1: { grade: "B", date: "2026-07-10", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "데미지 발생 월 3건 → 데미지 발생 월 0건 수준 달성 확인", verifyMh: "5M/H, 130,000원",
+    intangible: "작업자 안전사고 리스크 감소 및 현장 안전 신뢰도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-16"
@@ -638,7 +655,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-14",
     eval1: { grade: "C", date: "2026-07-11", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "이동거리 45m → 이동거리 20m 수준 달성 확인", verifyMh: "1M/H, 70,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-18"
@@ -652,7 +670,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-17",
     eval1: { grade: "B", date: "2026-07-12", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "대기시간 4분 → 대기시간 1분 수준 달성 확인", verifyMh: "4M/H, 150,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-21"
@@ -666,7 +685,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-19",
     eval1: { grade: "B", date: "2026-07-13", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "이동거리 30m → 이동거리 12m 수준 달성 확인", verifyMh: "5M/H, 120,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-23"
@@ -680,7 +700,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-22",
     eval1: { grade: "B", date: "2026-07-10", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'MCV서브라인 Q-keeper 활동 / 리스' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "3M/H, 130,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-26"
@@ -694,7 +715,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-24",
     eval1: { grade: "B", date: "2026-07-11", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "작업시간 15분 → 작업시간 7분 수준 달성 확인", verifyMh: "4M/H, 140,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-05-28"
@@ -708,8 +730,9 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-27",
     eval1: { grade: "S", date: "2026-07-12", checked: 6 },
     eval2: { grade: "S", date: "2026-07-16", checked: 6 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "회수 작업시간 20분 → 회수 작업시간 5분 수준 달성 확인", verifyMh: "9M/H, 380,000원",
+    intangible: "작업자 안전사고 리스크 감소 및 현장 안전 신뢰도 향상",
+    stdTimeApplied: true, stdTimeDate: "2026-07-07",
     horizontalDeployments: [
       { workplace: "휠로더Front팀", appliedDate: "2026-07-24" },
       { workplace: "휠로더메인팀", appliedDate: "2026-08-01" }
@@ -725,8 +748,9 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-06-29",
     eval1: { grade: "B", date: "2026-07-13", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
-    stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "갭 조정시간 12분 → 갭 조정시간 5분 수준 달성 확인", verifyMh: "3M/H, 120,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
+    stdTimeApplied: true, stdTimeDate: "2026-07-09",
     horizontalDeployments: [],
     favorite: false, regDate: "2026-06-02"
   },
@@ -739,7 +763,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-07-02",
     eval1: { grade: "B", date: "2026-07-10", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'주유공정 작동유 주입 정합성' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "4M/H, 130,000원",
+    intangible: "품질 산포 감소로 후공정 신뢰성 및 고객 만족도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-06-05"
@@ -753,7 +778,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-07-04",
     eval1: { grade: "B", date: "2026-07-11", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "데미지 발생 월 5건 → 데미지 발생 월 1건 이하 수준 달성 확인", verifyMh: "5M/H, 140,000원",
+    intangible: "품질 산포 감소로 후공정 신뢰성 및 고객 만족도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-06-07"
@@ -767,7 +793,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-07-07",
     eval1: { grade: "C", date: "2026-07-12", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "'300LCE-BP(전기차) 판넬 서브 작업대' 개선활동 결과 현장 적용 및 효과 확인", verifyMh: "1M/H, 80,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소, 현장 개선 참여문화 확산",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-06-10"
@@ -781,7 +808,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-07-09",
     eval1: { grade: "B", date: "2026-07-13", checked: 4 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "우천시 오작동 월 3건 → 우천시 오작동 월 0건 수준 달성 확인", verifyMh: "4M/H, 120,000원",
+    intangible: "품질 산포 감소로 후공정 신뢰성 및 고객 만족도 향상",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-06-12"
@@ -795,7 +823,8 @@ let SG_TASKS = [
     resultLevel: "", doneYN: true, doneDate: "2026-07-12",
     eval1: { grade: "C", date: "2026-07-10", checked: 3 },
     eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "",
+    verifyDesc: "드레인 작업시간 10분 → 드레인 작업시간 4분 수준 달성 확인", verifyMh: "3M/H, 60,000원",
+    intangible: "생산 리드타임 안정화로 현장 대기 스트레스 및 작업 피로도 감소",
     stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: "2026-06-15"
@@ -852,6 +881,7 @@ function renderScreenById(screenId){
   if (screenId === "sgEvalHistoryScreen") renderSgEvalHistoryScreen();
   if (screenId === "sgPerfScreen") renderSgPerfScreen();
   if (screenId === "hdStatusScreen") renderHdStatusScreen();
+  if (screenId === "sgEffectScreen") renderSgEffectScreen();
   if (screenId === "masterDataScreen") renderMasterDataScreen();
 }
 
@@ -866,7 +896,11 @@ function switchToScreen(screenId){
 
 const CATEGORY_DEFAULT_SCREEN = { master: "masterDataScreen", problem: "mainScreen", sg: "sgMainScreen" };
 
-function switchCategory(category){
+/* ================= 통합기준정보 보안코드 잠금 ================= */
+let MASTER_SECURITY_CODE = "306312";
+let masterUnlocked = false;
+
+function applyCategorySwitch(category){
   $all(".category-btn").forEach(b => b.classList.remove("active"));
   document.querySelector('.category-btn[data-category="' + category + '"]').classList.add("active");
 
@@ -874,6 +908,113 @@ function switchCategory(category){
   $("#subTabsSg").style.display = category === "sg" ? "" : "none";
 
   switchToScreen(CATEGORY_DEFAULT_SCREEN[category]);
+}
+
+function switchCategory(category){
+  if (category === "master" && !masterUnlocked){
+    openMasterLock();
+    return;
+  }
+  applyCategorySwitch(category);
+}
+
+function openMasterLock(){
+  $("#masterLockInput").value = "";
+  $("#masterLockError").textContent = "";
+  $("#masterLockOverlay").classList.add("open");
+  setTimeout(() => $("#masterLockInput").focus(), 50);
+}
+function closeMasterLock(){
+  $("#masterLockOverlay").classList.remove("open");
+  pendingMasterAuthAction = null;
+}
+function attemptMasterUnlock(){
+  const val = $("#masterLockInput").value.trim();
+  if (val === MASTER_SECURITY_CODE){
+    masterUnlocked = true;
+    const action = pendingMasterAuthAction;
+    pendingMasterAuthAction = null;
+    closeMasterLock();
+    if (action){
+      toast("마스터 권한이 확인되었습니다.", "green");
+      action();
+    } else {
+      applyCategorySwitch("master");
+      toast("통합기준정보 접근이 확인되었습니다.", "green");
+    }
+  } else {
+    $("#masterLockError").textContent = "보안코드가 일치하지 않습니다.";
+    $("#masterLockInput").value = "";
+    $("#masterLockInput").focus();
+  }
+}
+
+/* ================= 문제해결과제/소그룹 메인 - 삭제 기능 (마스터 권한자 전용) ================= */
+function updateMainDeleteBtnState(){
+  const anyChecked = [...$all("[data-rowsel]")].some(cb => cb.checked);
+  const btn = $("#btnDeleteRow");
+  if (btn) btn.disabled = !anyChecked;
+}
+function updateSgDeleteBtnState(){
+  const anyChecked = [...$all("[data-sgrowsel]")].some(cb => cb.checked);
+  const btn = $("#btnSgmDelete");
+  if (btn) btn.disabled = !anyChecked;
+}
+
+function requireMasterAuth(onSuccess){
+  if (masterUnlocked){ onSuccess(); return; }
+  pendingMasterAuthAction = onSuccess;
+  openMasterLock();
+}
+let pendingMasterAuthAction = null;
+
+function bindDeleteButtons(){
+  $("#btnDeleteRow").addEventListener("click", () => {
+    const ids = [...$all("[data-rowsel]:checked")].map(cb => cb.dataset.rowsel);
+    if (!ids.length) return;
+    requireMasterAuth(() => {
+      if (!confirm(`선택한 문제해결과제 ${ids.length}건을 삭제하시겠습니까?`)) return;
+      TASKS = TASKS.filter(t => !ids.includes(t.id));
+      toast(`문제해결과제 ${ids.length}건이 삭제되었습니다. (마스터 권한자)`, "red");
+      refreshAllScreens();
+    });
+  });
+
+  $("#btnSgmDelete").addEventListener("click", () => {
+    const ids = [...$all("[data-sgrowsel]:checked")].map(cb => cb.dataset.sgrowsel);
+    if (!ids.length) return;
+    requireMasterAuth(() => {
+      if (!confirm(`선택한 소그룹활동 과제 ${ids.length}건을 삭제하시겠습니까?`)) return;
+      SG_TASKS = SG_TASKS.filter(t => !ids.includes(t.id));
+      toast(`소그룹활동 과제 ${ids.length}건이 삭제되었습니다. (마스터 권한자)`, "red");
+      refreshSgScreens();
+    });
+  });
+}
+
+function bindMasterLock(){
+  $("#masterLockConfirmBtn").addEventListener("click", attemptMasterUnlock);
+  $("#masterLockCancelBtn").addEventListener("click", closeMasterLock);
+  $("#masterLockInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") attemptMasterUnlock();
+  });
+
+  $("#btnOpenChangeCode").addEventListener("click", () => {
+    $("#changeCodePanel").style.display = $("#changeCodePanel").style.display === "none" ? "" : "none";
+    $("#ccCurrentCode").value = ""; $("#ccNewCode").value = ""; $("#ccNewCodeConfirm").value = "";
+  });
+  $("#btnCancelChangeCode").addEventListener("click", () => { $("#changeCodePanel").style.display = "none"; });
+  $("#btnSaveChangeCode").addEventListener("click", () => {
+    const cur = $("#ccCurrentCode").value.trim();
+    const next = $("#ccNewCode").value.trim();
+    const confirm = $("#ccNewCodeConfirm").value.trim();
+    if (cur !== MASTER_SECURITY_CODE){ toast("현재 보안코드가 일치하지 않습니다.", "red"); return; }
+    if (!next || next.length < 4){ toast("새 보안코드는 4자 이상 입력해 주세요.", "red"); return; }
+    if (next !== confirm){ toast("새 보안코드 확인이 일치하지 않습니다.", "red"); return; }
+    MASTER_SECURITY_CODE = next;
+    $("#changeCodePanel").style.display = "none";
+    toast("보안코드가 변경되었습니다. 다음 접속부터 새 코드가 적용됩니다.", "green");
+  });
 }
 
 function bindTabs(){
@@ -933,6 +1074,7 @@ function renderMainScreen(){
           <div><span class="sqdc-pill">${t.sqdc || "-"}</span></div>
           <div class="cat-dot ${catCls}">${catLabel}</div>
           <div class="progress-counts">
+            <input type="checkbox" class="row-sel" data-rowsel="${t.id}" title="선택 (마스터 권한자만 삭제 가능)">
             <button class="star-btn" data-star="${t.id}">${t.favorite ? "★" : "☆"}</button>
           </div>
         `;
@@ -944,6 +1086,8 @@ function renderMainScreen(){
   });
 
   $all("[data-open]").forEach(a => a.addEventListener("click", (e) => { e.stopPropagation(); openTaskModal(a.dataset.open); }));
+  $all("[data-rowsel]").forEach(cb => cb.addEventListener("click", (e) => e.stopPropagation()));
+  $all("[data-rowsel]").forEach(cb => cb.addEventListener("change", updateMainDeleteBtnState));
   $all("[data-star]").forEach(btn => btn.addEventListener("click", (e) => {
     e.stopPropagation();
     const t = getTask(btn.dataset.star);
@@ -1560,6 +1704,10 @@ function renderKpiStrip(){
   const deployedShare = hd.highCount ? (deployedCount / hd.highCount) * 100 : 0;
   const notDeployedShare = hd.highCount ? (hd.noDeployCount / hd.highCount) * 100 : 0;
 
+  const tangibleRecords = buildTangibleEffectRecords();
+  const tangibleVerified = tangibleRecords.reduce((s, r) => s + r.verifiedAmount, 0);
+  const tangibleRaw = tangibleRecords.reduce((s, r) => s + r.amount, 0);
+
   /* ---- 추가 지표: SQDC 분포(문제해결과제) ---- */
   const sqdcCounts = { S: 0, Q: 0, D: 0, C: 0 };
   TASKS.forEach(t => { if (sqdcCounts[t.sqdc] !== undefined) sqdcCounts[t.sqdc]++; });
@@ -1633,6 +1781,7 @@ function renderKpiStrip(){
           <div class="kpi-alert ${hd.noDeployCount > 0 ? "warn" : "ok"}">
             ${hd.noDeployCount > 0 ? `🏆 고등급 ${hd.highCount}건 중 ${hd.noDeployCount}건 미전개 — 확산 필요` : `✅ 고등급 ${hd.highCount}건 전량 수평전개 완료`}
           </div>
+          <div class="kpi-alert info">💰 검증완료 ${formatWon(tangibleVerified)} <span style="opacity:.8">(현장산출 ${formatWon(tangibleRaw)} 중)</span></div>
         </div>
 
         <div class="kpi-insight-card">
@@ -1986,6 +2135,7 @@ function refreshSgScreens(){
   if ($("#sgEvalHistoryScreen").classList.contains("active")) renderSgEvalHistoryScreen();
   if ($("#sgPerfScreen").classList.contains("active")) renderSgPerfScreen();
   if ($("#hdStatusScreen").classList.contains("active")) renderHdStatusScreen();
+  if ($("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen();
   renderKpiStrip();
 }
 
@@ -2039,6 +2189,7 @@ function renderSgMainScreen(){
           <div><span class="sqdc-pill">${t.sqdc || "-"}</span></div>
           <div>${gradeBadge}</div>
           <div class="progress-counts">
+            <input type="checkbox" class="row-sel" data-sgrowsel="${t.id}" title="선택 (마스터 권한자만 삭제 가능)">
             ${(() => { const ea = evalActionFor(t); return ea ? `<button class="eval-btn" data-eval-open="${t.id}" data-eval-round="${ea.round}">📝 ${ea.label}</button>` : ""; })()}
             <button class="star-btn" data-sg-star="${t.id}">${t.favorite ? "★" : "☆"}</button>
           </div>
@@ -2051,6 +2202,8 @@ function renderSgMainScreen(){
   });
 
   $all("[data-sg-open]").forEach(a => a.addEventListener("click", (e) => { e.stopPropagation(); openSgTaskModal(a.dataset.sgOpen); }));
+  $all("[data-sgrowsel]").forEach(cb => cb.addEventListener("click", (e) => e.stopPropagation()));
+  $all("[data-sgrowsel]").forEach(cb => cb.addEventListener("change", updateSgDeleteBtnState));
   $all("[data-sg-star]").forEach(btn => btn.addEventListener("click", (e) => {
     e.stopPropagation();
     const t = sgGetTask(btn.dataset.sgStar);
@@ -2080,7 +2233,7 @@ function bindSgMainToolbar(){
     const id = "SG-2026-" + String(sgCounter++).padStart(4, "0");
     const clone = { ...src, id, files: [], doneYN: false, doneDate: null,
       eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
-      verifyDesc: "", verifyMh: "", stdTimeApplied: false, stdTimeDate: null,
+      verifyDesc: "", verifyMh: "", intangible: "", stdTimeApplied: false, stdTimeDate: null,
       horizontalDeployments: [],
       favorite: false, regDate: todayStr(), isNew: true };
     SG_TASKS.push(clone);
@@ -2595,6 +2748,200 @@ function renderHdStatusScreen(){
   `).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">수평전개 이력이 아직 없습니다.</td></tr>`;
 }
 
+/* ================= SCREEN — 유형효과 성과 모니터링 ================= */
+function parseMoneyFromVerifyMh(str){
+  if (!str) return 0;
+  const m = str.match(/([\d,]+)\s*원/);
+  if (!m) return 0;
+  return parseInt(m[1].replace(/,/g, ""), 10) || 0;
+}
+function parseMhFromVerifyMh(str){
+  if (!str) return 0;
+  const m = str.match(/([\d.]+)\s*M\s*\/?\s*H/i);
+  if (!m) return 0;
+  return parseFloat(m[1]) || 0;
+}
+function formatWon(n){ return Math.round(n).toLocaleString("ko-KR") + "원"; }
+function formatManwon(n){ return Math.round(n / 10000).toLocaleString("ko-KR") + "만원"; }
+
+function dateToHalfLabel(dateStr){
+  if (!dateStr) return null;
+  const d = new Date(dateStr + "T00:00:00");
+  return `${d.getFullYear()} H${d.getMonth() < 6 ? "1" : "2"}`;
+}
+function currentHalfLabel(){
+  const d = new Date();
+  return `${d.getFullYear()} H${d.getMonth() < 6 ? "1" : "2"}`;
+}
+
+/* 유형효과 금액은 "M/H × 표준단가"로 실제 산출됩니다(통합기준정보 > M/H 단가 기준정보 참조).
+   검증완료(생산기술) 시점의 연도 단가를 적용해, 단가 개정 시 과거 실적도 즉시 재계산됩니다. */
+function buildTangibleEffectRecords(){
+  return SG_TASKS
+    .filter(t => t.doneYN && t.doneDate && t.verifyMh)
+    .map(t => {
+      const mh = parseMhFromVerifyMh(t.verifyMh);
+      const verified = !!t.stdTimeApplied;
+      const rateYear = dateToYear(verified ? (t.stdTimeDate || t.doneDate) : t.doneDate);
+      const rate = getMhRate(rateYear);
+      const amount = Math.round(mh * rate);
+      return {
+        taskId: t.id, team: t.team, title: t.title, doneDate: t.doneDate,
+        verifyMh: t.verifyMh, intangible: t.intangible || "—", mh, rate, amount,
+        verified, verifiedDate: t.stdTimeDate,
+        verifiedAmount: verified ? amount : 0,
+        pendingAmount: verified ? 0 : amount,
+        quarter: dateToQuarterLabel(t.doneDate), half: dateToHalfLabel(t.doneDate), year: dateToYear(t.doneDate)
+      };
+    })
+    .filter(r => r.amount > 0)
+    .sort((a, b) => (b.doneDate || "").localeCompare(a.doneDate || ""));
+}
+
+/* 분기/반기/연도별로 {verified, pending} 두 값을 동시에 집계 */
+function aggregateSplitAmountBy(records, keyFn){
+  const map = {};
+  records.forEach(r => {
+    const key = keyFn(r.doneDate);
+    if (!key) return;
+    if (!map[key]) map[key] = { verified: 0, pending: 0 };
+    map[key].verified += r.verifiedAmount;
+    map[key].pending += r.pendingAmount;
+  });
+  return map;
+}
+
+function renderSplitAmountBarChart(chartEl, tableEl, map, unitLabel){
+  const labels = Object.keys(map).sort();
+  chartEl.innerHTML = "";
+  if (!labels.length){
+    chartEl.innerHTML = `<div class="case-empty" style="padding:20px">${unitLabel} 유형효과 데이터가 아직 없습니다.</div>`;
+    tableEl.innerHTML = "";
+    return;
+  }
+  const maxV = Math.max(1, ...labels.map(l => map[l].verified + map[l].pending));
+  labels.forEach(l => {
+    const { verified, pending } = map[l];
+    const hV = Math.round((verified / maxV) * 140);
+    const hP = Math.round((pending / maxV) * 140);
+    const col = document.createElement("div");
+    col.className = "bar-col";
+    col.innerHTML = `
+      <div class="bar-rate">${formatManwon(verified + pending)}</div>
+      <div class="bar-stack" style="height:${Math.max(hV + hP, 2)}px">
+        <div class="bar-seg-fail" style="height:${hP}px; background:var(--amber);" title="현장 산출(검증대기) ${formatWon(pending)}"></div>
+        <div class="bar-seg-done" style="height:${hV}px" title="생산기술 검증완료 ${formatWon(verified)}"></div>
+      </div>
+      <div class="bar-label">${l}</div>
+    `;
+    chartEl.appendChild(col);
+  });
+  tableEl.innerHTML = `<tr><th>${unitLabel}</th><th>검증완료</th><th>검증대기</th><th>합계</th></tr>` +
+    labels.map(l => `<tr><th>${l}</th><td style="color:var(--green);font-weight:700">${formatWon(map[l].verified)}</td><td style="color:#8A5A0F">${formatWon(map[l].pending)}</td><td>${formatWon(map[l].verified + map[l].pending)}</td></tr>`).join("");
+}
+
+function renderCumulativeChart(chartEl, tableEl, quarterMap){
+  const labels = Object.keys(quarterMap).sort();
+  if (!labels.length){
+    chartEl.innerHTML = `<div class="case-empty" style="padding:20px">누적 추이 데이터가 아직 없습니다.</div>`;
+    tableEl.innerHTML = "";
+    return;
+  }
+  let runV = 0, runP = 0;
+  const cumV = {}, cumP = {};
+  labels.forEach(l => { runV += quarterMap[l].verified; runP += quarterMap[l].pending; cumV[l] = runV; cumP[l] = runP; });
+
+  const w = 680, h = 190, padL = 60, padR = 16, padT = 16, padB = 26;
+  const maxV = Math.max(1, ...labels.map(l => cumV[l] + cumP[l]));
+  const stepX = labels.length > 1 ? (w - padL - padR) / (labels.length - 1) : 0;
+  const yFor = (v) => padT + (h - padT - padB) * (1 - v / maxV);
+  const xFor = (i) => padL + stepX * i;
+
+  const gridLines = [0, 0.5, 1].map(f => {
+    const y = padT + (h - padT - padB) * f;
+    const val = Math.round(maxV * (1 - f));
+    return `<line x1="${padL}" y1="${y}" x2="${w - padR}" y2="${y}" stroke="#E2E8EE" stroke-width="1"/><text x="2" y="${y + 4}" font-size="9" fill="#8792A0">${formatManwon(val)}</text>`;
+  }).join("");
+
+  const totalPts = labels.map((l, i) => `${xFor(i)},${yFor(cumV[l] + cumP[l])}`).join(" ");
+  const verifiedPts = labels.map((l, i) => `${xFor(i)},${yFor(cumV[l])}`).join(" ");
+  const totalDots = labels.map((l, i) => `<circle cx="${xFor(i)}" cy="${yFor(cumV[l] + cumP[l])}" r="3.5" fill="#E8A23D"/>`).join("");
+  const verifiedDots = labels.map((l, i) => `<circle cx="${xFor(i)}" cy="${yFor(cumV[l])}" r="3.5" fill="#2C5F8A"/>`).join("");
+  const xLabels = labels.map((l, i) => `<text x="${xFor(i)}" y="${h - 8}" font-size="10" fill="#8792A0" text-anchor="middle">${l}</text>`).join("");
+
+  chartEl.innerHTML = `<svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+    ${gridLines}
+    <polyline points="${totalPts}" fill="none" stroke="#E8A23D" stroke-width="2" stroke-dasharray="4 3"/>
+    <polyline points="${verifiedPts}" fill="none" stroke="#2C5F8A" stroke-width="2.5"/>
+    ${totalDots}${verifiedDots}${xLabels}
+  </svg>`;
+
+  tableEl.innerHTML = `<tr><th>분기</th><th>검증완료 누적</th><th>현장산출 누적(전체)</th></tr>` +
+    labels.map(l => `<tr><th>${l}</th><td style="font-weight:800;color:var(--navy)">${formatWon(cumV[l])}</td><td>${formatWon(cumV[l] + cumP[l])}</td></tr>`).join("");
+}
+
+/* 생산기술팀 검증완료(표준시간 반영) 시 실적 확정 메일 자동 배포 */
+let STD_MH_MAIL_LOG = [];
+const STD_MH_MAIL_RECIPIENTS = "생산기술팀, 생산운영팀, 생산혁신팀, 경영진, 전 부서팀장";
+
+function distributeStdMhMail(t){
+  const mh = parseMhFromVerifyMh(t.verifyMh);
+  const rate = getMhRate(dateToYear(t.stdTimeDate));
+  const amount = Math.round(mh * rate);
+  STD_MH_MAIL_LOG.push({
+    date: todayStr(),
+    time: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+    taskId: t.id, title: t.title, team: t.team, mh, rate, amount,
+    recipients: STD_MH_MAIL_RECIPIENTS
+  });
+  toast(`✅ 생산기술 검증완료 — [${STD_MH_MAIL_RECIPIENTS}]에 유형효과 확정 메일 배포 (MH ${mh}, ${formatWon(amount)})`, "green");
+}
+
+function renderStdMhMailLog(){
+  const el = $("#stdMhMailLog");
+  if (!el) return;
+  el.innerHTML = STD_MH_MAIL_LOG.length ? STD_MH_MAIL_LOG.slice().reverse().slice(0, 5).map(m => `
+    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.team} · ${m.title} · MH ${m.mh} × ${formatWon(m.rate)} = <b>${formatWon(m.amount)}</b><br>
+      <span style="font-size:10px;color:var(--ink-soft)">수신: ${m.recipients}</span>
+    </div>
+  `).join("") : `<div class="case-empty" style="padding:14px">아직 배포된 검증완료 메일이 없습니다.</div>`;
+}
+
+function renderSgEffectScreen(){
+  const records = buildTangibleEffectRecords();
+  const rawTotal = records.reduce((s, r) => s + r.amount, 0);
+  const verifiedTotal = records.reduce((s, r) => s + r.verifiedAmount, 0);
+  const pendingTotal = rawTotal - verifiedTotal;
+  const verifyRate = rawTotal ? Math.round((verifiedTotal / rawTotal) * 100) : 0;
+
+  const qMap = aggregateSplitAmountBy(records, dateToQuarterLabel);
+  const hMap = aggregateSplitAmountBy(records, dateToHalfLabel);
+  const yMap = aggregateSplitAmountBy(records, dateToYear);
+
+  $("#sgEffectStrip").innerHTML = `
+    <div class="stat-card accent-navy"><span class="stat-label">✅ 생산기술팀 검증완료 누적</span><span class="stat-value" style="font-size:19px">${formatWon(verifiedTotal)}</span></div>
+    <div class="stat-card accent-amber"><span class="stat-label">⏳ 현장 산출(검증대기) 누적</span><span class="stat-value" style="font-size:19px">${formatWon(pendingTotal)}</span></div>
+    <div class="stat-card"><span class="stat-label">현장 산출 전체 합계</span><span class="stat-value" style="font-size:19px">${formatWon(rawTotal)}</span></div>
+    <div class="stat-card accent-green"><span class="stat-label">검증률</span><span class="stat-value">${verifyRate}%</span></div>
+  `;
+
+  renderSplitAmountBarChart($("#effectQuarterChart"), $("#effectQuarterTable"), qMap, "분기");
+  renderSplitAmountBarChart($("#effectHalfChart"), $("#effectHalfTable"), hMap, "반기");
+  renderSplitAmountBarChart($("#effectYearChart"), $("#effectYearTable"), yMap, "연도");
+  renderCumulativeChart($("#effectCumulativeChart"), $("#effectCumulativeTable"), qMap);
+  renderStdMhMailLog();
+
+  $("#effectDetailBody").innerHTML = records.length ? records.map(r => `
+    <tr>
+      <td>${r.doneDate}</td><td>${r.team}</td>
+      <td style="text-align:left;font-weight:600">${r.title}</td>
+      <td>${formatWon(r.amount)}</td>
+      <td style="color:${r.verified ? "var(--green)" : "#8A5A0F"};font-weight:700">${r.verified ? formatWon(r.amount) : "—"}</td>
+      <td>${r.verified ? `<span class="sent-tag">✅ 검증완료</span>` : `<span class="locked-cell">⏳ 검증대기</span>`}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">유형효과 데이터가 없습니다.</td></tr>`;
+}
+
 /* ================= SCREEN — 통합기준정보 ================= */
 let DEPT_TEAM_MASTER = [];   // { dept, team, use }
 let WORKPLACE_MASTER = [];   // { workplace, use }
@@ -2607,6 +2954,17 @@ let EXEC_RECIPIENTS = [
   { name: "한동희", title: "생산혁신팀장", email: "dh.han@hd-ce.com", use: true },
   { name: "조은비", title: "경영기획팀장", email: "eb.jo@hd-ce.com", use: false }
 ];
+let MH_RATE_MASTER = [
+  { year: 2025, rate: 53300, note: "2025년도~ 적용", use: true }
+];
+
+function getMhRate(year){
+  const y = +year || new Date().getFullYear();
+  const candidates = MH_RATE_MASTER.filter(r => r.use && r.year <= y).sort((a, b) => b.year - a.year);
+  if (candidates.length) return candidates[0].rate;
+  const anyActive = MH_RATE_MASTER.filter(r => r.use).sort((a, b) => a.year - b.year);
+  return anyActive.length ? anyActive[0].rate : 53300;
+}
 
 let MASTER_DATA_INITIALIZED = false;
 let DEFAULT_MASTER_SNAPSHOT = null;
@@ -2637,7 +2995,7 @@ function initMasterDataOnce(){
   WORKPLACE_MASTER = buildWorkplaceMasterSeed();
   USER_MASTER = buildUserMasterSeed();
   DEFAULT_MASTER_SNAPSHOT = JSON.parse(JSON.stringify({
-    dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS
+    dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, mhrate: MH_RATE_MASTER
   }));
   // 분류기준은 함수(check)를 포함하므로 별도로 직렬화 가능한 형태만 스냅샷
   DEFAULT_MASTER_SNAPSHOT.criteria = IMPORTANCE_CRITERIA.map(c => ({ id: c.id, label: c.label, desc: c.desc, weight: c.weight, keyword: c.keyword }));
@@ -2763,6 +3121,27 @@ function renderMasterCriteria(){
   `;
 }
 
+function renderMasterMhRate(){
+  $("#masterMhRateBody").innerHTML = MH_RATE_MASTER.length ? MH_RATE_MASTER.map((r, i) => `
+    <tr>
+      <td><input type="checkbox" data-msel-mhrate="${i}"></td>
+      <td><input class="master-inline-input" type="number" style="text-align:center" value="${r.year}" data-mfield-mhrate="year" data-midx="${i}"></td>
+      <td><input class="master-inline-input" type="number" style="text-align:center" value="${r.rate}" data-mfield-mhrate="rate" data-midx="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.note}" data-mfield-mhrate="note" data-midx="${i}"></td>
+      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-mfield-mhrate="use" data-midx="${i}"> 사용</label></td>
+    </tr>
+  `).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 단가 정보가 없습니다.</td></tr>`;
+
+  $all("[data-mfield-mhrate]").forEach(el => el.addEventListener("change", () => {
+    const r = MH_RATE_MASTER[+el.dataset.midx];
+    const field = el.dataset.mfieldMhrate;
+    if (field === "year" || field === "rate") r[field] = +el.value || 0;
+    else r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+    if ($("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen();
+    renderKpiStrip();
+  }));
+}
+
 function renderMasterDataScreen(){
   initMasterDataOnce();
   renderMasterDept();
@@ -2770,6 +3149,7 @@ function renderMasterDataScreen(){
   renderMasterUser();
   renderMasterExec();
   renderMasterCriteria();
+  renderMasterMhRate();
 }
 
 /* ---- 통합기준정보 서브탭 전환 ---- */
@@ -2798,6 +3178,11 @@ function bindMasterToolbar(){
       IMPORTANCE_CRITERIA.push(makeKeywordCriterion(label, "안전", 1));
       renderMasterCriteria();
     }
+    else if (type === "mhrate"){
+      MH_RATE_MASTER.push({ year: new Date().getFullYear(), rate: 53300, note: "신규 단가", use: true });
+      renderMasterMhRate();
+      if ($("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen();
+    }
     toast("신규 행이 추가되었습니다. 값을 입력한 뒤 저장해 주세요.", "navy");
   }));
 
@@ -2806,12 +3191,13 @@ function bindMasterToolbar(){
     const selector = "[data-msel-" + type + "]:checked";
     const idxs = [...document.querySelectorAll(selector)].map(cb => +cb.dataset["msel" + type.charAt(0).toUpperCase() + type.slice(1)]).sort((a, b) => b - a);
     if (!idxs.length){ toast("삭제할 행을 먼저 선택해 주세요.", "red"); return; }
-    const arrMap = { dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, criteria: IMPORTANCE_CRITERIA };
+    const arrMap = { dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, criteria: IMPORTANCE_CRITERIA, mhrate: MH_RATE_MASTER };
     const arr = arrMap[type];
     idxs.forEach(i => arr.splice(i, 1));
-    const renderMap = { dept: renderMasterDept, workplace: renderMasterWorkplace, user: renderMasterUser, exec: renderMasterExec, criteria: renderMasterCriteria };
+    const renderMap = { dept: renderMasterDept, workplace: renderMasterWorkplace, user: renderMasterUser, exec: renderMasterExec, criteria: renderMasterCriteria, mhrate: renderMasterMhRate };
     renderMap[type]();
     if (type === "exec") renderExecMailBar();
+    if (type === "mhrate" && $("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen();
     toast(`${idxs.length}건 삭제되었습니다.`, "red");
   }));
 
@@ -2827,6 +3213,11 @@ function bindMasterToolbar(){
     else if (type === "workplace"){ WORKPLACE_MASTER = JSON.parse(JSON.stringify(snap.workplace)); renderMasterWorkplace(); }
     else if (type === "user"){ USER_MASTER = JSON.parse(JSON.stringify(snap.user)); renderMasterUser(); }
     else if (type === "exec"){ EXEC_RECIPIENTS = JSON.parse(JSON.stringify(snap.exec)); renderMasterExec(); renderExecMailBar(); }
+    else if (type === "mhrate"){
+      MH_RATE_MASTER = JSON.parse(JSON.stringify(snap.mhrate));
+      renderMasterMhRate();
+      if ($("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen();
+    }
     else if (type === "criteria"){
       IMPORTANCE_THRESHOLD = snap.threshold;
       IMPORTANCE_CRITERIA = snap.criteria.map(c => {
@@ -2859,7 +3250,7 @@ function openSgRegisterModal(){
     improve: "품질 개선", sqdc: "", title: "", phenomenon: "", current: "", target: "",
     files: [], resultLevel: "", doneYN: false, doneDate: null,
     eval1: { grade: "", date: "", checked: 0 }, eval2: { grade: "", date: "", checked: 0 },
-    verifyDesc: "", verifyMh: "", stdTimeApplied: false, stdTimeDate: null,
+    verifyDesc: "", verifyMh: "", intangible: "", stdTimeApplied: false, stdTimeDate: null,
     horizontalDeployments: [],
     favorite: false, regDate: todayStr(), isNew: true
   });
@@ -2885,6 +3276,7 @@ function openSgTaskModal(id){
   $("#sgDoneDate").textContent = "완료일 " + (t.doneDate || "—");
   $("#sgVerifyDesc").value = t.verifyDesc;
   $("#sgVerifyMh").value = t.verifyMh;
+  $("#sgIntangible").value = t.intangible || "";
   $("#sgStdTime").checked = t.stdTimeApplied;
   $("#sgStdTimeDate").textContent = "완료 저장일 " + (t.stdTimeDate || "—");
 
@@ -2928,10 +3320,18 @@ function saveSgRegistration(){
   t.doneDate = t.doneYN ? (t.doneDate || todayStr()) : null;
   t.verifyDesc = $("#sgVerifyDesc").value.trim();
   t.verifyMh = $("#sgVerifyMh").value.trim();
+  t.intangible = $("#sgIntangible").value.trim();
+
+  const wasVerified = !!t.stdTimeApplied;
   t.stdTimeApplied = $("#sgStdTime").checked;
   t.stdTimeDate = t.stdTimeApplied ? (t.stdTimeDate || todayStr()) : null;
   t.isNew = false;
-  toast("소그룹활동 과제가 저장되었습니다.", "green");
+
+  if (!wasVerified && t.stdTimeApplied){
+    distributeStdMhMail(t);
+  } else {
+    toast("소그룹활동 과제가 저장되었습니다.", "green");
+  }
   openSgTaskModal(t.id);
   refreshSgScreens();
 }
@@ -3035,6 +3435,156 @@ function bindGlobalTooltip(){
   });
 }
 
+/* ================= 데이터 추출 (엑셀 .xlsx) ================= */
+function buildProblemExportRows(){
+  return TASKS.map(t => ({
+    "과제ID": t.id,
+    "부서": t.dept,
+    "진행팀": t.team,
+    "등록자": t.user,
+    "과제제목": t.title,
+    "과제리소스": t.resource,
+    "개선구분": t.improve,
+    "중요도": t.category === "important" ? "중요과제" : "일상과제",
+    "SQDC": t.sqdc,
+    "현상": t.phenomenon,
+    "현수준": t.current,
+    "목표수준": t.target,
+    "기대효과": t.effect,
+    "활동시작": t.actFrom,
+    "활동종료": t.actTo,
+    "현재단계": STAGES[t.stageIndex] || "",
+    "진행상태": t.stageStatus === "done_all" ? "완료" : "진행중",
+    "P단계일": t.stageDates.P || "",
+    "D단계일": t.stageDates.D || "",
+    "C단계일": t.stageDates.C || "",
+    "A단계일": t.stageDates.A || "",
+    "개선결과": t.result,
+    "C검토": t.review.C,
+    "A검토": t.review.A,
+    "사후검증 M+1": t.postcheck[0] || "",
+    "사후검증 M+2": t.postcheck[1] || "",
+    "사후검증 M+3": t.postcheck[2] || "",
+    "목표달성여부": t.completeYN === "Y" ? "달성" : (t.completeYN === "N" ? "미달성" : "판정대기"),
+    "재이관 원본": t.regenOf || "",
+    "첨부(P)": (t.filesP || []).map(f => f.name).join(" / "),
+    "첨부(D·C·A)": (t.filesDCA || []).map(f => f.name).join(" / "),
+    "등록일": t.regDate
+  }));
+}
+
+function buildSgExportRows(){
+  return SG_TASKS.map(t => ({
+    "과제ID": t.id,
+    "부서": t.dept,
+    "진행팀": t.team,
+    "테마리더": t.user,
+    "과제제목": t.title,
+    "개선구분": t.improve,
+    "SQDC": t.sqdc,
+    "현상": t.phenomenon,
+    "현수준": t.current,
+    "목표수준": t.target,
+    "완료여부": t.doneYN ? "완료" : "진행중",
+    "완료일": t.doneDate || "",
+    "1차평가 등급": t.eval1.grade || "",
+    "1차평가일": t.eval1.date || "",
+    "1차 점검충족": t.eval1.checked || 0,
+    "2차평가 등급": t.eval2.grade || "",
+    "2차평가일": t.eval2.date || "",
+    "2차 점검충족": t.eval2.checked || 0,
+    "최종등급": t.eval2.grade || t.eval1.grade || "미평가",
+    "유형효과(정량)": t.verifyDesc || "",
+    "M/H·금액환산": t.verifyMh || "",
+    "산출금액(원)": parseMoneyFromVerifyMh(t.verifyMh) || 0,
+    "생산기술 검증": t.stdTimeApplied ? "검증완료" : "검증대기",
+    "검증일": t.stdTimeDate || "",
+    "검증인정금액(원)": t.stdTimeApplied ? (parseMoneyFromVerifyMh(t.verifyMh) || 0) : 0,
+    "무형효과(정성)": t.intangible || "",
+    "수평전개 건수": (t.horizontalDeployments || []).length,
+    "수평전개 적용처": (t.horizontalDeployments || []).map(h => h.workplace).join(" / "),
+    "등록일": t.regDate
+  }));
+}
+
+function buildDeployExportRows(){
+  return buildDeploymentRecords().map(r => {
+    const t = sgGetTask(r.taskId);
+    return {
+      "원본 과제ID": r.taskId,
+      "발굴팀": t ? t.team : "",
+      "고등급 사례": r.title,
+      "등급": t ? (t.eval2.grade || t.eval1.grade || "") : "",
+      "적용 작업장/라인": r.workplace,
+      "적용일": r.appliedDate
+    };
+  });
+}
+
+function buildSummaryRows(){
+  const tangible = buildTangibleEffectRecords();
+  const hd = computeHdStats();
+  const verifiedTotal = tangible.reduce((s, r) => s + r.verifiedAmount, 0);
+  const rawTotal = tangible.reduce((s, r) => s + r.amount, 0);
+  return [
+    { "구분": "문제해결과제 총 건수", "값": TASKS.length },
+    { "구분": "  ├ 중요과제", "값": TASKS.filter(t => t.category === "important").length },
+    { "구분": "  └ 일상과제", "값": TASKS.filter(t => t.category === "normal").length },
+    { "구분": "SQDC 목표 달성", "값": TASKS.filter(t => t.completeYN === "Y").length },
+    { "구분": "SQDC 목표 미달성(재이관)", "값": TASKS.filter(t => t.completeYN === "N").length },
+    { "구분": "소그룹활동 총 건수", "값": SG_TASKS.length },
+    { "구분": "  └ 고등급(S+·S·A) 사례", "값": hd.highCount },
+    { "구분": "수평전개 적용 누적", "값": hd.deployCount },
+    { "구분": "미전개 고등급 사례", "값": hd.noDeployCount },
+    { "구분": "현장 산출 유형효과 합계(원)", "값": rawTotal },
+    { "구분": "생산기술 검증완료 금액(원)", "값": verifiedTotal },
+    { "구분": "검증률(%)", "값": rawTotal ? Math.round((verifiedTotal / rawTotal) * 100) : 0 },
+    { "구분": "추출 일시", "값": new Date().toLocaleString("ko-KR") }
+  ];
+}
+
+function autoFitColumns(rows){
+  if (!rows.length) return [];
+  return Object.keys(rows[0]).map(key => {
+    const maxLen = Math.max(
+      key.length * 2,
+      ...rows.map(r => String(r[key] == null ? "" : r[key]).length)
+    );
+    return { wch: Math.min(Math.max(maxLen + 2, 8), 50) };
+  });
+}
+
+function handleExportExcel(){
+  if (typeof XLSX === "undefined"){
+    toast("엑셀 라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해 주세요.", "red");
+    return;
+  }
+  try {
+    const wb = XLSX.utils.book_new();
+
+    const sheets = [
+      { name: "요약", rows: buildSummaryRows() },
+      { name: "문제해결과제", rows: buildProblemExportRows() },
+      { name: "소그룹활동", rows: buildSgExportRows() },
+      { name: "수평전개이력", rows: buildDeployExportRows() }
+    ];
+
+    sheets.forEach(s => {
+      const ws = XLSX.utils.json_to_sheet(s.rows);
+      ws["!cols"] = autoFitColumns(s.rows);
+      if (s.rows.length) ws["!autofilter"] = { ref: ws["!ref"] };
+      XLSX.utils.book_append_sheet(wb, ws, s.name);
+    });
+
+    const fname = `GMES_과제데이터_${todayStr().replace(/-/g, "")}.xlsx`;
+    XLSX.writeFile(wb, fname);
+    toast(`엑셀 파일로 추출했습니다. (문제해결 ${TASKS.length}건 · 소그룹 ${SG_TASKS.length}건)`, "green");
+  } catch (err) {
+    console.error(err);
+    toast("추출 중 오류가 발생했습니다.", "red");
+  }
+}
+
 function bindEvents(){
   $("#closeModalBtn").addEventListener("click", closeTaskModal);
   $("#taskOverlay").addEventListener("click", (e) => { if (e.target.id === "taskOverlay") closeTaskModal(); });
@@ -3081,6 +3631,9 @@ function bindEvents(){
   bindRegenTrendScreen();
   bindMasterTabs();
   bindMasterToolbar();
+  bindMasterLock();
+  $("#btnExportExcel").addEventListener("click", handleExportExcel);
+  bindDeleteButtons();
   bindPdcaMonitorScreen();
   bindAdmin();
   bindTypeSelect();
