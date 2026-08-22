@@ -1311,6 +1311,25 @@ function buildRegenRecords(){
   }).sort((a, b) => (b.failDate || "").localeCompare(a.failDate || ""));
 }
 
+function seedHistoricalRegenWarnings(){
+  if (REGEN_WARNING_MAIL_LOG.length) return;
+  const records = buildRegenRecords().filter(r => r.childId);
+  records.forEach(r => {
+    const original = getTask(r.id);
+    const child = getTask(r.childId);
+    if (!original || !child) return;
+    const leader = findTeamLeader(original.dept, original.team);
+    const recipients = [...new Set([original.user, leader])];
+    REGEN_WARNING_MAIL_LOG.push({
+      date: r.failDate, time: "09:00",
+      originalId: r.id, newId: r.childId,
+      dept: r.dept, team: r.team, title: r.title,
+      recipients: recipients.join(", "),
+      message: `⚠ 본 과제는 재이관되어 다시 추진되어야 합니다. 신규과제 ${r.childId}를 수행해 주세요.`
+    });
+  });
+}
+
 function renderRegenTrendScreen(){
   const regenRecords = buildRegenRecords();
   const decided = TASKS.filter(t => t.completeYN === "Y" || t.completeYN === "N").length;
@@ -1381,6 +1400,8 @@ function renderRegenTrendScreen(){
       <td>${r.childProgress}</td>
     </tr>
   `).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">재이관 이력이 없습니다.</td></tr>`;
+
+  renderRegenWarningMailLog();
 }
 
 function bindRegenTrendScreen(){
@@ -1673,9 +1694,11 @@ function handleExecMailSend(){
 function renderExecMailLog(){
   const el = $("#execMailLog");
   if (!el) return;
-  el.innerHTML = EXEC_MAIL_LOG.length ? EXEC_MAIL_LOG.slice().reverse().slice(0, 3).map(m => `
-    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.freq} · 수신 ${m.recipients ? m.recipients : "-"} · ${m.snapshot}</div>
-  `).join("") : "";
+  el.innerHTML = EXEC_MAIL_LOG.map((m, i) => ({ m, i })).reverse().slice(0, 3).map(({ m, i }) => `
+    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.freq} · 수신 ${m.recipients ? m.recipients : "-"} · ${m.snapshot}
+      <button class="preview-btn" data-mail-preview="exec:${i}">👁 미리보기</button>
+    </div>
+  `).join("");
 }
 
 function renderKpiStrip(){
@@ -2099,6 +2122,44 @@ function handlePassM3(){
   refreshAllScreens();
 }
 
+/* ================= 재이관 워닝 메일 (최초 수행자/등록자 + 담당 팀장) ================= */
+let REGEN_WARNING_MAIL_LOG = [];
+
+function findTeamLeader(dept, team){
+  initMasterDataOnce();
+  const rec = DEPT_TEAM_MASTER.find(r => r.dept === dept && r.team === team);
+  return (rec && rec.leader) ? rec.leader : "(팀장 미지정 — 통합기준정보에서 지정 필요)";
+}
+
+function sendRegenWarningMail(originalTask, newTask){
+  const leader = findTeamLeader(originalTask.dept, originalTask.team);
+  const recipients = [...new Set([originalTask.user, leader])];
+  const message = `⚠ 본 과제는 재이관되어 다시 추진되어야 합니다. 신규과제 ${newTask.id}를 수행해 주세요.`;
+  REGEN_WARNING_MAIL_LOG.push({
+    date: todayStr(),
+    time: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+    originalId: originalTask.id, newId: newTask.id,
+    dept: originalTask.dept, team: originalTask.team, title: originalTask.title,
+    recipients: recipients.join(", "),
+    message
+  });
+  toast(`${message} (수신: ${recipients.join(", ")} · 사유: 목표미달성·근인 미제거 재발 · ${originalTask.id} → ${newTask.id})`, "red");
+  renderRegenWarningMailLog();
+}
+
+function renderRegenWarningMailLog(){
+  const el = $("#regenWarnMailLog");
+  if (!el) return;
+  el.innerHTML = REGEN_WARNING_MAIL_LOG.length ? REGEN_WARNING_MAIL_LOG.map((m, i) => ({ m, i })).reverse().map(({ m, i }) => `
+    <div class="mail-log-item">⚠ <b>${m.date} ${m.time}</b> · ${m.dept}/${m.team} · ${m.title}<br>
+      <span style="font-weight:800;color:var(--red)">${m.message || ("본 과제는 재이관되어 다시 추진되어야 합니다. 신규과제 " + m.newId + "를 수행해 주세요.")}</span><br>
+      <span style="font-size:10.5px">${m.originalId} → <b>${m.newId}</b> 재이관 · 사유: 목표미달성(근인 미제거로 인한 재발)</span><br>
+      <span style="font-size:10px;color:var(--ink-soft)">수신: ${m.recipients}</span>
+      <button class="preview-btn" data-mail-preview="regenwarn:${i}">👁 미리보기</button>
+    </div>
+  `).join("") : `<div class="case-empty" style="padding:14px">발송된 워닝 메일이 없습니다.</div>`;
+}
+
 function handleFailM3(){
   const t = getTask(activeTaskId);
   const newId = "T-2026-" + String(taskCounter++).padStart(4, "0");
@@ -2112,6 +2173,7 @@ function handleFailM3(){
   };
   t.completeYN = "N";
   TASKS.push(clone);
+  sendRegenWarningMail(t, clone);
   toast(`M+${CONFIG.post} 목표 미달 — 마스터 데이터를 복제해 신규 PLAN 과제 ${newId} 를 생성했습니다 (parent_task_id: ${t.id})`, "red");
   closeTaskModal();
 }
@@ -2485,9 +2547,10 @@ function renderMailLog(){
   const log = $("#mailLog");
   if (!MAIL_LOG.length){ log.innerHTML = ""; return; }
   log.innerHTML = "<div style='font-size:11.5px;font-weight:700;color:var(--ink-soft);margin-bottom:4px'>발송 이력</div>" +
-    MAIL_LOG.slice().reverse().map(m => `
+    MAIL_LOG.map((m, i) => ({ m, i })).reverse().map(({ m, i }) => `
       <div class="mail-log-item">
         📧 <b>${m.quarter}</b> 분기 배포 · ${m.date} · 고등급 사례 <b>${m.count}건</b> → ${m.recipients}
+        <button class="preview-btn" data-mail-preview="highgrade:${i}">👁 미리보기</button>
       </div>
     `).join("");
 }
@@ -2762,6 +2825,132 @@ function parseMhFromVerifyMh(str){
   return parseFloat(m[1]) || 0;
 }
 function formatWon(n){ return Math.round(n).toLocaleString("ko-KR") + "원"; }
+
+/* ================= 이메일 미리보기 (공용 템플릿 시스템) ================= */
+function emailWrapper(title, colorHex, bodyContent){
+  return `
+    <div style="background:${colorHex};color:#fff;padding:16px 20px;">
+      <div style="font-size:10.5px;opacity:.85;letter-spacing:1px;font-weight:700;">GMES 문제해결과제 관리시스템</div>
+      <div style="font-size:16px;font-weight:800;margin-top:4px;">${title}</div>
+    </div>
+    <div style="padding:18px 20px;font-size:13px;line-height:1.7;color:#22303C;">
+      ${bodyContent}
+    </div>
+  `;
+}
+
+function openMailPreview(to, subject, bodyHtml){
+  $("#mpTo").textContent = to;
+  $("#mpSubject").textContent = subject;
+  $("#mpBody").innerHTML = bodyHtml;
+  $("#mailPreviewOverlay").classList.add("open");
+}
+function closeMailPreview(){ $("#mailPreviewOverlay").classList.remove("open"); }
+
+function previewExecMail(idx){
+  const m = EXEC_MAIL_LOG[idx];
+  if (!m) return;
+  const subject = `[GMES] 종합현황 정기 리포트 (${m.date})`;
+  const body = emailWrapper("종합현황 정기 리포트", "#14304C", `
+    <p>안녕하십니까, GMES 시스템에서 자동 발송된 <b>${m.freq}</b> 종합현황 리포트입니다.</p>
+    <div style="background:#F5F8FA;border-left:4px solid #14304C;padding:12px 14px;border-radius:6px;margin:14px 0;">
+      ${m.snapshot}
+    </div>
+    <p>자세한 현황은 GMES 시스템 &gt; 종합현황 배너에서 실시간으로 확인하실 수 있습니다.</p>
+    <p style="font-size:11.5px;color:#8792A0;margin-top:16px;border-top:1px solid #E2E8EE;padding-top:10px;">발송일시: ${m.date} ${m.time}</p>
+  `);
+  openMailPreview(m.recipients || "-", subject, body);
+}
+
+function previewHighGradeMail(idx){
+  const m = MAIL_LOG[idx];
+  if (!m) return;
+  const subject = `[GMES] ${m.quarter} 분기 고등급 소그룹 사례 안내 (${m.count}건)`;
+  const body = emailWrapper("고등급 사례 안내", "#1F7A8C", `
+    <p>${m.quarter} 분기 중 고등급(S+·S·A)으로 평가된 소그룹활동 사례 <b>${m.count}건</b>을 안내드립니다.</p>
+    <ul style="padding-left:18px;margin:12px 0;">
+      ${m.caseIds.map(k => `<li>${k}</li>`).join("")}
+    </ul>
+    <p>상세 내용은 GMES 시스템 &gt; 소그룹 평가이력 조회 화면에서 확인하실 수 있습니다.</p>
+    <p style="font-size:11.5px;color:#8792A0;margin-top:16px;border-top:1px solid #E2E8EE;padding-top:10px;">발송일시: ${m.date}</p>
+  `);
+  openMailPreview(m.recipients, subject, body);
+}
+
+function previewStdMhMail(idx){
+  const m = STD_MH_MAIL_LOG[idx];
+  if (!m) return;
+  const subject = `[GMES] 유형효과 검증완료 배포 - ${m.taskId}`;
+  const body = emailWrapper("유형효과 검증완료 확정 배포", "#3F8F5F", `
+    <p>생산기술팀이 표준시간(M/H)을 반영하여 아래 과제의 유형효과를 <b>검증완료</b> 처리했습니다.</p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;">
+      <tr><td style="padding:6px 0;color:#8792A0;width:100px;">팀</td><td>${m.team}</td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">과제명</td><td>${m.title}</td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">M/H × 단가</td><td>${m.mh} M/H × ${formatWon(m.rate)}</td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">확정 금액</td><td><b style="color:#3F8F5F;font-size:15px;">${formatWon(m.amount)}</b></td></tr>
+    </table>
+    <p style="font-size:11.5px;color:#8792A0;margin-top:16px;border-top:1px solid #E2E8EE;padding-top:10px;">발송일시: ${m.date} ${m.time}</p>
+  `);
+  openMailPreview(m.recipients, subject, body);
+}
+
+function previewTechReviewMail(idx){
+  const m = TECH_MAIL_LOG[idx];
+  if (!m) return;
+  const subject = `[GMES] 생산기술팀 유형효과 검토요청 (${m.count}건)`;
+  const body = emailWrapper("유형효과 검토요청", "#E8A23D", `
+    <p>안녕하십니까, 생산기술팀 담당자님.</p>
+    <p>현장 소그룹활동에서 산출된 유형효과 중 아직 검증되지 않은 <b>${m.count}건</b>에 대한 검토를 요청드립니다.</p>
+    <ul style="padding-left:18px;margin:12px 0;">
+      ${m.taskIds.map(id => `<li>${id}</li>`).join("")}
+    </ul>
+    <p>GMES 시스템 &gt; 유형효과 성과 모니터링 화면에 접속하여 각 과제의 <b>"📝 검토입력"</b> 버튼으로 검토결과(승인/반려)와 의견을 입력해 주시기 바랍니다.</p>
+    <p style="font-size:11.5px;color:#8792A0;margin-top:16px;border-top:1px solid #E2E8EE;padding-top:10px;">발송일시: ${m.date} ${m.time} · 발송유형: ${m.trigger}</p>
+  `);
+  openMailPreview(m.recipients || "-", subject, body);
+}
+
+function previewRegenWarningMail(idx){
+  const m = REGEN_WARNING_MAIL_LOG[idx];
+  if (!m) return;
+  const subject = `[GMES] ⚠ 재이관 워닝 - ${m.originalId} → ${m.newId}`;
+  const message = m.message || `본 과제는 재이관되어 다시 추진되어야 합니다. 신규과제 ${m.newId}를 수행해 주세요.`;
+  const body = emailWrapper("재이관 워닝 알림", "#C0392B", `
+    <p style="font-weight:800;color:#C0392B;font-size:14px;">${message}</p>
+    <table style="width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;">
+      <tr><td style="padding:6px 0;color:#8792A0;width:120px;">부서/팀</td><td>${m.dept} / ${m.team}</td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">과제명</td><td>${m.title}</td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">원본 과제</td><td>${m.originalId}</td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">재이관 신규과제</td><td><b>${m.newId}</b></td></tr>
+      <tr><td style="padding:6px 0;color:#8792A0;">재이관 사유</td><td>목표미달성(근인 미제거로 인한 재발)</td></tr>
+    </table>
+    <p>신규 재이관 과제를 확인하시고 즉시 재추진해 주시기 바랍니다.</p>
+    <p style="font-size:11.5px;color:#8792A0;margin-top:16px;border-top:1px solid #E2E8EE;padding-top:10px;">발송일시: ${m.date} ${m.time}</p>
+  `);
+  openMailPreview(m.recipients, subject, body);
+}
+
+function bindMailPreview(){
+  $("#closeMailPreviewBtn").addEventListener("click", closeMailPreview);
+  $("#mailPreviewOverlay").addEventListener("click", (e) => { if (e.target.id === "mailPreviewOverlay") closeMailPreview(); });
+
+  document.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-mail-preview]");
+    if (!btn) return;
+    const [type, idxStr] = btn.dataset.mailPreview.split(":");
+    const idx = +idxStr;
+    const map = {
+      exec: previewExecMail,
+      highgrade: previewHighGradeMail,
+      stdmh: previewStdMhMail,
+      techreview: previewTechReviewMail,
+      regenwarn: previewRegenWarningMail
+    };
+    if (map[type]) map[type](idx);
+  });
+}
+
+
 function formatManwon(n){ return Math.round(n / 10000).toLocaleString("ko-KR") + "만원"; }
 
 function dateToHalfLabel(dateStr){
@@ -2900,9 +3089,10 @@ function distributeStdMhMail(t){
 function renderStdMhMailLog(){
   const el = $("#stdMhMailLog");
   if (!el) return;
-  el.innerHTML = STD_MH_MAIL_LOG.length ? STD_MH_MAIL_LOG.slice().reverse().slice(0, 5).map(m => `
+  el.innerHTML = STD_MH_MAIL_LOG.length ? STD_MH_MAIL_LOG.map((m, i) => ({ m, i })).reverse().slice(0, 5).map(({ m, i }) => `
     <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.team} · ${m.title} · MH ${m.mh} × ${formatWon(m.rate)} = <b>${formatWon(m.amount)}</b><br>
       <span style="font-size:10px;color:var(--ink-soft)">수신: ${m.recipients}</span>
+      <button class="preview-btn" data-mail-preview="stdmh:${i}">👁 미리보기</button>
     </div>
   `).join("") : `<div class="case-empty" style="padding:14px">아직 배포된 검증완료 메일이 없습니다.</div>`;
 }
@@ -2965,9 +3155,10 @@ function renderTechMailUI(){
     (pendingCount > 0 ? `⚠ 분기가 종료된 미검토 과제 ${pendingCount}건이 있습니다. 자동 발송 대상입니다.` : "✅ 분기 종료된 과제 중 미발송 건 없음")
     + ` · 메일 수신자 ${activeRecipients.length}명 · 검토 입력 권한자 ${authorizedReviewers.length}명 (통합기준정보에서 관리)`;
 
-  $("#techMailLog").innerHTML = TECH_MAIL_LOG.length ? TECH_MAIL_LOG.slice().reverse().slice(0, 4).map(m => `
+  $("#techMailLog").innerHTML = TECH_MAIL_LOG.length ? TECH_MAIL_LOG.map((m, i) => ({ m, i })).reverse().slice(0, 4).map(({ m, i }) => `
     <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.trigger} · 검토요청 ${m.count}건 발송<br>
       <span style="font-size:10px;color:var(--ink-soft)">수신: ${m.recipients || "-"}<br>대상과제: ${m.taskIds.join(", ")}</span>
+      <button class="preview-btn" data-mail-preview="techreview:${i}">👁 미리보기</button>
     </div>
   `).join("") : `<div class="case-empty" style="padding:14px">발송 이력이 없습니다.</div>`;
 }
@@ -3097,18 +3288,18 @@ let DEPT_TEAM_MASTER = [];   // { dept, team, use }
 let WORKPLACE_MASTER = [];   // { workplace, use }
 let USER_MASTER = [];        // { user, team, evalAuth }
 let EXEC_RECIPIENTS = [
-  { name: "박승현", title: "대표이사(CEO)", email: "sh.park@hd-ce.com", use: true },
-  { name: "이강수", title: "생산본부장", email: "ks.lee@hd-ce.com", use: true },
-  { name: "최윤정", title: "품질본부장", email: "yj.choi@hd-ce.com", use: true },
-  { name: "서인국", title: "울산공장장", email: "ik.seo@hd-ce.com", use: true },
-  { name: "한동희", title: "생산혁신팀장", email: "dh.han@hd-ce.com", use: true },
-  { name: "조은비", title: "경영기획팀장", email: "eb.jo@hd-ce.com", use: false }
+  { name: "박승현", title: "대표이사(CEO)", email: "hastom79@gmail.com", use: true },
+  { name: "이강수", title: "생산본부장", email: "hastom79@gmail.com", use: true },
+  { name: "최윤정", title: "품질본부장", email: "hastom79@gmail.com", use: true },
+  { name: "서인국", title: "울산공장장", email: "hastom79@gmail.com", use: true },
+  { name: "한동희", title: "생산혁신팀장", email: "hastom79@gmail.com", use: true },
+  { name: "조은비", title: "경영기획팀장", email: "hastom79@gmail.com", use: false }
 ];
 let TECH_MAIL_RECIPIENTS = [
-  { name: "정하윤", title: "생산기술팀 표준시간 담당", email: "hy.jung@hd-ce.com", use: true },
-  { name: "김도현", title: "생산기술팀 유형효과 검증 담당", email: "dh.kim@hd-ce.com", use: true },
-  { name: "이향기", title: "생산기술팀 제작기술 담당", email: "hg.lee@hd-ce.com", use: true },
-  { name: "한동희", title: "생산혁신팀장(참조)", email: "dh.han@hd-ce.com", use: false }
+  { name: "정하윤", title: "생산기술팀 표준시간 담당", email: "hastom79@gmail.com", use: true },
+  { name: "김도현", title: "생산기술팀 유형효과 검증 담당", email: "hastom79@gmail.com", use: true },
+  { name: "이향기", title: "생산기술팀 제작기술 담당", email: "hastom79@gmail.com", use: true },
+  { name: "한동희", title: "생산혁신팀장(참조)", email: "hastom79@gmail.com", use: false }
 ];
 let MH_RATE_MASTER = [
   { year: 2025, rate: 53300, note: "2025년도~ 적용", use: true }
@@ -3127,8 +3318,8 @@ let DEFAULT_MASTER_SNAPSHOT = null;
 
 function buildDeptTeamMasterSeed(){
   const map = {};
-  TASKS.forEach(t => { const k = t.dept + "|" + t.team; if (!map[k]) map[k] = { dept: t.dept, team: t.team, use: true }; });
-  SG_TASKS.forEach(t => { const k = t.dept + "|" + t.team; if (!map[k]) map[k] = { dept: t.dept, team: t.team, use: true }; });
+  TASKS.forEach(t => { const k = t.dept + "|" + t.team; if (!map[k]) map[k] = { dept: t.dept, team: t.team, leader: t.user, use: true }; });
+  SG_TASKS.forEach(t => { const k = t.dept + "|" + t.team; if (!map[k]) map[k] = { dept: t.dept, team: t.team, leader: t.user, use: true }; });
   return Object.values(map).sort((a, b) => a.dept.localeCompare(b.dept) || a.team.localeCompare(b.team));
 }
 function buildWorkplaceMasterSeed(){
@@ -3196,10 +3387,11 @@ function renderMasterDept(){
       <td><input type="checkbox" data-msel-dept="${i}"></td>
       <td><input class="master-inline-input" type="text" value="${r.dept}" data-mfield-dept="dept" data-midx="${i}"></td>
       <td><input class="master-inline-input" type="text" value="${r.team}" data-mfield-dept="team" data-midx="${i}"></td>
+      <td><input class="master-inline-input" type="text" value="${r.leader || ""}" data-mfield-dept="leader" data-midx="${i}"></td>
       <td>${c.problemCount}</td><td>${c.sgCount}</td>
       <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-mfield-dept="use" data-midx="${i}"> 사용</label></td>
     </tr>`;
-  }).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">등록된 부서/팀이 없습니다.</td></tr>`;
+  }).join("") : `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">등록된 부서/팀이 없습니다.</td></tr>`;
 
   $all("[data-mfield-dept]").forEach(el => el.addEventListener("change", () => {
     const r = DEPT_TEAM_MASTER[+el.dataset.midx];
@@ -3361,11 +3553,11 @@ function bindMasterToolbar(){
   $all("[data-master-new]").forEach(btn => btn.addEventListener("click", () => {
     const type = btn.dataset.masterNew;
     initMasterDataOnce();
-    if (type === "dept"){ DEPT_TEAM_MASTER.push({ dept: "신규부서", team: "신규팀", use: true }); renderMasterDept(); }
+    if (type === "dept"){ DEPT_TEAM_MASTER.push({ dept: "신규부서", team: "신규팀", leader: "팀장 미지정", use: true }); renderMasterDept(); }
     else if (type === "workplace"){ WORKPLACE_MASTER.push({ workplace: "신규작업장", use: true }); renderMasterWorkplace(); }
     else if (type === "user"){ USER_MASTER.push({ user: "신규담당자", team: "미배정", evalAuth: false, effectReviewAuth: false }); renderMasterUser(); }
-    else if (type === "exec"){ EXEC_RECIPIENTS.push({ name: "신규수신자", title: "직책 입력", email: "email@hd-ce.com", use: true }); renderMasterExec(); renderExecMailBar(); }
-    else if (type === "techmail"){ TECH_MAIL_RECIPIENTS.push({ name: "신규수신자", title: "생산기술팀 담당", email: "email@hd-ce.com", use: true }); renderMasterTechMail(); renderTechMailUI(); }
+    else if (type === "exec"){ EXEC_RECIPIENTS.push({ name: "신규수신자", title: "직책 입력", email: "hastom79@gmail.com", use: true }); renderMasterExec(); renderExecMailBar(); }
+    else if (type === "techmail"){ TECH_MAIL_RECIPIENTS.push({ name: "신규수신자", title: "생산기술팀 담당", email: "hastom79@gmail.com", use: true }); renderMasterTechMail(); renderTechMailUI(); }
     else if (type === "criteria"){
       const label = "④ 커스텀 기준 " + (IMPORTANCE_CRITERIA.length + 1);
       IMPORTANCE_CRITERIA.push(makeKeywordCriterion(label, "안전", 1));
@@ -3828,6 +4020,7 @@ function bindEvents(){
   bindMasterToolbar();
   bindMasterLock();
   bindTechReviewPopup();
+  bindMailPreview();
   $("#btnExportExcel").addEventListener("click", handleExportExcel);
   bindDeleteButtons();
   bindPdcaMonitorScreen();
@@ -3851,6 +4044,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderExecMailBar();
   renderExecMailLog();
   initMasterDataOnce();
+  seedHistoricalRegenWarnings();
   autoCheckTechReviewMailing();
   bindGlobalTooltip();
 });

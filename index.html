@@ -269,7 +269,7 @@
 
     <div class="dash-card followup-card">
       <h3>재이관 이력</h3>
-      <p class="board-sub" style="margin-bottom:10px">M+3 검증에서 목표 미달로 확정되어 자동 재생성된 과제와, 그 재이관 신규과제의 현재 진행상태입니다.</p>
+      <p class="board-sub" style="margin-bottom:10px">M+3 검증에서 목표 미달(근인 미제거로 인한 재발)로 확정되어 자동 재생성된 과제와, 그 재이관 신규과제의 현재 진행상태입니다. 재이관 발생 시 <b>최초 과제 수행자·등록자와 담당 팀장(부서장)에게 자동 워닝 메일</b>이 발송됩니다.</p>
       <div class="table-wrap followup-scroll">
         <table class="task-table">
           <thead>
@@ -281,6 +281,12 @@
           <tbody id="regenHistoryBody"></tbody>
         </table>
       </div>
+    </div>
+
+    <div class="dash-card followup-card">
+      <h3>⚠ 재이관 워닝 메일 발송 이력</h3>
+      <p class="board-sub" style="margin-bottom:10px">재이관 사유(목표미달성·근인 미제거로 인한 재발)와 함께, 최초 과제 수행자/등록자 + 담당 팀장(부서장)에게 자동 발송된 워닝 메일 이력입니다. 수신자(팀장)는 통합기준정보 &gt; 부서·팀 마스터에서 지정합니다.</p>
+      <div class="mail-log" id="regenWarnMailLog"></div>
     </div>
   </section>
 
@@ -670,10 +676,10 @@
             <button class="tbtn ghost" data-master-reset="dept">♻ 초기화</button>
           </div>
         </div>
-        <p class="board-sub" style="margin-bottom:10px">문제해결과제·소그룹활동에서 실제 사용 중인 부서/팀 목록입니다. 부서명/팀명 칸을 직접 수정할 수 있습니다.</p>
+        <p class="board-sub" style="margin-bottom:10px">문제해결과제·소그룹활동에서 실제 사용 중인 부서/팀 목록입니다. 부서명/팀명/팀장 칸을 직접 수정할 수 있습니다. <b>팀장/부서장</b>은 재이관 워닝 메일 등 팀 단위 알림의 수신자로 사용됩니다.</p>
         <div class="table-wrap followup-scroll">
           <table class="task-table">
-            <thead><tr><th style="width:30px"></th><th>부서</th><th>팀</th><th>문제해결과제</th><th>소그룹활동</th><th>사용여부</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th>부서</th><th>팀</th><th>팀장/부서장</th><th>문제해결과제</th><th>소그룹활동</th><th>사용여부</th></tr></thead>
             <tbody id="masterDeptBody"></tbody>
           </table>
         </div>
@@ -1249,6 +1255,25 @@
     <div class="lock-btns">
       <button class="tbtn ghost" id="masterLockCancelBtn">취소</button>
       <button class="tbtn" id="masterLockConfirmBtn" style="background:var(--navy);color:#fff;border-color:var(--navy)">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 이메일 미리보기 팝업 (공용) ============ -->
+<div class="overlay" id="mailPreviewOverlay">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-head">
+      <h3>📧 메일 미리보기</h3>
+      <button class="icon-btn" id="closeMailPreviewBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div style="padding:0 20px 20px">
+      <div class="email-meta">
+        <div><b>보낸사람</b> GMES 시스템 &lt;noreply@gmes-system.local&gt;</div>
+        <div><b>받는사람</b> <span id="mpTo"></span></div>
+        <div><b>제목</b> <span id="mpSubject" style="font-weight:800;color:var(--navy)"></span></div>
+      </div>
+      <div class="email-body" id="mpBody"></div>
+      <p class="hint" style="margin-top:12px">※ 이 목업 환경에서는 실제로 메일이 발송되지 않습니다. 실제 운영 시스템의 메일 서버와 연동하면 이 템플릿 그대로 발송됩니다.</p>
     </div>
   </div>
 </div>
