@@ -2907,6 +2907,140 @@ function renderStdMhMailLog(){
   `).join("") : `<div class="case-empty" style="padding:14px">아직 배포된 검증완료 메일이 없습니다.</div>`;
 }
 
+/* ================= 생산기술팀 검토 메일링 (분기종료 자동감지) ================= */
+let TECH_MAIL_LOG = [];
+let activeTechReviewId = null;
+
+/* 유형효과 값은 있는데 아직 생산기술 검증이 안 됐고, 이미 분기가 종료된(현재 분기가 아닌) 과제 */
+function computePendingTechReviewTasks(){
+  return SG_TASKS.filter(t => {
+    if (!t.verifyMh || t.stdTimeApplied || t.techMailSent) return false;
+    const q = dateToQuarterLabel(t.doneDate);
+    return !!q && q !== currentQuarterLabel();
+  });
+}
+
+function sendTechReviewMailing(isAuto){
+  const pending = computePendingTechReviewTasks();
+  const recipients = TECH_MAIL_RECIPIENTS.filter(r => r.use);
+  if (!recipients.length){
+    if (!isAuto) toast("수신여부가 켜진 생기팀 메일링 수신자가 없습니다. 통합기준정보에서 먼저 설정해 주세요.", "red");
+    return;
+  }
+  if (!pending.length){
+    if (!isAuto) toast("검토 메일링 발송 대상 과제가 없습니다.", "navy");
+    return;
+  }
+  pending.forEach(t => { t.techMailSent = true; });
+  const recipientNames = recipients.map(r => r.name + "(" + r.title + ")").join(", ");
+  TECH_MAIL_LOG.push({
+    date: todayStr(),
+    time: new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }),
+    trigger: isAuto ? "자동 (분기종료 감지)" : "수동",
+    count: pending.length,
+    taskIds: pending.map(t => t.id),
+    recipients: recipientNames
+  });
+  toast(`📧 ${recipientNames} 에게 유형효과 검토 요청 메일 ${pending.length}건을 발송했습니다.${isAuto ? " (분기 종료 자동감지)" : ""}`, "green");
+  renderTechMailUI();
+}
+
+function renderTechMailUI(){
+  const stripEl = $("#techMailStrip");
+  if (!stripEl) return;
+  const pendingCount = computePendingTechReviewTasks().length;
+  const awaitingCount = SG_TASKS.filter(t => t.techMailSent && !t.stdTimeApplied && !t.techReviewResult).length;
+  const reviewedCount = SG_TASKS.filter(t => t.techReviewResult).length;
+  const activeRecipients = TECH_MAIL_RECIPIENTS.filter(r => r.use);
+  const authorizedReviewers = USER_MASTER.filter(u => u.effectReviewAuth);
+
+  stripEl.innerHTML = `
+    <div class="stat-card accent-amber"><span class="stat-label">검토 메일링 대상(분기종료·미발송)</span><span class="stat-value">${pendingCount}</span></div>
+    <div class="stat-card accent-navy"><span class="stat-label">메일발송 · 회신대기</span><span class="stat-value">${awaitingCount}</span></div>
+    <div class="stat-card accent-green"><span class="stat-label">검토 완료(승인/반려)</span><span class="stat-value">${reviewedCount}</span></div>
+  `;
+  const btn = $("#btnTechMailNow");
+  if (btn) btn.disabled = activeRecipients.length === 0;
+  $("#techMailStatusText").innerHTML =
+    (pendingCount > 0 ? `⚠ 분기가 종료된 미검토 과제 ${pendingCount}건이 있습니다. 자동 발송 대상입니다.` : "✅ 분기 종료된 과제 중 미발송 건 없음")
+    + ` · 메일 수신자 ${activeRecipients.length}명 · 검토 입력 권한자 ${authorizedReviewers.length}명 (통합기준정보에서 관리)`;
+
+  $("#techMailLog").innerHTML = TECH_MAIL_LOG.length ? TECH_MAIL_LOG.slice().reverse().slice(0, 4).map(m => `
+    <div class="mail-log-item">📧 <b>${m.date} ${m.time}</b> · ${m.trigger} · 검토요청 ${m.count}건 발송<br>
+      <span style="font-size:10px;color:var(--ink-soft)">수신: ${m.recipients || "-"}<br>대상과제: ${m.taskIds.join(", ")}</span>
+    </div>
+  `).join("") : `<div class="case-empty" style="padding:14px">발송 이력이 없습니다.</div>`;
+}
+
+/* 분기 종료가 감지되면(현재 분기가 아닌 완료 과제 중 미검증·미발송 건 존재 시) 페이지 진입 시 자동 발송 */
+function autoCheckTechReviewMailing(){
+  if (computePendingTechReviewTasks().length > 0){
+    sendTechReviewMailing(true);
+  } else {
+    renderTechMailUI();
+  }
+}
+
+function openTechReviewPopup(taskId){
+  const t = sgGetTask(taskId);
+  if (!t) return;
+  const authorizedReviewers = USER_MASTER.filter(u => u.effectReviewAuth);
+  if (!authorizedReviewers.length){
+    toast("유형효과 검토 입력 권한자가 없습니다. 통합기준정보 > 담당자 마스터에서 검토권한을 부여해 주세요.", "red");
+    return;
+  }
+  activeTechReviewId = taskId;
+  $("#techReviewTaskInfo").textContent = `${t.id} · ${t.team} · ${t.title}`;
+  $("#techReviewVerifyMh").textContent = t.verifyMh || "—";
+  $("#techReviewMailDate").textContent = t.techMailSent ? "발송됨" : "미발송(수동 검토 진입)";
+  $("#techReviewResult").value = t.techReviewResult || "";
+  $("#techReviewComment").value = t.techReviewComment || "";
+  const defaultReviewer = authorizedReviewers.find(r => r.user.includes("팀장")) || authorizedReviewers[0];
+  $("#techReviewer").value = t.techReviewer || (defaultReviewer ? defaultReviewer.user : "생산기술팀");
+  $("#techReviewOverlay").classList.add("open");
+}
+function closeTechReviewPopup(){
+  $("#techReviewOverlay").classList.remove("open");
+  activeTechReviewId = null;
+}
+function saveTechReview(){
+  const t = sgGetTask(activeTechReviewId);
+  if (!t) return;
+  const result = $("#techReviewResult").value;
+  if (!result){ toast("검토결과를 선택해 주세요.", "red"); return; }
+
+  const wasVerified = !!t.stdTimeApplied;
+  t.techReviewResult = result;
+  t.techReviewComment = $("#techReviewComment").value.trim();
+  t.techReviewer = $("#techReviewer").value.trim() || "생산기술팀";
+  t.techReviewDate = todayStr();
+
+  if (result === "승인"){
+    t.stdTimeApplied = true;
+    t.stdTimeDate = t.stdTimeDate || todayStr();
+  }
+
+  closeTechReviewPopup();
+
+  if (result === "승인" && !wasVerified){
+    distributeStdMhMail(t);
+  } else {
+    toast(`${t.id} 유형효과 검토결과(${result})가 저장되었습니다.`, result === "승인" ? "green" : "navy");
+  }
+  renderTechMailUI();
+  refreshSgScreens();
+}
+
+function bindTechReviewPopup(){
+  $("#btnTechMailNow").addEventListener("click", () => sendTechReviewMailing(false));
+  $("#closeTechReviewBtn").addEventListener("click", closeTechReviewPopup);
+  $("#techReviewOverlay").addEventListener("click", (e) => { if (e.target.id === "techReviewOverlay") closeTechReviewPopup(); });
+  $("#saveTechReviewBtn").addEventListener("click", saveTechReview);
+  $("#btnOpenTechReviewFromModal").addEventListener("click", () => {
+    if (activeSgId) openTechReviewPopup(activeSgId);
+  });
+}
+
 function renderSgEffectScreen(){
   const records = buildTangibleEffectRecords();
   const rawTotal = records.reduce((s, r) => s + r.amount, 0);
@@ -2930,16 +3064,32 @@ function renderSgEffectScreen(){
   renderSplitAmountBarChart($("#effectYearChart"), $("#effectYearTable"), yMap, "연도");
   renderCumulativeChart($("#effectCumulativeChart"), $("#effectCumulativeTable"), qMap);
   renderStdMhMailLog();
+  renderTechMailUI();
 
-  $("#effectDetailBody").innerHTML = records.length ? records.map(r => `
+  $("#effectDetailBody").innerHTML = records.length ? records.map(r => {
+    const t = sgGetTask(r.taskId);
+    let reviewCell;
+    if (r.verified){
+      reviewCell = `<span class="sent-tag">✅ 승인완료</span>`;
+    } else if (t && t.techReviewResult === "반려"){
+      reviewCell = `<button class="eval-btn" data-tech-review="${r.taskId}" title="${t.techReviewComment || ""}">❌ 반려 · 재검토</button>`;
+    } else if (t && t.techMailSent){
+      reviewCell = `<button class="eval-btn" data-tech-review="${r.taskId}">📝 검토입력(발송됨)</button>`;
+    } else {
+      reviewCell = `<button class="eval-btn" data-tech-review="${r.taskId}">📝 검토입력</button>`;
+    }
+    return `
     <tr>
       <td>${r.doneDate}</td><td>${r.team}</td>
       <td style="text-align:left;font-weight:600">${r.title}</td>
       <td>${formatWon(r.amount)}</td>
       <td style="color:${r.verified ? "var(--green)" : "#8A5A0F"};font-weight:700">${r.verified ? formatWon(r.amount) : "—"}</td>
       <td>${r.verified ? `<span class="sent-tag">✅ 검증완료</span>` : `<span class="locked-cell">⏳ 검증대기</span>`}</td>
-    </tr>
-  `).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">유형효과 데이터가 없습니다.</td></tr>`;
+      <td>${reviewCell}</td>
+    </tr>`;
+  }).join("") : `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">유형효과 데이터가 없습니다.</td></tr>`;
+
+  $all("[data-tech-review]").forEach(btn => btn.addEventListener("click", () => openTechReviewPopup(btn.dataset.techReview)));
 }
 
 /* ================= SCREEN — 통합기준정보 ================= */
@@ -2953,6 +3103,12 @@ let EXEC_RECIPIENTS = [
   { name: "서인국", title: "울산공장장", email: "ik.seo@hd-ce.com", use: true },
   { name: "한동희", title: "생산혁신팀장", email: "dh.han@hd-ce.com", use: true },
   { name: "조은비", title: "경영기획팀장", email: "eb.jo@hd-ce.com", use: false }
+];
+let TECH_MAIL_RECIPIENTS = [
+  { name: "정하윤", title: "생산기술팀 표준시간 담당", email: "hy.jung@hd-ce.com", use: true },
+  { name: "김도현", title: "생산기술팀 유형효과 검증 담당", email: "dh.kim@hd-ce.com", use: true },
+  { name: "이향기", title: "생산기술팀 제작기술 담당", email: "hg.lee@hd-ce.com", use: true },
+  { name: "한동희", title: "생산혁신팀장(참조)", email: "dh.han@hd-ce.com", use: false }
 ];
 let MH_RATE_MASTER = [
   { year: 2025, rate: 53300, note: "2025년도~ 적용", use: true }
@@ -2982,10 +3138,23 @@ function buildWorkplaceMasterSeed(){
 }
 function buildUserMasterSeed(){
   const map = {};
-  TASKS.forEach(t => { if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, evalAuth: false }; });
-  SG_TASKS.forEach(t => { if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, evalAuth: false }; });
+  TASKS.forEach(t => { if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, evalAuth: false, effectReviewAuth: false }; });
+  SG_TASKS.forEach(t => { if (!map[t.user]) map[t.user] = { user: t.user, team: t.team, evalAuth: false, effectReviewAuth: false }; });
   if (map["이향기"]) map["이향기"].evalAuth = true;
   if (map["정민아"]) map["정민아"].evalAuth = true;
+
+  // 유형효과 검토권한자(효과검증 입력 권한자) — 명 파트 지정 인원
+  const EFFECT_REVIEWERS = [
+    { user: "임동열(팀장)", team: "명파트" },
+    { user: "이한규", team: "명파트" },
+    { user: "이상욱", team: "명파트" },
+    { user: "임종효", team: "명파트" }
+  ];
+  EFFECT_REVIEWERS.forEach(r => {
+    if (!map[r.user]) map[r.user] = { user: r.user, team: r.team, evalAuth: false, effectReviewAuth: false };
+    map[r.user].effectReviewAuth = true;
+  });
+
   return Object.values(map).sort((a, b) => a.user.localeCompare(b.user));
 }
 
@@ -2995,7 +3164,8 @@ function initMasterDataOnce(){
   WORKPLACE_MASTER = buildWorkplaceMasterSeed();
   USER_MASTER = buildUserMasterSeed();
   DEFAULT_MASTER_SNAPSHOT = JSON.parse(JSON.stringify({
-    dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, mhrate: MH_RATE_MASTER
+    dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS,
+    techmail: TECH_MAIL_RECIPIENTS, mhrate: MH_RATE_MASTER
   }));
   // 분류기준은 함수(check)를 포함하므로 별도로 직렬화 가능한 형태만 스냅샷
   DEFAULT_MASTER_SNAPSHOT.criteria = IMPORTANCE_CRITERIA.map(c => ({ id: c.id, label: c.label, desc: c.desc, weight: c.weight, keyword: c.keyword }));
@@ -3064,13 +3234,15 @@ function renderMasterUser(){
       <td><input class="master-inline-input" type="text" value="${r.team}" data-mfield-user="team" data-midx="${i}"></td>
       <td>${c.problemCount}</td><td>${c.sgCount}</td>
       <td><label class="chk"><input type="checkbox" ${r.evalAuth ? "checked" : ""} data-mfield-user="evalAuth" data-midx="${i}"> 평가권한</label></td>
+      <td><label class="chk"><input type="checkbox" ${r.effectReviewAuth ? "checked" : ""} data-mfield-user="effectReviewAuth" data-midx="${i}"> 검토권한</label></td>
     </tr>`;
-  }).join("") : `<tr><td colspan="6" style="padding:20px;color:#9AA7B2">등록된 담당자가 없습니다.</td></tr>`;
+  }).join("") : `<tr><td colspan="7" style="padding:20px;color:#9AA7B2">등록된 담당자가 없습니다.</td></tr>`;
 
   $all("[data-mfield-user]").forEach(el => el.addEventListener("change", () => {
     const r = USER_MASTER[+el.dataset.midx];
     const field = el.dataset.mfieldUser;
     r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+    if (field === "effectReviewAuth") { renderTechMailUI(); if ($("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen(); }
   }));
 }
 
@@ -3090,6 +3262,25 @@ function renderMasterExec(){
     const field = el.dataset.mfieldExec;
     r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
     if (field === "use") renderExecMailBar();
+  }));
+}
+
+function renderMasterTechMail(){
+  $("#masterTechMailBody").innerHTML = TECH_MAIL_RECIPIENTS.length ? TECH_MAIL_RECIPIENTS.map((r, i) => `
+    <tr>
+      <td><input type="checkbox" data-msel-techmail="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.name}" data-mfield-techmail="name" data-midx="${i}"></td>
+      <td><input class="master-inline-input" type="text" value="${r.title}" data-mfield-techmail="title" data-midx="${i}"></td>
+      <td style="text-align:left"><input class="master-inline-input" type="text" value="${r.email}" data-mfield-techmail="email" data-midx="${i}"></td>
+      <td><label class="chk"><input type="checkbox" ${r.use ? "checked" : ""} data-mfield-techmail="use" data-midx="${i}"> 수신</label></td>
+    </tr>
+  `).join("") : `<tr><td colspan="5" style="padding:20px;color:#9AA7B2">등록된 수신자가 없습니다.</td></tr>`;
+
+  $all("[data-mfield-techmail]").forEach(el => el.addEventListener("change", () => {
+    const r = TECH_MAIL_RECIPIENTS[+el.dataset.midx];
+    const field = el.dataset.mfieldTechmail;
+    r[field] = el.type === "checkbox" ? el.checked : el.value.trim();
+    if (field === "use") renderTechMailUI();
   }));
 }
 
@@ -3148,6 +3339,7 @@ function renderMasterDataScreen(){
   renderMasterWorkplace();
   renderMasterUser();
   renderMasterExec();
+  renderMasterTechMail();
   renderMasterCriteria();
   renderMasterMhRate();
 }
@@ -3171,8 +3363,9 @@ function bindMasterToolbar(){
     initMasterDataOnce();
     if (type === "dept"){ DEPT_TEAM_MASTER.push({ dept: "신규부서", team: "신규팀", use: true }); renderMasterDept(); }
     else if (type === "workplace"){ WORKPLACE_MASTER.push({ workplace: "신규작업장", use: true }); renderMasterWorkplace(); }
-    else if (type === "user"){ USER_MASTER.push({ user: "신규담당자", team: "미배정", evalAuth: false }); renderMasterUser(); }
+    else if (type === "user"){ USER_MASTER.push({ user: "신규담당자", team: "미배정", evalAuth: false, effectReviewAuth: false }); renderMasterUser(); }
     else if (type === "exec"){ EXEC_RECIPIENTS.push({ name: "신규수신자", title: "직책 입력", email: "email@hd-ce.com", use: true }); renderMasterExec(); renderExecMailBar(); }
+    else if (type === "techmail"){ TECH_MAIL_RECIPIENTS.push({ name: "신규수신자", title: "생산기술팀 담당", email: "email@hd-ce.com", use: true }); renderMasterTechMail(); renderTechMailUI(); }
     else if (type === "criteria"){
       const label = "④ 커스텀 기준 " + (IMPORTANCE_CRITERIA.length + 1);
       IMPORTANCE_CRITERIA.push(makeKeywordCriterion(label, "안전", 1));
@@ -3191,12 +3384,13 @@ function bindMasterToolbar(){
     const selector = "[data-msel-" + type + "]:checked";
     const idxs = [...document.querySelectorAll(selector)].map(cb => +cb.dataset["msel" + type.charAt(0).toUpperCase() + type.slice(1)]).sort((a, b) => b - a);
     if (!idxs.length){ toast("삭제할 행을 먼저 선택해 주세요.", "red"); return; }
-    const arrMap = { dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, criteria: IMPORTANCE_CRITERIA, mhrate: MH_RATE_MASTER };
+    const arrMap = { dept: DEPT_TEAM_MASTER, workplace: WORKPLACE_MASTER, user: USER_MASTER, exec: EXEC_RECIPIENTS, techmail: TECH_MAIL_RECIPIENTS, criteria: IMPORTANCE_CRITERIA, mhrate: MH_RATE_MASTER };
     const arr = arrMap[type];
     idxs.forEach(i => arr.splice(i, 1));
-    const renderMap = { dept: renderMasterDept, workplace: renderMasterWorkplace, user: renderMasterUser, exec: renderMasterExec, criteria: renderMasterCriteria, mhrate: renderMasterMhRate };
+    const renderMap = { dept: renderMasterDept, workplace: renderMasterWorkplace, user: renderMasterUser, exec: renderMasterExec, techmail: renderMasterTechMail, criteria: renderMasterCriteria, mhrate: renderMasterMhRate };
     renderMap[type]();
     if (type === "exec") renderExecMailBar();
+    if (type === "techmail") renderTechMailUI();
     if (type === "mhrate" && $("#sgEffectScreen").classList.contains("active")) renderSgEffectScreen();
     toast(`${idxs.length}건 삭제되었습니다.`, "red");
   }));
@@ -3213,6 +3407,7 @@ function bindMasterToolbar(){
     else if (type === "workplace"){ WORKPLACE_MASTER = JSON.parse(JSON.stringify(snap.workplace)); renderMasterWorkplace(); }
     else if (type === "user"){ USER_MASTER = JSON.parse(JSON.stringify(snap.user)); renderMasterUser(); }
     else if (type === "exec"){ EXEC_RECIPIENTS = JSON.parse(JSON.stringify(snap.exec)); renderMasterExec(); renderExecMailBar(); }
+    else if (type === "techmail"){ TECH_MAIL_RECIPIENTS = JSON.parse(JSON.stringify(snap.techmail)); renderMasterTechMail(); renderTechMailUI(); }
     else if (type === "mhrate"){
       MH_RATE_MASTER = JSON.parse(JSON.stringify(snap.mhrate));
       renderMasterMhRate();
@@ -3632,6 +3827,7 @@ function bindEvents(){
   bindMasterTabs();
   bindMasterToolbar();
   bindMasterLock();
+  bindTechReviewPopup();
   $("#btnExportExcel").addEventListener("click", handleExportExcel);
   bindDeleteButtons();
   bindPdcaMonitorScreen();
@@ -3654,5 +3850,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderKpiStrip();
   renderExecMailBar();
   renderExecMailLog();
+  initMasterDataOnce();
+  autoCheckTechReviewMailing();
   bindGlobalTooltip();
 });

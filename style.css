@@ -483,12 +483,12 @@ table{ border-collapse: collapse; }
 .field{ display:flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
 .field label{ font-size:12.5px; font-weight:700; color: var(--ink); }
 .field label .req{ color: var(--red); }
-.field input, .field select{
+.field input, .field select, .field textarea{
   padding: 9px 11px; border: 1px solid var(--line); border-radius: 7px;
-  font-size: 13.5px; color: var(--ink); background:#fff;
+  font-size: 13.5px; color: var(--ink); background:#fff; resize: vertical;
 }
 .field input:disabled, .field select:disabled{ background: #F3F5F7; color: var(--ink-soft); }
-.field input:focus, .field select:focus{ outline:none; border-color: var(--steel); box-shadow: 0 0 0 3px var(--steel-light); }
+.field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--steel); box-shadow: 0 0 0 3px var(--steel-light); }
 .field input.invalid{ border-color: var(--red); box-shadow: 0 0 0 3px var(--red-light); }
 .hint{ font-size: 11px; color: var(--ink-soft); }
 .hint.error{ color: var(--red); font-weight:700; }

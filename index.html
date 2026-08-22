@@ -545,6 +545,19 @@
 
     <div class="panel-strip" id="sgEffectStrip"></div>
 
+    <div class="dash-card followup-card">
+      <h3>📧 생산기술팀 검토 메일링</h3>
+      <p class="board-sub" style="margin-bottom:10px">소그룹활동 분기가 종료되면, 유형효과(M/H·금액) 값이 있는데 아직 생산기술팀 검증이 안 된 과제를 자동으로 모아 생산기술팀에 검토 요청 메일을 발송합니다. 생산기술팀은 메일을 받으면 본 시스템에서 검토결과·의견을 입력해 반영합니다.</p>
+      <div class="panel-strip" id="techMailStrip"></div>
+      <div class="master-toolbar" style="margin-top:12px">
+        <span class="hint" id="techMailStatusText"></span>
+        <div class="master-toolbar-btns">
+          <button class="tbtn" id="btnTechMailNow">📧 지금 검토 메일링 발송</button>
+        </div>
+      </div>
+      <div class="mail-log" id="techMailLog" style="margin-top:10px"></div>
+    </div>
+
     <div class="dash-grid">
       <div class="dash-card">
         <h3>분기별 유형효과 금액</h3>
@@ -592,7 +605,7 @@
       <div class="table-wrap followup-scroll">
         <table class="task-table">
           <thead>
-            <tr><th>완료일</th><th>팀</th><th style="text-align:left">과제명</th><th>현장 산출액</th><th>생산기술 검증액</th><th>검증상태</th></tr>
+            <tr><th>완료일</th><th>팀</th><th style="text-align:left">과제명</th><th>현장 산출액</th><th>생산기술 검증액</th><th>검증상태</th><th>생산기술 검토</th></tr>
           </thead>
           <tbody id="effectDetailBody"></tbody>
         </table>
@@ -641,6 +654,7 @@
       <button class="master-tab" data-mtab="workplace">작업장·라인</button>
       <button class="master-tab" data-mtab="user">담당자</button>
       <button class="master-tab" data-mtab="exec">경영진 수신자</button>
+      <button class="master-tab" data-mtab="techmail">생기팀 메일링 수신자</button>
       <button class="master-tab" data-mtab="criteria">중요과제 분류기준</button>
       <button class="master-tab" data-mtab="mhrate">M/H 단가</button>
     </div>
@@ -698,10 +712,10 @@
             <button class="tbtn ghost" data-master-reset="user">♻ 초기화</button>
           </div>
         </div>
-        <p class="board-sub" style="margin-bottom:10px">등록자 기준 담당자 목록과 소그룹활동 평가권한 부여 현황입니다. (평가권한자만 1·2차 평가를 실시할 수 있도록 통제하는 기준정보)</p>
+        <p class="board-sub" style="margin-bottom:10px">등록자 기준 담당자 목록입니다. <b>평가권한</b>자만 소그룹 1·2차 평가를 실시할 수 있고, <b>유형효과 검토권한</b>자만 생산기술 검토 팝업에서 검토결과를 입력할 수 있습니다.</p>
         <div class="table-wrap followup-scroll">
           <table class="task-table">
-            <thead><tr><th style="width:30px"></th><th style="text-align:left">담당자</th><th>소속팀</th><th>문제해결과제</th><th>소그룹활동</th><th>평가권한</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th style="text-align:left">담당자</th><th>소속팀</th><th>문제해결과제</th><th>소그룹활동</th><th>평가권한</th><th>유형효과 검토권한</th></tr></thead>
             <tbody id="masterUserBody"></tbody>
           </table>
         </div>
@@ -724,6 +738,27 @@
           <table class="task-table">
             <thead><tr><th style="width:30px"></th><th style="text-align:left">이름</th><th>직책</th><th style="text-align:left">이메일</th><th>수신여부</th></tr></thead>
             <tbody id="masterExecBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="master-panel" id="masterPanelTechmail">
+      <div class="dash-card followup-card">
+        <div class="master-toolbar">
+          <h3>생기팀 메일링 수신자 마스터</h3>
+          <div class="master-toolbar-btns">
+            <button class="tbtn" data-master-new="techmail">🆕 신규</button>
+            <button class="tbtn" data-master-del="techmail">🗑 삭제</button>
+            <button class="tbtn" data-master-save="techmail">💾 저장</button>
+            <button class="tbtn ghost" data-master-reset="techmail">♻ 초기화</button>
+          </div>
+        </div>
+        <p class="board-sub" style="margin-bottom:10px">분기 종료 시 자동(또는 수동) 발송되는 "생산기술팀 유형효과 검토 요청" 메일의 수신 대상입니다. "유형효과 성과 모니터링" 탭의 메일링 발송이 이 명단을 참조합니다.</p>
+        <div class="table-wrap followup-scroll">
+          <table class="task-table">
+            <thead><tr><th style="width:30px"></th><th style="text-align:left">이름</th><th>직책</th><th style="text-align:left">이메일</th><th>수신여부</th></tr></thead>
+            <tbody id="masterTechMailBody"></tbody>
           </table>
         </div>
       </div>
@@ -892,6 +927,7 @@
           <div class="field"><label>무형효과 (정성)</label><input type="text" id="sgIntangible" placeholder="예) 작업자 안전사고 리스크 감소, 현장 만족도 향상"></div>
           <label class="chk"><input type="checkbox" id="sgStdTime"> ✅ 생산기술팀 검증완료 (표준시간 반영) — 체크 시에만 유형효과 금액이 공식 실적으로 집계됩니다</label>
           <span class="hint" id="sgStdTimeDate">완료 저장일 —</span>
+          <button class="eval-btn" id="btnOpenTechReviewFromModal" style="margin-top:6px">📝 생산기술 검토 팝업으로 입력</button>
         </div>
       </div>
     </div>
@@ -1213,6 +1249,47 @@
     <div class="lock-btns">
       <button class="tbtn ghost" id="masterLockCancelBtn">취소</button>
       <button class="tbtn" id="masterLockConfirmBtn" style="background:var(--navy);color:#fff;border-color:var(--navy)">확인</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ 생산기술팀 유형효과 검토 팝업 ============ -->
+<div class="overlay" id="techReviewOverlay">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-head">
+      <h3>생산기술팀 유형효과 검토</h3>
+      <button class="icon-btn" id="closeTechReviewBtn" aria-label="닫기">&times;</button>
+    </div>
+    <div class="modal-body" style="grid-template-columns:1fr;padding:18px 20px">
+      <div class="field-row" style="margin-bottom:10px">
+        <div class="field" style="grid-column:1/-1">
+          <label>대상 과제</label>
+          <div class="hint" id="techReviewTaskInfo" style="font-size:13px;color:var(--navy);font-weight:700"></div>
+        </div>
+      </div>
+      <div class="field-row two">
+        <div class="field"><label>현장 산출 유형효과</label><div class="hint" id="techReviewVerifyMh"></div></div>
+        <div class="field"><label>검토요청 발송일</label><div class="hint" id="techReviewMailDate"></div></div>
+      </div>
+      <div class="field">
+        <label>검토결과</label>
+        <select id="techReviewResult">
+          <option value="">선택</option>
+          <option value="승인">✅ 승인 (표준시간 반영, 유형효과 공식 인정)</option>
+          <option value="반려">❌ 반려 (재산출 필요)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>검토 의견</label>
+        <textarea id="techReviewComment" rows="4" placeholder="검토 의견을 입력해 주세요 (예: 표준시간 반영 확인, 산출 근거 재확인 필요 등)"></textarea>
+      </div>
+      <div class="field">
+        <label>검토자</label>
+        <input type="text" id="techReviewer" placeholder="예: 생산기술팀 홍길동" value="생산기술팀">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button class="btn btn-approve" id="saveTechReviewBtn" style="flex:1">검토결과 저장</button>
+      </div>
     </div>
   </div>
 </div>
